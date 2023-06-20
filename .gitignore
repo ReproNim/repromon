@@ -1,0 +1,13 @@
+*.egg-info
+*.pid
+*.pyc
+.coverage*
+.dir-locals.el
+.flake8
+.mypy_cache/
+.tox/
+build/
+dist/
+.idea/
+.python-version
+*.swp
