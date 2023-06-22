@@ -2,11 +2,9 @@ import logging
 import logging.config
 from pathlib import Path
 from flask import Flask, render_template
+from repromon_app.cfg import app_cfg, app_cfg_init
 
 logger = logging.getLogger(__name__)
-# init logger, will be moved outside
-logFile = str(Path(__file__).parent.parent) + '/logging.ini'
-logging.config.fileConfig(logFile, disable_existing_loggers=False)
 logger.debug("name=" + __name__)
 
 
@@ -15,9 +13,11 @@ def create_flask_app() -> Flask:
 
     :return: Root flask webapp
     """
+    app_cfg_init()
     logger.info("create_flask_app()")
 
-    app_web = Flask(__name__, template_folder='app/web/templates', static_folder='app/web/static')
+    app_web: Flask = Flask(__name__, template_folder='app/web/templates', static_folder='app/web/static')
+    app_web.config.from_mapping(app_cfg().FLASK.dict())
 
     @app_web.route('/')
     def home():
@@ -30,7 +30,7 @@ def create_flask_app() -> Flask:
 def main():
     app = create_flask_app()
     logger.debug("Running server ...")
-    app.run(use_reloader=False, port=9095)
+    app.run(use_reloader=False)
 
 
 if __name__ == "__main__":
