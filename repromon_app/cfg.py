@@ -1,6 +1,7 @@
 import logging
+from string import Template
 import pydantic
-import configparser
+from configparser import ConfigParser, ExtendedInterpolation
 import platform
 from pathlib import Path
 import sys
@@ -10,8 +11,23 @@ import time
 logger = logging.getLogger(__name__)
 
 
-class FlaskCfg(pydantic.BaseModel):
-    """ Flask configuration under [FLASK] section
+class BaseSectionConfig(pydantic.BaseModel):
+    """Base class for section configuration
+    """
+    pass
+
+
+class DbConfig(BaseSectionConfig):
+    """ Flask configuration under [db***] sections for SQLAlchemy
+    """
+    url: str = None
+    echo: bool = False
+    pool_size: int = 5
+    pool_recycle: int = 3600
+
+
+class FlaskConfig(BaseSectionConfig):
+    """ Flask configuration under [flask] section
     """
     FLASK_ENV: str = None
     DEBUG: bool = False
@@ -24,13 +40,13 @@ class FlaskCfg(pydantic.BaseModel):
     TEMPLATES_AUTO_RELOAD: str = None
 
 
-class RepromonCfg(pydantic.BaseModel):
-    """ Basic configuration for [REPROMON] section
+class SettingsConfig(BaseSectionConfig):
+    """ Basic configuration for [system] section
     """
     ENV: str = "Unknown"
 
 
-class AppCfg:
+class AppConfig:
     """Application configuration
     """
     instance = None
@@ -39,9 +55,9 @@ class AppCfg:
     LOGGING_INI = "logging.ini"
     APP_INI = "repromon.ini"
     #
-    SECTION_SYSTEM = "SYSTEM"
-    SECTION_REPROMON = "REPROMON"
-    SECTION_FLASK = "FLASK"
+    SECTION_SETTINGS = "settings"
+    SECTION_FLASK = "flask"
+    SECTION_DB = "db"
 
     # AppConfig members
     def __init__(self):
@@ -49,8 +65,9 @@ class AppCfg:
         self.HOST_CONFIG_PATH = "/etc/repronim/repromon"
         self.START_TIME = time.time()
         self.CONFIG_PATH = None
-        self.REPROMON: RepromonCfg = RepromonCfg()
-        self.FLASK: FlaskCfg = FlaskCfg()
+        self.settings: SettingsConfig = SettingsConfig()
+        self.flask: FlaskConfig = FlaskConfig()
+        self.db: DbConfig = DbConfig()
 
     def to_dict(self):
         return {
@@ -58,17 +75,33 @@ class AppCfg:
             "HOST_CONFIG_PATH": self.HOST_CONFIG_PATH,
             "START_TIME": self.START_TIME,
             "CONFIG_PATH": self.CONFIG_PATH,
-            "REPROMON": self.REPROMON.dict(),
-            "FLASK": self.FLASK.dict()
+            "[settings]": self.settings.dict(),
+            "[flask]": self.flask.dict(),
+            "[db]": self.db.dict()
         }
 
 
-def app_cfg() -> AppCfg:
+class MacroExpander(ExtendedInterpolation):
+    """Expand macros values with ${} pattern in configparser
+    """
+
+    def __init__(self, params: dict):
+        self._params = params
+
+    def before_get(self, parser, section, option, value, defaults):
+        logger.debug("before_get() value = "+str(value)+", type="+str(type(value)))
+        if value and value.find("$") >= 0:
+            for k, v in self._params.items():
+                value = value.replace("${"+k+"}", v)
+        return super().before_get(parser, section, option, value, defaults)
+
+
+def app_cfg() -> AppConfig:
     """Get application configuration
 
     :return: Current application configuration
     """
-    return AppCfg.instance
+    return AppConfig.instance
 
 
 def app_cfg_init() -> None:
@@ -77,17 +110,17 @@ def app_cfg_init() -> None:
     """
     logger.debug("app_cfg_init()")
 
-    if AppCfg.instance:
+    if AppConfig.instance:
         logger.info("Application config already initialized")
         return
 
-    cfg = AppCfg()
-    AppCfg.instance = cfg
+    cfg = AppConfig()
+    AppConfig.instance = cfg
 
     # init logger
     log_files = [
-        cfg.HOST_CONFIG_PATH + '/' + AppCfg.LOGGING_INI,
-        cfg.ROOT_PATH + '/' + AppCfg.LOGGING_INI
+        cfg.HOST_CONFIG_PATH + '/' + AppConfig.LOGGING_INI,
+        cfg.ROOT_PATH + '/' + AppConfig.LOGGING_INI
     ]
 
     for log_file in log_files:
@@ -108,8 +141,8 @@ def app_cfg_init() -> None:
 
     # load configuration from multiple INI files
     ini_paths = [
-        cfg.ROOT_PATH + '/' + AppCfg.APP_INI,
-        cfg.HOST_CONFIG_PATH + '/' + AppCfg.APP_INI
+        cfg.ROOT_PATH + '/' + AppConfig.APP_INI,
+        cfg.HOST_CONFIG_PATH + '/' + AppConfig.APP_INI
     ]
 
     for ini_path in ini_paths:
@@ -117,18 +150,28 @@ def app_cfg_init() -> None:
             logging.config.fileConfig(log_file, disable_existing_loggers=False)
             logger.info("Found ini configuration file: "+str(ini_path))
 
-            cp = configparser.ConfigParser()
+            cp = ConfigParser(interpolation=MacroExpander({
+                    "ROOT_PATH": cfg.ROOT_PATH
+                }))
             # keep property names as is
             cp.optionxform = str
             with open(ini_path) as fd:
                 cp.read_file(fd)
 
-            cfg.REPROMON = RepromonCfg(**cp[AppCfg.SECTION_REPROMON])
-            cfg.FLASK = FlaskCfg(**cp[AppCfg.SECTION_FLASK])
+            cfg.settings = SettingsConfig(**cp[AppConfig.SECTION_SETTINGS])
+            cfg.flask = FlaskConfig(**cp[AppConfig.SECTION_FLASK])
+            cfg.db = DbConfig(**cp[AppConfig.SECTION_DB])
 
             break
 
-    logger.info('Environment: '+cfg.REPROMON.ENV)
+    logger.info('Environment: ' + cfg.settings.ENV)
     logger.info("Application config initialized successfully")
-    #logger.debug(cfg.to_dict())
+    logger.debug(cfg.to_dict())
 
+
+def app_settings() -> SettingsConfig:
+    """Get application settings configuration
+
+    :return: Current application settings configuration
+    """
+    return app_cfg().settings

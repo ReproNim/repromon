@@ -17,7 +17,7 @@ def create_flask_app() -> Flask:
     logger.info("create_flask_app()")
 
     app_web: Flask = Flask(__name__, template_folder='app/web/templates', static_folder='app/web/static')
-    app_web.config.from_mapping(app_cfg().FLASK.dict())
+    app_web.config.from_mapping(app_cfg().flask.dict())
 
     @app_web.route('/')
     def home():
