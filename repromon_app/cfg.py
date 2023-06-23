@@ -6,6 +6,7 @@ import platform
 from pathlib import Path
 import sys
 import time
+import json
 
 
 logger = logging.getLogger(__name__)
@@ -76,8 +77,8 @@ class AppConfig:
             "START_TIME": self.START_TIME,
             "CONFIG_PATH": self.CONFIG_PATH,
             "[settings]": self.settings.dict(),
-            "[flask]": self.flask.dict(),
-            "[db]": self.db.dict()
+            "[db]": self.db.dict(),
+            "[flask]": self.flask.dict()
         }
 
 
@@ -166,7 +167,7 @@ def app_cfg_init() -> None:
 
     logger.info('Environment: ' + cfg.settings.ENV)
     logger.info("Application config initialized successfully")
-    logger.debug(cfg.to_dict())
+    logger.debug(json.dumps(cfg.to_dict(), indent=4))
 
 
 def app_settings() -> SettingsConfig:
