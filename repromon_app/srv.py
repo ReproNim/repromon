@@ -3,6 +3,7 @@ import logging.config
 from pathlib import Path
 from flask import Flask, render_template
 from repromon_app.cfg import app_cfg, app_cfg_init
+from repromon_app.app.admin import admin_bp
 
 logger = logging.getLogger(__name__)
 logger.debug("name=" + __name__)
@@ -18,6 +19,11 @@ def create_flask_app() -> Flask:
 
     app_web: Flask = Flask(__name__, template_folder='app/web/templates', static_folder='app/web/static')
     app_web.config.from_mapping(app_cfg().flask.dict())
+
+    # register blueprints
+    with app_web.app_context():
+        logger.debug("Registering blueprint: admin ...")
+        app_web.register_blueprint(admin_bp, url_prefix='/admin')
 
     @app_web.route('/')
     def home():
