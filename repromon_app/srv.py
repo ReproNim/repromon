@@ -2,7 +2,7 @@ import logging
 import logging.config
 from pathlib import Path
 from flask import Flask, render_template
-from repromon_app.cfg import app_cfg, app_cfg_init
+from repromon_app.cfg import app_config, app_config_init
 from repromon_app.app.admin import admin_bp
 
 logger = logging.getLogger(__name__)
@@ -14,11 +14,11 @@ def create_flask_app() -> Flask:
 
     :return: Root flask webapp
     """
-    app_cfg_init()
+    app_config_init()
     logger.info("create_flask_app()")
 
     app_web: Flask = Flask(__name__, template_folder='app/web/templates', static_folder='app/web/static')
-    app_web.config.from_mapping(app_cfg().flask.dict())
+    app_web.config.from_mapping(app_config().flask.dict())
 
     # register blueprints
     with app_web.app_context():

@@ -97,7 +97,7 @@ class MacroExpander(ExtendedInterpolation):
         return super().before_get(parser, section, option, value, defaults)
 
 
-def app_cfg() -> AppConfig:
+def app_config() -> AppConfig:
     """Get application configuration
 
     :return: Current application configuration
@@ -105,7 +105,7 @@ def app_cfg() -> AppConfig:
     return AppConfig.instance
 
 
-def app_cfg_init() -> None:
+def app_config_init() -> None:
     """Initializes logger and application configuration from INI file
     and environment variables
     """
@@ -167,7 +167,7 @@ def app_cfg_init() -> None:
 
     logger.info('Environment: ' + cfg.settings.ENV)
     logger.info("Application config initialized successfully")
-    logger.debug(json.dumps(cfg.to_dict(), indent=4))
+    #logger.debug(json.dumps(cfg.to_dict(), indent=4))
 
 
 def app_settings() -> SettingsConfig:
@@ -175,4 +175,4 @@ def app_settings() -> SettingsConfig:
 
     :return: Current application settings configuration
     """
-    return app_cfg().settings
+    return app_config().settings
