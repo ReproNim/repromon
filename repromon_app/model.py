@@ -23,7 +23,7 @@ class Rolename:
 # Model/DTO
 
 
-class BaseDTO(BaseModel):
+class BaseDTO:
     """Base class for all DTOs
     """
 
@@ -31,7 +31,22 @@ class BaseDTO(BaseModel):
         pass
 
 
-class UserInfoDTO(BaseDTO):
+class BasePydantic(BaseModel, BaseDTO):
+    """Base class for all pydantic based DTOs
+    """
+    pass
+
+
+class RoleInfoDTO(BasePydantic):
+    """Short role info DTO
+    """
+
+    id: int = 0
+    rolename: str = None
+    description: str = None
+
+
+class UserInfoDTO(BasePydantic):
     """Short user info DTO
     """
 
