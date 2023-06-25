@@ -1,7 +1,7 @@
 import logging
 import datetime
 from sqlalchemy import MetaData, Table, Column, Integer, Numeric, String, DateTime, \
-    ForeignKey, Float, Boolean, UniqueConstraint
+    ForeignKey, Float, Boolean, UniqueConstraint, Text, TIMESTAMP, Index, JSON
 from sqlalchemy.orm import as_declarative
 from pydantic import BaseModel
 
@@ -80,6 +80,108 @@ class BaseEntity(BaseDTO):
         }
 
 
+class DataProviderEntity(BaseEntity):
+    """Entity for "data_provider" table
+    """
+    __tablename__ = 'data_provider'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    provider = Column(String(15), nullable=False, unique=True)
+
+    def __repr__(self):
+        return "DataProviderEntity(id={self.id}, " \
+               "provider='{self.provider}')".format(self=self)
+
+
+class DeviceEntity(BaseEntity):
+    """Entity for "device" table
+    """
+    __tablename__ = 'device'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    kind = Column(String(15))
+    description = Column(String(128))
+
+    def __repr__(self):
+        return "DeviceEntity(id={self.id}, " \
+               "kind='{self.kind}', " \
+               "description='{self.description}')".format(self=self)
+
+
+class MessageCategoryEntity(BaseEntity):
+    """Entity for "message_category" table
+    """
+    __tablename__ = 'message_category'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    category = Column(String(45))
+
+    def __repr__(self):
+        return "MessageCategoryEntity(id={self.id}, " \
+               "category='{self.category}')".format(self=self)
+
+
+class MessageLevelEntity(BaseEntity):
+    """Entity for "message_level" table
+    """
+    __tablename__ = 'message_level'
+
+    id = Column(Integer, primary_key=True)
+    level = Column(String(8))
+
+    def __repr__(self):
+        return "MessageLevelEntity(id={self.id}, " \
+               "level='{self.level}')".format(self=self)
+
+
+class MessageLogEntity(BaseEntity):
+    """Entity for "message_log" table
+    """
+    __tablename__ = 'message_log'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    level_id = Column(Integer)
+    category_id = Column(Integer)
+    provider_id = Column(Integer)
+    study_id = Column(Integer)
+    status_id = Column(Integer)
+    description = Column(String(255))
+    payload_id = Column(Integer)
+    created_on = Column(TIMESTAMP)
+    created_by = Column(String(15))
+
+    def __repr__(self):
+        return "MessageLogEntity(id={self.id}, " \
+               "level_id='{self.level_id}', " \
+               "category_id='{self.category_id}', "\
+               "provider_id='{self.provider_id}', " \
+               "study_id='{self.study_id}', " \
+               "status_id='{self.status_id}', " \
+               "description='{self.description}', " \
+               "payload_id='{self.payload_id}', " \
+               "created_on='{self.created_on}', " \
+               "created_by='{self.created_by}')".format(self=self)
+
+
+class MessagePayloadEntity(BaseEntity):
+    """Entity for "message_payload" table
+    """
+    __tablename__ = 'message_payload'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    uid = Column(String(36))
+    payload = Column(Text)
+    created_on = Column(TIMESTAMP)
+    created_by = Column(String(15))
+
+    def __repr__(self):
+        return "MessagePayloadEntity(id={self.id}, " \
+               "uid='{self.uid}', " \
+               "payload='{self.payload}', " \
+               "created_on='{self.created_on}', " \
+               "created_by='{self.created_by}')".format(self=self)
+
+
 class RoleEntity(BaseEntity):
     """Entity for "role" table
     """
@@ -96,3 +198,112 @@ class RoleEntity(BaseEntity):
         return "RoleEntity(id={self.id}, " \
                "rolename='{self.rolename}', " \
                "description='{self.description}')".format(self=self)
+
+
+class SecUserDeviceEntity(BaseEntity):
+    """Entity for "sec_user_device" table
+    """
+    __tablename__ = 'sec_user_device'
+    __table_args__ = (
+        UniqueConstraint('user_id', 'device_id'),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    device_id = Column(Integer, nullable=False)
+
+    def __repr__(self):
+        return "SecUserDeviceEntity(id={self.id}, " \
+               "user_id='{self.user_id}', " \
+               "device_id='{self.device_id}')".format(self=self)
+
+
+class SecUserRoleEntity(BaseEntity):
+    """Entity for "sec_user_role" table
+    """
+    __tablename__ = 'sec_user_role'
+    __table_args__ = (
+        UniqueConstraint('user_id', 'role_id'),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    role_id = Column(Integer, nullable=False)
+
+    def __repr__(self):
+        return "SecUserRoleEntity(id={self.id}, " \
+               "user_id='{self.user_id}', " \
+               "role_id='{self.role_id}')".format(self=self)
+
+
+class StudyDataEntity(BaseEntity):
+    """Entity for "study_data" table
+    """
+    __tablename__ = 'study_data'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String(128))
+    device_id = Column(Integer)
+    status_id = Column(Integer)
+    start_ts = Column(TIMESTAMP)
+    end_ts = Column(TIMESTAMP)
+    info = Column(JSON)
+
+    def __repr__(self):
+        return "StudyDataEntity(id={self.id}, " \
+               "description='{self.description}', " \
+               "device_id='{self.device_id}', " \
+               "status_id='{self.status_id}', "\
+               "start_ts='{self.start_ts}', " \
+               "end_ts='{self.end_ts}', " \
+               "info='{self.info}')".format(self=self)
+
+
+class StudyStatusEntity(BaseEntity):
+    """Entity for "study_status" table
+    """
+    __tablename__ = 'study_status'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    status = Column(String(45))
+
+    def __repr__(self):
+        return "StudyStatusEntity(id={self.id}, " \
+               "status='{self.status}')".format(self=self)
+
+
+class UserEntity(BaseEntity):
+    """Entity for "user" table
+    """
+    __tablename__ = 'user'
+    __table_args__ = (
+        UniqueConstraint('email'),
+        Index('idx_user_name', 'username')
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String(15), nullable=False, unique=True)
+    is_active = Column(String(1), default='N')
+    is_system = Column(String(1), nullable=False, default='N')
+    first_name = Column(String(45))
+    last_name = Column(String(45))
+    email = Column(String(128), unique=True)
+    phone = Column(String(16))
+    description = Column(String(128))
+    password = Column(String(45))
+    password_changed_on = Column(TIMESTAMP)
+    last_login = Column(TIMESTAMP)
+
+    def __repr__(self):
+        return "RoleEntity(id={self.id}, " \
+               "username='{self.username}', " \
+               "is_active='{self.is_active}', "\
+               "is_system='{self.is_system}', " \
+               "first_name='{self.first_name}', " \
+               "last_name='{self.last_name}', " \
+               "email='{self.email}', " \
+               "phone='{self.phone}', " \
+               "description='{self.description}', " \
+               "password='{self.password}', " \
+               "password_changed_on='{self.password_changed_on}', " \
+               "last_login='{self.last_login}')".format(self=self)
