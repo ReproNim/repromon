@@ -17,6 +17,7 @@ class Rolename:
     MRI_OPERATOR: str = "mri_operator"
     PARTICIPANT: str = "participant"
     SYS_DATA_ENTRY: str = "sys_data_entry"
+    TESTER: str = "tester"
 
 
 ############################################
