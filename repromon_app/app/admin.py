@@ -15,12 +15,14 @@ def response_ok(res, mimetype):
     return response
 
 
+# @security: role=admin
 @admin_bp.route('/')
 def home():
     logger.debug("home")
     return render_template('admin/home.j2')
 
 
+# @security: role=admin
 @admin_bp.route('/view_config')
 def view_config():
     logger.debug("view_config")

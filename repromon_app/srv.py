@@ -40,6 +40,7 @@ def create_flask_app() -> Flask:
         # logger.debug("teardown_appcontext(...)")
         db_session_done()
 
+    # @security: any
     @app_web.route('/')
     def home():
         logger.debug("home")

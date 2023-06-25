@@ -15,12 +15,14 @@ def response_ok(res, mimetype):
     return response
 
 
+# @security: env=dev|qa|uat, auth, ??role=tester
 @test_bp.route('/')
 def home():
     logger.debug("home")
     return render_template('test/home.j2')
 
 
+# @security: env=dev|qa|uat, auth, ??role=tester
 @test_bp.route('/test1')
 def view_config():
     logger.debug("test1")
