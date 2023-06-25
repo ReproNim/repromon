@@ -14,6 +14,13 @@ logger.debug("name=" + __name__)
 ############################################
 # DAO
 
+def to_dto(cls, proxy):
+    if proxy:
+        if isinstance(proxy, list):
+            return [cls.parse_obj(r._mapping) for r in proxy]
+        return cls.parse_obj(proxy._mapping)
+    return None
+
 
 class BaseDAO:
     """Base class for all DAO objects
@@ -25,6 +32,7 @@ class BaseDAO:
 
     def session(self):
         return BaseDAO.default_session
+
 
 
 # User, role account DAO
@@ -43,7 +51,7 @@ class AccountDAO(BaseDAO):
             query(RoleEntity).filter(RoleEntity.rolename == rolename).first()
 
     def get_role_infos(self) -> list[RoleInfoDTO]:
-        return self.session().execute(
+        return to_dto(RoleInfoDTO, self.session().execute(
             text("""
                 select
                     id, 
@@ -53,10 +61,10 @@ class AccountDAO(BaseDAO):
                     role    
             """
                  )
-        ).all()
+        ).all())
 
     def get_user_info(self, username: str) -> UserInfoDTO:
-        return self.session().execute(
+        return to_dto(UserInfoDTO, self.session().execute(
             text("""
                 select
                     u.id,
@@ -69,7 +77,7 @@ class AccountDAO(BaseDAO):
                     u.username = :username
             """
                  ), {'username': username}
-        ).first()
+        ).first())
 
 
 # DAO factory
