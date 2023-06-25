@@ -93,6 +93,6 @@ class RoleEntity(BaseEntity):
     description = Column(String(128))
 
     def __repr__(self):
-        return "RoleDTO(id={self.id}, " \
+        return "RoleEntity(id={self.id}, " \
                "rolename='{self.rolename}', " \
                "description='{self.description}')".format(self=self)

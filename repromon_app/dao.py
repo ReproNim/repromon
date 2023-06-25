@@ -75,7 +75,7 @@ class AccountDAO(BaseDAO):
 # DAO factory
 class DAO:
     def __init__(self):
-        pass
+        self.account = AccountDAO()
 
 
 
