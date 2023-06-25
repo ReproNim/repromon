@@ -1,3 +1,5 @@
+-- export DDL
+-- sqlite3 db_dev.sqlite3 '.schema' > db_dev.ddl
 
 select * from user;
 select * from role;
