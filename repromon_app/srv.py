@@ -6,6 +6,7 @@ from repromon_app.cfg import app_config, app_config_init
 from repromon_app.db import db_init, db_session_done
 from repromon_app.app.admin import admin_bp
 from repromon_app.app.test import test_bp
+from repromon_app.app.root import root_bp
 
 logger = logging.getLogger(__name__)
 logger.debug("name=" + __name__)
@@ -28,6 +29,9 @@ def create_flask_app() -> Flask:
 
     # register blueprints
     with app_web.app_context():
+        logger.debug("Registering blueprint: root ...")
+        app_web.register_blueprint(root_bp, url_prefix='/')
+
         logger.debug("Registering blueprint: admin ...")
         app_web.register_blueprint(admin_bp, url_prefix='/admin')
 
@@ -39,12 +43,6 @@ def create_flask_app() -> Flask:
     def teardown_appcontext(resp_or_exc):
         # logger.debug("teardown_appcontext(...)")
         db_session_done()
-
-    # @security: any
-    @app_web.route('/')
-    def home():
-        logger.debug("home")
-        return render_template('home.j2')
 
     return app_web
 
