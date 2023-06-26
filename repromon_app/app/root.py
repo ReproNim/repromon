@@ -21,7 +21,7 @@ def response_ok(res, mimetype):
 @root_bp.route('/')
 def home():
     logger.debug("home")
-    return render_template('home.j2')
+    return render_template('root/home.j2')
 
 
 # @security: any
