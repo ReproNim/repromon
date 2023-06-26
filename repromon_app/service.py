@@ -1,5 +1,4 @@
 import logging
-from typing import List
 from repromon_app.dao import DAO
 from repromon_app.model import RoleEntity, RoleInfoDTO, MessageLogInfoDTO, StudyInfoDTO, LoginInfoDTO, UserInfoDTO
 from repromon_app.security import sec_ctx
@@ -19,6 +18,27 @@ class BaseService:
         self.dao = DAO()
 
 
+# service to handle account functionality
+# user, role registration, login and onboarding
+class AccountService(BaseService):
+    def __init__(self):
+        super().__init__()
+
+
+# service for feedback screen
+class FeedbackService(BaseService):
+    def __init__(self):
+        super().__init__()
+
+    def get_message_log(self, study_id: int) -> list[MessageLogInfoDTO]:
+        logger.debug(f"get_message_log(study_id={str(study_id)})")
+        return self.dao.message_dao.get_message_log_infos(study_id)
+
+    def get_study_header(self, study_id: int) -> StudyInfoDTO:
+        logger.debug(f"get_study_header(study_id={str(study_id)})")
+        return self.dao.study_dao.get_study_info(study_id)
+
+
 # Login service, provides login/logout functionality
 # and current login status
 class LoginService(BaseService):
@@ -36,4 +56,10 @@ class LoginService(BaseService):
                 li.last_name = ui.last_name
         return li
 
+
+# security system service to handle
+# user, role permissions and similar
+class SecSysService(BaseService):
+    def __init__(self):
+        super().__init__()
 
