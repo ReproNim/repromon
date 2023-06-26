@@ -2,7 +2,7 @@ import logging
 from typing import List
 from repromon_app.dao import DAO
 from repromon_app.model import RoleEntity, RoleInfoDTO, MessageLogInfoDTO, StudyInfoDTO, LoginInfoDTO, UserInfoDTO
-from repromon_app.sec import sec_ctx
+from repromon_app.security import sec_ctx
 
 
 logger = logging.getLogger(__name__)

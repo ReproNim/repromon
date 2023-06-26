@@ -2,7 +2,7 @@ import logging
 import logging.config
 from pathlib import Path
 from flask import Flask, render_template
-from repromon_app.cfg import app_config, app_config_init
+from repromon_app.config import app_config, app_config_init
 from repromon_app.db import db_init, db_session_done
 from repromon_app.app.admin import admin_bp
 from repromon_app.app.test import test_bp

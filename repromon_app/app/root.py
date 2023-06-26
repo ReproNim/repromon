@@ -1,9 +1,9 @@
 import json
 import logging
 from flask import render_template, make_response, jsonify, Blueprint
-from repromon_app.cfg import app_config
+from repromon_app.config import app_config
 from repromon_app.dao import DAO
-from repromon_app.svc import LoginService
+from repromon_app.service import LoginService
 
 logger = logging.getLogger(__name__)
 logger.debug("name=" + __name__)

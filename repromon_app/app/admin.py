@@ -1,7 +1,7 @@
 import json
 import logging
 from flask import render_template, make_response, jsonify, Blueprint
-from repromon_app.cfg import app_config
+from repromon_app.config import app_config
 
 logger = logging.getLogger(__name__)
 logger.debug("name=" + __name__)
