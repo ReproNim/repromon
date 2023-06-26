@@ -1,5 +1,5 @@
 import logging
-from repromon_app.model import RoleInfoDTO, RoleEntity, UserInfoDTO
+from repromon_app.model import RoleInfoDTO, RoleEntity, UserInfoDTO, MessageLogInfoDTO, StudyInfoDTO
 from sqlalchemy import MetaData, Table, Column, Integer, Numeric, String, DateTime, \
     ForeignKey, create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -44,7 +44,6 @@ class BaseDAO:
 
     def session(self):
         return BaseDAO.default_session
-
 
 
 # User, role account DAO
@@ -92,10 +91,77 @@ class AccountDAO(BaseDAO):
         ).first())
 
 
+# Message system DAO
+class MessageDAO(BaseDAO):
+    def __init__(self):
+        pass
+
+    def get_message_log_infos(self, study_id: int) -> list[MessageLogInfoDTO]:
+        return list_dto(self.session().execute(
+            text("""
+                select
+                    ml.id,
+                    ml.study_id,
+                    time(ml.created_on) as time,
+                    mc.category,
+                    ss.status,
+                    ll.level,
+                    dp.provider,
+                    ml.description
+                from
+                    message_log ml
+                    left join message_category mc on ml.category_id = mc.id
+                    left join study_status ss on ml.status_id = ss.id
+                    left join message_level ll on ml.level_id = ll.id
+                    left join data_provider dp on ml.provider_id = dp.id
+                where
+                    ml.study_id = :study_id
+                order by ml.created_on asc
+                """
+                 ), {'study_id': study_id}
+        ).all())
+
+
+# Security system DAO
+class SecSysDAO(BaseDAO):
+    def __init__(self):
+        pass
+
+
+# Study and related things DAO
+class StudyDAO(BaseDAO):
+    def __init__(self):
+        pass
+
+    def get_study_info(self, study_id: int) -> StudyInfoDTO:
+        return dto(self.session().execute(
+            text("""
+                select
+                    sd.id,
+                    md.description as device,
+                    ss.status,
+                    sd.description as study,
+                    sd.start_ts,
+                    sd.end_ts
+                from
+                    study_data sd
+                    left join study_status ss on sd.status_id = ss.id
+                    left join device md on sd.device_id = md.id
+                where
+                    sd.id = :study_id
+            """
+                 ), {'study_id': study_id}
+        ).first())
+
+
 # DAO factory
 class DAO:
     def __init__(self):
         self.account = AccountDAO()
+        self.message = MessageDAO()
+        self.study = StudyDAO()
+        self.sec_sys = SecSysDAO()
+
 
 
 
