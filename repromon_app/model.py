@@ -38,6 +38,30 @@ class BasePydantic(BaseModel, BaseDTO):
     pass
 
 
+class LoginInfoDTO(BasePydantic):
+    """Logged user info
+    """
+
+    is_logged_in: bool = False
+    username: str = None
+    first_name: str = None
+    last_name: str = None
+
+
+class MessageLogInfoDTO(BasePydantic):
+    """Message log info view information
+    """
+
+    id: int = 0
+    study_id: int = 0
+    time: datetime.datetime = None
+    category: str = None
+    status: str = None
+    level: str = None
+    provider: str = None
+    description: str = None
+
+
 class RoleInfoDTO(BasePydantic):
     """Short role info DTO
     """
@@ -45,6 +69,18 @@ class RoleInfoDTO(BasePydantic):
     id: int = 0
     rolename: str = None
     description: str = None
+
+
+class StudyInfoDTO(BasePydantic):
+    """Study header info view
+    """
+
+    id: int = 0
+    device: str = None
+    status: str = None
+    study: str = 0
+    start_ts: datetime.datetime = None
+    end_ts: datetime.datetime = None
 
 
 class UserInfoDTO(BasePydantic):
