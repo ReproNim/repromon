@@ -159,8 +159,8 @@ class DAO:
     def __init__(self):
         self.account = AccountDAO()
         self.message = MessageDAO()
-        self.study = StudyDAO()
         self.sec_sys = SecSysDAO()
+        self.study = StudyDAO()
 
 
 
