@@ -1,0 +1,68 @@
+<body>
+    <head>
+        <title>Feedback Screen Mock</title>
+        <link rel="STYLESHEET" href="static/css/main.css" type="text/css">
+    </head>
+<body>
+    <h3>Feedback Screen Mock </h3>
+
+{% set study_header = feedback_service.get_study_header(study_id) %}
+{% set message_log = feedback_service.get_message_log(study_id) %}
+{% set ce =  message_log | selectattr('level', 'eq', 'ERROR') | list | length %}
+{% set cw =  message_log | selectattr('level', 'eq', 'WARN') | list | length %}
+
+    <p>
+        <b>Study ID:</b> {{study_id}},
+        <b>Time:</b> {{ts.strftime("%Y/%m/%d %H:%M:%S")}},
+        <b>User:</b> {{current_user.first_name}} {{current_user.last_name}}
+    </p>
+
+    <table>
+        <tr>
+            <td><b>Status:</b></td>
+            <td>{{study_header.status}}</td>
+        </tr>
+        <tr>
+            <td><b>Study:</b></td>
+            <td>{{study_header.study}}</td>
+        </tr>
+        <tr>
+            <td><b>Device:</b></td>
+            <td>{{study_header.device}}</td>
+        </tr>
+    </table>
+
+    <p>
+        <b style="color:red;">Errors:</b> {{ce}},
+        <b style="color:black;">Warnings:</b> {{cw}}.
+        <button type="button">Reset</button>
+    </p>
+
+    <p>
+        <b>Messages:</b>
+        <button type="button">Clear All</button>
+        <button type="button">Clear ERROR</button>
+        <button type="button">Clear WARN</button>
+        <button type="button">Clear INFO</button>
+
+    </p>
+    <table border="1" style="border-collapse: collapse;">
+       <tr>
+            <th>#</th>
+            <th>Time</th>
+            <th>Level</th>
+            <th>Provider</th>
+            <th>Description</th>
+       </tr>
+       {% for ml in message_log %}
+       <tr>
+            <td>{{loop.index}}</td>
+            <td>{{ml.time}}</td>
+            <td>{{ml.level}}</td>
+            <td>{{ml.provider}}</td>
+            <td>{{ml.description}}</td>
+       </tr>
+       {% endfor %}
+    </table>
+</body>
+</html>

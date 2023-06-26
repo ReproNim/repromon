@@ -54,7 +54,8 @@ class MessageLogInfoDTO(BasePydantic):
 
     id: int = 0
     study_id: int = 0
-    time: datetime.datetime = None
+    time: datetime.time = None
+    ts: datetime.datetime = None
     category: str = None
     status: str = None
     level: str = None

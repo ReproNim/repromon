@@ -32,11 +32,11 @@ class FeedbackService(BaseService):
 
     def get_message_log(self, study_id: int) -> list[MessageLogInfoDTO]:
         logger.debug(f"get_message_log(study_id={str(study_id)})")
-        return self.dao.message_dao.get_message_log_infos(study_id)
+        return self.dao.message.get_message_log_infos(study_id)
 
     def get_study_header(self, study_id: int) -> StudyInfoDTO:
         logger.debug(f"get_study_header(study_id={str(study_id)})")
-        return self.dao.study_dao.get_study_info(study_id)
+        return self.dao.study.get_study_info(study_id)
 
 
 # Login service, provides login/logout functionality

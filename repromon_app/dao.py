@@ -97,12 +97,13 @@ class MessageDAO(BaseDAO):
         pass
 
     def get_message_log_infos(self, study_id: int) -> list[MessageLogInfoDTO]:
-        return list_dto(self.session().execute(
+        return list_dto(MessageLogInfoDTO, self.session().execute(
             text("""
                 select
                     ml.id,
                     ml.study_id,
                     time(ml.created_on) as time,
+                    ml.created_on as ts,
                     mc.category,
                     ss.status,
                     ll.level,
@@ -134,7 +135,7 @@ class StudyDAO(BaseDAO):
         pass
 
     def get_study_info(self, study_id: int) -> StudyInfoDTO:
-        return dto(self.session().execute(
+        return dto(StudyInfoDTO, self.session().execute(
             text("""
                 select
                     sd.id,
