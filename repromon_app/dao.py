@@ -14,6 +14,18 @@ logger.debug("name=" + __name__)
 ############################################
 # DAO
 
+def dto(cls, proxy):
+    if proxy:
+        return cls.parse_obj(proxy._mapping)
+    return None
+
+
+def list_dto(cls, proxy):
+    if proxy:
+            return [cls.parse_obj(r._mapping) for r in proxy]
+    return []
+
+
 def to_dto(cls, proxy):
     if proxy:
         if isinstance(proxy, list):
@@ -51,7 +63,7 @@ class AccountDAO(BaseDAO):
             query(RoleEntity).filter(RoleEntity.rolename == rolename).first()
 
     def get_role_infos(self) -> list[RoleInfoDTO]:
-        return to_dto(RoleInfoDTO, self.session().execute(
+        return list_dto(RoleInfoDTO, self.session().execute(
             text("""
                 select
                     id, 
@@ -64,7 +76,7 @@ class AccountDAO(BaseDAO):
         ).all())
 
     def get_user_info(self, username: str) -> UserInfoDTO:
-        return to_dto(UserInfoDTO, self.session().execute(
+        return dto(UserInfoDTO, self.session().execute(
             text("""
                 select
                     u.id,
