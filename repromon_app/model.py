@@ -196,6 +196,7 @@ class MessageLogEntity(BaseEntity):
     provider_id = Column(Integer)
     study_id = Column(Integer)
     status_id = Column(Integer)
+    is_visible = Column(String(1), default='Y')
     description = Column(String(255))
     payload_id = Column(Integer)
     created_on = Column(TIMESTAMP)
@@ -208,6 +209,7 @@ class MessageLogEntity(BaseEntity):
                "provider_id='{self.provider_id}', " \
                "study_id='{self.study_id}', " \
                "status_id='{self.status_id}', " \
+               "is_visible='{self.is_visible}', " \
                "description='{self.description}', " \
                "payload_id='{self.payload_id}', " \
                "created_on='{self.created_on}', " \

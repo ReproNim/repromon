@@ -86,6 +86,7 @@ class MessageService(BaseService):
         msg.level_id = level_id
         msg.provider_id = provider_id
         msg.status_id = sd.status_id
+        msg.is_visible = 'Y'
         msg.description = description
         msg.payload_id = p.id
         msg.created_on = datetime.now()

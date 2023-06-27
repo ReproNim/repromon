@@ -144,7 +144,8 @@ class MessageDAO(BaseDAO):
                     left join message_level ll on ml.level_id = ll.id
                     left join data_provider dp on ml.provider_id = dp.id
                 where
-                    ml.study_id = :study_id
+                    ml.study_id = :study_id and
+                    ml.is_visible = 'Y'
                 order by ml.created_on asc
                 """
                  ), {'study_id': study_id}
