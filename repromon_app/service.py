@@ -4,7 +4,7 @@ from datetime import datetime
 from repromon_app.dao import DAO
 from repromon_app.model import RoleEntity, RoleInfoDTO, MessageLogInfoDTO, StudyInfoDTO, LoginInfoDTO, \
     UserInfoDTO, MessageLogEntity, MessagePayloadEntity, StudyDataEntity
-from repromon_app.security import sec_ctx
+from repromon_app.security import security_context
 
 
 logger = logging.getLogger(__name__)
@@ -50,8 +50,8 @@ class LoginService(BaseService):
 
     def get_current_user(self) -> LoginInfoDTO:
         li = LoginInfoDTO()
-        li.username = sec_ctx().username
-        li.is_logged_in = not(sec_ctx().is_empty())
+        li.username = security_context().username
+        li.is_logged_in = not(security_context().is_empty())
         if li.is_logged_in:
             ui = self.dao.account.get_user_info(li.username)
             if ui:

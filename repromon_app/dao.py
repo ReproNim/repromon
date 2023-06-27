@@ -27,11 +27,23 @@ def list_dto(cls, proxy):
     return []
 
 
+def list_scalar(cls, proxy):
+    if proxy:
+        return [cls(row[0]) for row in proxy]
+    return []
+
+
 def to_dto(cls, proxy):
     if proxy:
         if isinstance(proxy, list):
             return [cls.parse_obj(r._mapping) for r in proxy]
         return cls.parse_obj(proxy._mapping)
+    return None
+
+
+def to_scalar(cls, proxy):
+    if proxy:
+        return cls(proxy[0])
     return None
 
 
@@ -143,6 +155,20 @@ class MessageDAO(BaseDAO):
 class SecSysDAO(BaseDAO):
     def __init__(self):
         pass
+
+    def get_rolename_by_username(self, username: str) -> list[str]:
+        return list_scalar(str, self.session().execute(
+            text("""
+                select
+                    r.rolename
+                from 
+                    user u, role r, sec_user_role ur 
+                where 
+                    u.username = :username and
+                    u.id = ur.user_id and
+                    ur.role_id = r.id 
+            """), {'username': username}
+        ).all())
 
 
 # Study and related things DAO

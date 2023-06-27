@@ -45,6 +45,7 @@ class SettingsConfig(BaseSectionConfig):
     """ Basic configuration for [system] section
     """
     ENV: str = "Unknown"
+    DEBUG_USERNAME: str = None
 
 
 class AppConfig:

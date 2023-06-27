@@ -6,7 +6,7 @@ from repromon_app.dao import DAO
 from repromon_app.model import MessageLevelEntity, MessageLogEntity, MessagePayloadEntity, DataProviderEntity, \
     MessageCategory
 
-from repromon_app.security import sec_ctx
+from repromon_app.security import security_context
 from repromon_app.service import MessageService
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ def send_fmessage():
     logger.debug("providers="+str(providers))
     return render_template(
         'admin/send_fmessage.j2',
-        username=sec_ctx().username,
+        username=security_context().username,
         levels=levels,
         providers=providers
     )
