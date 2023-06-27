@@ -33,3 +33,8 @@ build-backend = "poetry.masonry.api"
 
 srv = "repromon_app.srv:main"
 test_model = "repromon_app.tests.test_model:test_1"
+
+[tool.codespell]
+skip = '.git,*.pdf,*.svg'
+#
+# ignore-words-list = ''

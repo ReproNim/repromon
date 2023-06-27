@@ -46,7 +46,7 @@ where
 ;
 
 -------------------------
--- show mesage log
+-- show message log
 
 select
 	ml.id,
