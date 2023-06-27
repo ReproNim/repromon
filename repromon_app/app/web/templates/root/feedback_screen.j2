@@ -49,6 +49,7 @@
     <table border="1" style="border-collapse: collapse;">
        <tr>
             <th>#</th>
+            <th>Date</th>
             <th>Time</th>
             <th>Level</th>
             <th>Provider</th>
@@ -57,7 +58,8 @@
        {% for ml in message_log %}
        <tr>
             <td>{{loop.index}}</td>
-            <td>{{ml.time}}</td>
+            <td>{{ml.ts.strftime("%Y-%m-%d")}}</td>
+            <td>{{ml.ts.strftime("%H:%M:%S")}}</td>
             <td>{{ml.level}}</td>
             <td>{{ml.provider}}</td>
             <td>{{ml.description}}</td>
