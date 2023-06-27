@@ -1,0 +1,55 @@
+<body>
+    <head>
+        <title>ReproMon Send Feedback Screen Message</title>
+        <link rel="STYLESHEET" href="../static/css/main.css" type="text/css">
+    </head>
+<body>
+    <h3>ReproMon Send Feedback Screen Message</h3>
+    <form method="post" action="send_fmessage_ctl">
+        <input type="hidden" name="action" value="send_fmessage_ctl"/>
+        <table>
+            <tr>
+                <td>Username:</td>
+                <td><input type="text" name="username" value="{{username}}"/></td>
+            </tr>
+            <tr>
+                <td>Study ID:</td>
+                <td><input type="text" name="study_id" value="1"/></td>
+            </tr>
+            <tr>
+                <td>Level:</td>
+                <td>
+                    <select name="level_id" value="1">
+                       {% for level in levels %}
+                       <option value="{{level.id}}">{{level.level}}</option>
+                       {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Provider:</td>
+                <td>
+                   <select name="provider_id" value="3"/>
+                        {% for provider in providers %}
+                        <option value="{{provider.id}}">{{provider.provider}}</option>
+                        {% endfor %}
+                   </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Description:</td>
+                <td><input type="text" name="description" value="Some message"/></td>
+            </tr>
+            <tr>
+                <td>Payload:</td>
+                <td><input type="text" name="payload" value="{}"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Send Message" /></td>
+            </tr>
+        </table>
+    </form><br>
+
+</body>
+</html>

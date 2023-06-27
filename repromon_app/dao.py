@@ -1,5 +1,6 @@
 import logging
-from repromon_app.model import RoleInfoDTO, RoleEntity, UserInfoDTO, MessageLogInfoDTO, StudyInfoDTO
+from repromon_app.model import RoleInfoDTO, RoleEntity, UserInfoDTO, MessageLogInfoDTO, StudyInfoDTO, \
+                                MessageLevelEntity, DataProviderEntity, BaseDTO, BaseEntity, StudyDataEntity
 from sqlalchemy import MetaData, Table, Column, Integer, Numeric, String, DateTime, \
     ForeignKey, create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -41,6 +42,15 @@ class BaseDAO:
 
     def __init__(self):
         pass
+
+    def add(self, o: BaseDTO):
+        return self.session().add(o)
+
+    def commit(self):
+        self.session().commit()
+
+    def flush(self):
+        self.session().flush()
 
     def session(self):
         return BaseDAO.default_session
@@ -96,6 +106,12 @@ class MessageDAO(BaseDAO):
     def __init__(self):
         pass
 
+    def get_data_providers(self) -> list[DataProviderEntity]:
+        return self.session().query(DataProviderEntity).all()
+
+    def get_message_levels(self) -> list[MessageLevelEntity]:
+        return self.session().query(MessageLevelEntity).all()
+
     def get_message_log_infos(self, study_id: int) -> list[MessageLogInfoDTO]:
         return list_dto(MessageLogInfoDTO, self.session().execute(
             text("""
@@ -134,6 +150,9 @@ class StudyDAO(BaseDAO):
     def __init__(self):
         pass
 
+    def get_study_data(self, study_id: int) -> StudyDataEntity:
+        return self.session().get(StudyDataEntity, study_id)
+
     def get_study_info(self, study_id: int) -> StudyInfoDTO:
         return dto(StudyInfoDTO, self.session().execute(
             text("""
@@ -157,11 +176,10 @@ class StudyDAO(BaseDAO):
 
 # DAO factory
 class DAO:
-    def __init__(self):
-        self.account = AccountDAO()
-        self.message = MessageDAO()
-        self.sec_sys = SecSysDAO()
-        self.study = StudyDAO()
+    account: AccountDAO = AccountDAO()
+    message: MessageDAO = MessageDAO()
+    sec_sys: SecSysDAO = SecSysDAO()
+    study: StudyDAO = StudyDAO()
 
 
 

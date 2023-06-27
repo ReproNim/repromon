@@ -32,8 +32,8 @@ class FlaskConfig(BaseSectionConfig):
     """
     FLASK_ENV: str = None
     DEBUG: bool = False
-    MAX_CONTENT_LENGTH: str = "@| int(1000000)"
-    MAX_COOKIE_SIZE: str = "@|int(4096)"
+    MAX_CONTENT_LENGTH: int = 1000000
+    MAX_COOKIE_SIZE: int = 4096
     SERVER_NAME: str = "127.0.0.1:5050"
     APPLICATION_ROOT: str = "/repromon"
     PREFERRED_URL_SCHEME: str = None

@@ -11,6 +11,19 @@ logger = logging.getLogger(__name__)
 ############################################
 # Model/Constants
 
+class DataProvider:
+    ID_REPROIN: int = 1
+    ID_REPROSTIM: int = 2
+    ID_REPROEVENTS: int = 3
+    ID_PACS: int = 4
+    ID_NOISSEUR: int = 5
+    ID_DICOM_QA: int = 6
+
+
+class MessageCategory:
+    ID_FEEDBACK: int = 1
+
+
 class Rolename:
     ADMIN: str = "admin"
     DATA_COLLECTOR: str = "data_collector"
