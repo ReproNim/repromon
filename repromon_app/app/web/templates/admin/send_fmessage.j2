@@ -19,7 +19,7 @@
             <tr>
                 <td>Level:</td>
                 <td>
-                    <select name="level_id" value="1">
+                    <select name="level_id" value="1" style="width: 120px;">
                        {% for level in levels %}
                        <option value="{{level.id}}">{{level.level}}</option>
                        {% endfor %}
@@ -29,7 +29,7 @@
             <tr>
                 <td>Provider:</td>
                 <td>
-                   <select name="provider_id" value="3"/>
+                   <select name="provider_id" value="3" style="width: 120px;"/>
                         {% for provider in providers %}
                         <option value="{{provider.id}}">{{provider.provider}}</option>
                         {% endfor %}
@@ -38,11 +38,11 @@
             </tr>
             <tr>
                 <td>Description:</td>
-                <td><input type="text" name="description" value="Some message"/></td>
+                <td><input type="text" style="width:400px;" name="description" value="Some message"/></td>
             </tr>
             <tr>
                 <td>Payload:</td>
-                <td><input type="text" name="payload" value="{}"/></td>
+                <td><textarea name="payload" style="width:400px;" rows="10">{}</textarea></td>
             </tr>
             <tr>
                 <td></td>
