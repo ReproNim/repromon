@@ -1,11 +1,11 @@
-import json
 import logging
-from flask import render_template, make_response, jsonify, Blueprint
-from repromon_app.config import app_config
+
+from flask import Blueprint, make_response, render_template
+
 from repromon_app.dao import DAO
 
 logger = logging.getLogger(__name__)
-logger.debug("name=" + __name__)
+logger.debug(f"name={__name__}")
 
 test_bp = Blueprint('test_bp', __name__)
 
@@ -30,10 +30,9 @@ def test1():
     dao: DAO = DAO()
 
     roles = dao.account.get_roles()
-    logger.debug("roles=" + str(roles))
+    logger.debug(f"roles={str(roles)}")
 
     role_infos = dao.account.get_role_infos()
-    logger.debug("role_infos=" + str(role_infos))
-
+    logger.debug(f"role_infos={str(role_infos)}")
 
     return response_ok("Done", 'text/plain')
