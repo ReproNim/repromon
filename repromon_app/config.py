@@ -1,26 +1,24 @@
 import logging
-from string import Template
-import pydantic
-from configparser import ConfigParser, ExtendedInterpolation
 import platform
-from pathlib import Path
 import sys
 import time
-import json
+from configparser import ConfigParser, ExtendedInterpolation
+from pathlib import Path
 
+import pydantic
 
 logger = logging.getLogger(__name__)
 
 
 class BaseSectionConfig(pydantic.BaseModel):
-    """Base class for section configuration
-    """
+    """Base class for section configuration"""
+
     pass
 
 
 class DbConfig(BaseSectionConfig):
-    """ Flask configuration under [db***] sections for SQLAlchemy
-    """
+    """Flask configuration under [db***] sections for SQLAlchemy"""
+
     url: str = None
     echo: bool = False
     pool_size: int = 5
@@ -28,8 +26,8 @@ class DbConfig(BaseSectionConfig):
 
 
 class FlaskConfig(BaseSectionConfig):
-    """ Flask configuration under [flask] section
-    """
+    """Flask configuration under [flask] section"""
+
     FLASK_ENV: str = None
     DEBUG: bool = False
     MAX_CONTENT_LENGTH: int = 1000000
@@ -42,15 +40,15 @@ class FlaskConfig(BaseSectionConfig):
 
 
 class SettingsConfig(BaseSectionConfig):
-    """ Basic configuration for [system] section
-    """
+    """Basic configuration for [system] section"""
+
     ENV: str = "Unknown"
     DEBUG_USERNAME: str = None
 
 
 class AppConfig:
-    """Application configuration
-    """
+    """Application configuration"""
+
     instance = None
 
     #
@@ -79,22 +77,22 @@ class AppConfig:
             "CONFIG_PATH": self.CONFIG_PATH,
             "[settings]": self.settings.dict(),
             "[db]": self.db.dict(),
-            "[flask]": self.flask.dict()
+            "[flask]": self.flask.dict(),
         }
 
 
 class MacroExpander(ExtendedInterpolation):
-    """Expand macros values with ${} pattern in configparser
-    """
+    """Expand macros values with ${} pattern in configparser"""
 
     def __init__(self, params: dict):
         self._params = params
 
     def before_get(self, parser, section, option, value, defaults):
-        logger.debug("before_get() value = "+str(value)+", type="+str(type(value)))
+        logger.debug(f"before_get() value={str(value)},"
+                     f" type={str(type(value))}")
         if value and value.find("$") >= 0:
             for k, v in self._params.items():
-                value = value.replace("${"+k+"}", v)
+                value = value.replace("${" + k + "}", v)
         return super().before_get(parser, section, option, value, defaults)
 
 
@@ -121,40 +119,41 @@ def app_config_init() -> None:
 
     # init logger
     log_files = [
-        cfg.HOST_CONFIG_PATH + '/' + AppConfig.LOGGING_INI,
-        cfg.ROOT_PATH + '/' + AppConfig.LOGGING_INI
+        cfg.HOST_CONFIG_PATH + "/" + AppConfig.LOGGING_INI,
+        cfg.ROOT_PATH + "/" + AppConfig.LOGGING_INI,
     ]
 
     for log_file in log_files:
         if Path(log_file).exists():
             logging.config.fileConfig(log_file, disable_existing_loggers=False)
-            logger.info("Found logger configuration file: "+str(log_file))
+            logger.info(f"Found logger configuration file: {str(log_file)}")
             break
 
     logger.info("Application configuration init...")
-    logger.info('[Platform Info]: ')
-    logger.info(' system    : ' + platform.system())
-    logger.info(' node      : ' + platform.node())
-    logger.info(' release   : ' + platform.release())
-    logger.info(' version   : ' + platform.version())
-    logger.info(' machine   : ' + platform.machine())
-    logger.info(' processor : ' + platform.processor())
-    logger.info(' python    : ' + '.'.join(map(str, sys.version_info)) + ', ' + sys.executable)
+    logger.info("[Platform Info]: ")
+    logger.info(f" system    : {platform.system()}")
+    logger.info(f" node      : {platform.node()}")
+    logger.info(f" release   : {platform.release()}")
+    logger.info(f" version   : {platform.version()}")
+    logger.info(f" machine   : {platform.machine()}")
+    logger.info(f" processor : {platform.processor()}")
+    logger.info(f" python    : {'.'.join(map(str, sys.version_info))},"
+                f" {sys.executable}")
 
     # load configuration from multiple INI files
     ini_paths = [
-        cfg.ROOT_PATH + '/' + AppConfig.APP_INI,
-        cfg.HOST_CONFIG_PATH + '/' + AppConfig.APP_INI
+        cfg.ROOT_PATH + "/" + AppConfig.APP_INI,
+        cfg.HOST_CONFIG_PATH + "/" + AppConfig.APP_INI,
     ]
 
     for ini_path in ini_paths:
         if Path(ini_path).exists():
             logging.config.fileConfig(log_file, disable_existing_loggers=False)
-            logger.info("Found ini configuration file: "+str(ini_path))
+            logger.info(f"Found ini config file: {str(ini_path)}")
 
-            cp = ConfigParser(interpolation=MacroExpander({
-                    "ROOT_PATH": cfg.ROOT_PATH
-                }))
+            cp = ConfigParser(interpolation=MacroExpander(
+                {"ROOT_PATH": cfg.ROOT_PATH}
+            ))
             # keep property names as is
             cp.optionxform = str
             with open(ini_path) as fd:
@@ -166,9 +165,9 @@ def app_config_init() -> None:
 
             break
 
-    logger.info('Environment: ' + cfg.settings.ENV)
+    logger.info("Environment: " + cfg.settings.ENV)
     logger.info("Application config initialized successfully")
-    #logger.debug(json.dumps(cfg.to_dict(), indent=4))
+    # logger.debug(json.dumps(cfg.to_dict(), indent=4))
 
 
 def app_settings() -> SettingsConfig:
