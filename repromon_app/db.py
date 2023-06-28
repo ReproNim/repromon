@@ -1,10 +1,12 @@
 import logging
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+
 from repromon_app.dao import BaseDAO
 
 logger = logging.getLogger(__name__)
-logger.debug("name=" + __name__)
+logger.debug(f"name={__name__}")
 
 
 ############################################
@@ -19,9 +21,11 @@ def db_init(params: dict, session_scopefunc=None):
     """
     logger.debug("db_init(...)")
     engine = create_engine(**params)
-    logger.debug("created DB engine=" + str(engine))
+    logger.debug(f"created DB engine={str(engine)}")
 
-    BaseDAO.default_session = scoped_session(sessionmaker(bind=engine), scopefunc=session_scopefunc)
+    BaseDAO.default_session = scoped_session(
+        sessionmaker(bind=engine), scopefunc=session_scopefunc
+    )
     logger.debug("done")
 
 
