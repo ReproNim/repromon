@@ -1,18 +1,25 @@
 import logging
 import uuid
 from datetime import datetime
+
 from repromon_app.dao import DAO
-from repromon_app.model import RoleEntity, RoleInfoDTO, MessageLogInfoDTO, StudyInfoDTO, LoginInfoDTO, \
-    UserInfoDTO, MessageLogEntity, MessagePayloadEntity, StudyDataEntity
+from repromon_app.model import (
+    LoginInfoDTO,
+    MessageLogEntity,
+    MessageLogInfoDTO,
+    MessagePayloadEntity,
+    StudyDataEntity,
+    StudyInfoDTO,
+)
 from repromon_app.security import security_context
 
-
 logger = logging.getLogger(__name__)
-logger.debug("name=" + __name__)
+logger.debug(f"name={__name__}")
 
 
 ############################################
 # Services
+
 
 # base class for all business services
 class BaseService:
@@ -51,7 +58,7 @@ class LoginService(BaseService):
     def get_current_user(self) -> LoginInfoDTO:
         li = LoginInfoDTO()
         li.username = security_context().username
-        li.is_logged_in = not(security_context().is_empty())
+        li.is_logged_in = not (security_context().is_empty())
         if li.is_logged_in:
             ui = self.dao.account.get_user_info(li.username)
             if ui:
@@ -65,8 +72,16 @@ class MessageService(BaseService):
     def __init__(self):
         super().__init__()
 
-    def send_message(self, username: str, study_id: int, category_id: int, level_id: int, provider_id: int,
-                     description: str, payload: str) -> MessageLogEntity:
+    def send_message(
+        self,
+        username: str,
+        study_id: int,
+        category_id: int,
+        level_id: int,
+        provider_id: int,
+        description: str,
+        payload: str,
+    ) -> MessageLogEntity:
         logger.debug("send_message(...)")
         sd: StudyDataEntity = self.dao.study.get_study_data(study_id)
 
@@ -78,7 +93,7 @@ class MessageService(BaseService):
 
         self.dao.message.add(p)
         self.dao.message.flush()
-        logger.debug("p="+str(p))
+        logger.debug(f"p={str(p)}")
 
         msg: MessageLogEntity = MessageLogEntity()
         msg.study_id = study_id
@@ -86,7 +101,7 @@ class MessageService(BaseService):
         msg.level_id = level_id
         msg.provider_id = provider_id
         msg.status_id = sd.status_id
-        msg.is_visible = 'Y'
+        msg.is_visible = "Y"
         msg.description = description
         msg.payload_id = p.id
         msg.created_on = datetime.now()
@@ -94,7 +109,7 @@ class MessageService(BaseService):
 
         self.dao.message.add(msg)
         self.dao.message.commit()
-        logger.debug("msg="+str(msg))
+        logger.debug(f"msg={str(msg)}")
         return msg
 
 
@@ -103,4 +118,3 @@ class MessageService(BaseService):
 class SecSysService(BaseService):
     def __init__(self):
         super().__init__()
-
