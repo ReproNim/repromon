@@ -1,15 +1,16 @@
 import logging
 import logging.config
-from pathlib import Path
-from flask import Flask, render_template
+
+from flask import Flask
+
+from repromon_app.app.admin import admin_bp
+from repromon_app.app.root import root_bp
+from repromon_app.app.test import test_bp
 from repromon_app.config import app_config, app_config_init
 from repromon_app.db import db_init, db_session_done
-from repromon_app.app.admin import admin_bp
-from repromon_app.app.test import test_bp
-from repromon_app.app.root import root_bp
 
 logger = logging.getLogger(__name__)
-logger.debug("name=" + __name__)
+logger.debug(f"name={__name__}")
 
 
 def create_flask_app() -> Flask:
@@ -24,7 +25,8 @@ def create_flask_app() -> Flask:
     # ?? db_init(app_config().db.dict(), threading.get_ident)
     db_init(app_config().db.dict())
 
-    app_web: Flask = Flask(__name__, template_folder='app/web/templates', static_folder='app/web/static')
+    app_web: Flask = Flask(__name__, template_folder='app/web/templates',
+                           static_folder='app/web/static')
     app_web.config.from_mapping(app_config().flask.dict())
 
     # register blueprints
@@ -38,10 +40,10 @@ def create_flask_app() -> Flask:
         logger.debug("Registering blueprint: test ...")
         app_web.register_blueprint(test_bp, url_prefix='/test')
 
-
     @app_web.teardown_appcontext
     def teardown_appcontext(resp_or_exc):
         # logger.debug("teardown_appcontext(...)")
+        _ = resp_or_exc
         db_session_done()
 
     return app_web
