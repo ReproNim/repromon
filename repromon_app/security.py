@@ -1,10 +1,12 @@
 import logging
+
 from repromon_app.config import app_settings
 from repromon_app.dao import DAO
-from repromon_app.model import Rolename, UserInfoDTO, RoleInfoDTO
+from repromon_app.model import UserInfoDTO
 
 logger = logging.getLogger(__name__)
-logger.debug("name=" + __name__)
+logger.debug(f"name={__name__}")
+
 
 ############################################
 # security things
@@ -18,7 +20,7 @@ class SecurityContext:
         self.__rolenames = rolenames
 
     def is_empty(self) -> bool:
-        return not(bool(self.__username))
+        return not (bool(self.__username))
 
     @property
     def user_id(self) -> int:
@@ -33,9 +35,10 @@ class SecurityContext:
         return self.__rolenames
 
     def __repr__(self):
-        return f"SecurityContext(user_id={self.__user_id}, " \
-               f"username={self.__username}, rolenames={str(self.__rolenames)})"
-
+        return (
+            f"SecurityContext(user_id={self.__user_id}, "
+            f"username={self.__username}, rolenames={str(self.__rolenames)})"
+        )
 
 
 class SecurityManager:
@@ -49,7 +52,6 @@ class SecurityManager:
 
     def __init__(self):
         self.__debug_context: SecurityContext = None
-        pass
 
     def create_empty_context(self) -> SecurityContext:
         return SecurityContext(0, None, ())
@@ -58,7 +60,9 @@ class SecurityManager:
         logger.debug(f"create_context_by_username(username={username})")
         u: UserInfoDTO = DAO.account.get_user_info(username)
         if not u:
-            raise Exception(f"Failed create security context. User not found: {username}")
+            raise Exception(
+                f"Failed create security context. User not found: {username}"
+            )
         roles: list[str] = DAO.sec_sys.get_rolename_by_username(username)
         ctx = SecurityContext(u.id, u.username, roles)
         return ctx
@@ -67,12 +71,14 @@ class SecurityManager:
         if not self.__debug_context:
             ctx: SecurityContext = None
             if app_settings().DEBUG_USERNAME:
-                ctx = SecurityManager().create_context_by_username(app_settings().DEBUG_USERNAME)
+                ctx = SecurityManager().create_context_by_username(
+                    app_settings().DEBUG_USERNAME
+                )
             else:
                 ctx = SecurityManager.create_empty_context()
 
             self.__debug_context = ctx
-            logger.debug("created debug context as="+str(self.__debug_context))
+            logger.debug(f"created debug context: {str(self.__debug_context)}")
         return self.__debug_context
 
     def get_context(self) -> SecurityContext:
