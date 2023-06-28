@@ -1,12 +1,11 @@
 import logging
-from repromon_app.model import RoleInfoDTO, RoleEntity, UserInfoDTO, MessageLogInfoDTO, StudyInfoDTO, \
-                                MessageLevelEntity, DataProviderEntity, BaseDTO, BaseEntity, StudyDataEntity
-from sqlalchemy import MetaData, Table, Column, Integer, Numeric, String, DateTime, \
-    ForeignKey, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
+
 from sqlalchemy.sql import text
 
+from repromon_app.model import (BaseDTO, DataProviderEntity,
+                                MessageLevelEntity, MessageLogInfoDTO,
+                                RoleEntity, RoleInfoDTO, StudyDataEntity,
+                                StudyInfoDTO, UserInfoDTO)
 
 logger = logging.getLogger(__name__)
 logger.debug("name=" + __name__)
@@ -15,41 +14,34 @@ logger.debug("name=" + __name__)
 ############################################
 # DAO
 
-def dto(cls, proxy):
+
+def _dto(cls, proxy):
     if proxy:
         return cls.parse_obj(proxy._mapping)
     return None
 
 
-def list_dto(cls, proxy):
+def _list_dto(cls, proxy):
     if proxy:
-            return [cls.parse_obj(r._mapping) for r in proxy]
+        return [cls.parse_obj(r._mapping) for r in proxy]
     return []
 
 
-def list_scalar(cls, proxy):
+def _list_scalar(cls, proxy):
     if proxy:
         return [cls(row[0]) for row in proxy]
     return []
 
 
-def to_dto(cls, proxy):
-    if proxy:
-        if isinstance(proxy, list):
-            return [cls.parse_obj(r._mapping) for r in proxy]
-        return cls.parse_obj(proxy._mapping)
-    return None
-
-
-def to_scalar(cls, proxy):
+def _scalar(cls, proxy):
     if proxy:
         return cls(proxy[0])
     return None
 
 
 class BaseDAO:
-    """Base class for all DAO objects
-    """
+    """Base class for all DAO objects"""
+
     default_session = None
 
     def __init__(self):
@@ -76,29 +68,43 @@ class AccountDAO(BaseDAO):
     def get_roles(self) -> list[RoleEntity]:
         return self.session().query(RoleEntity).all()
 
-    def get_role_by_id(self, id: int) -> RoleEntity:
-        return self.session().get(RoleEntity, id)
+    def get_role_by_id(self, role_id: int) -> RoleEntity:
+        return self.session().get(RoleEntity, role_id)
 
     def get_role_by_rolename(self, rolename: str) -> RoleEntity:
-        return self.session(). \
-            query(RoleEntity).filter(RoleEntity.rolename == rolename).first()
+        return (
+            self.session()
+            .query(RoleEntity)
+            .filter(RoleEntity.rolename == rolename)
+            .first()
+        )
 
     def get_role_infos(self) -> list[RoleInfoDTO]:
-        return list_dto(RoleInfoDTO, self.session().execute(
-            text("""
+        return _list_dto(
+            RoleInfoDTO,
+            self.session()
+            .execute(
+                text(
+                    """
                 select
-                    id, 
-                    rolename, 
+                    id,
+                    rolename,
                     description
-                from 
-                    role    
+                from
+                    role
             """
-                 )
-        ).all())
+                )
+            )
+            .all(),
+        )
 
     def get_user_info(self, username: str) -> UserInfoDTO:
-        return dto(UserInfoDTO, self.session().execute(
-            text("""
+        return _dto(
+            UserInfoDTO,
+            self.session()
+            .execute(
+                text(
+                    """
                 select
                     u.id,
                     u.username,
@@ -109,8 +115,11 @@ class AccountDAO(BaseDAO):
                 where
                     u.username = :username
             """
-                 ), {'username': username}
-        ).first())
+                ),
+                {"username": username},
+            )
+            .first(),
+        )
 
 
 # Message system DAO
@@ -125,8 +134,12 @@ class MessageDAO(BaseDAO):
         return self.session().query(MessageLevelEntity).all()
 
     def get_message_log_infos(self, study_id: int) -> list[MessageLogInfoDTO]:
-        return list_dto(MessageLogInfoDTO, self.session().execute(
-            text("""
+        return _list_dto(
+            MessageLogInfoDTO,
+            self.session()
+            .execute(
+                text(
+                    """
                 select
                     ml.id,
                     ml.study_id,
@@ -148,8 +161,11 @@ class MessageDAO(BaseDAO):
                     ml.is_visible = 'Y'
                 order by ml.created_on asc
                 """
-                 ), {'study_id': study_id}
-        ).all())
+                ),
+                {"study_id": study_id},
+            )
+            .all(),
+        )
 
 
 # Security system DAO
@@ -158,18 +174,26 @@ class SecSysDAO(BaseDAO):
         pass
 
     def get_rolename_by_username(self, username: str) -> list[str]:
-        return list_scalar(str, self.session().execute(
-            text("""
+        return _list_scalar(
+            str,
+            self.session()
+            .execute(
+                text(
+                    """
                 select
                     r.rolename
-                from 
-                    user u, role r, sec_user_role ur 
-                where 
+                from
+                    user u, role r, sec_user_role ur
+                where
                     u.username = :username and
                     u.id = ur.user_id and
-                    ur.role_id = r.id 
-            """), {'username': username}
-        ).all())
+                    ur.role_id = r.id
+            """
+                ),
+                {"username": username},
+            )
+            .all(),
+        )
 
 
 # Study and related things DAO
@@ -181,8 +205,12 @@ class StudyDAO(BaseDAO):
         return self.session().get(StudyDataEntity, study_id)
 
     def get_study_info(self, study_id: int) -> StudyInfoDTO:
-        return dto(StudyInfoDTO, self.session().execute(
-            text("""
+        return _dto(
+            StudyInfoDTO,
+            self.session()
+            .execute(
+                text(
+                    """
                 select
                     sd.id,
                     md.description as device,
@@ -197,8 +225,11 @@ class StudyDAO(BaseDAO):
                 where
                     sd.id = :study_id
             """
-                 ), {'study_id': study_id}
-        ).first())
+                ),
+                {"study_id": study_id},
+            )
+            .first(),
+        )
 
 
 # DAO factory
@@ -207,12 +238,3 @@ class DAO:
     message: MessageDAO = MessageDAO()
     sec_sys: SecSysDAO = SecSysDAO()
     study: StudyDAO = StudyDAO()
-
-
-
-
-
-
-
-
-
