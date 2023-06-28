@@ -88,8 +88,8 @@ class MacroExpander(ExtendedInterpolation):
         self._params = params
 
     def before_get(self, parser, section, option, value, defaults):
-        logger.debug(f"before_get() value={str(value)},"
-                     f" type={str(type(value))}")
+        # logger.debug(f"before_get() value={str(value)},"
+        #              f" type={str(type(value))}")
         if value and value.find("$") >= 0:
             for k, v in self._params.items():
                 value = value.replace("${" + k + "}", v)
@@ -119,8 +119,8 @@ def app_config_init() -> None:
 
     # init logger
     log_files = [
-        cfg.HOST_CONFIG_PATH + "/" + AppConfig.LOGGING_INI,
-        cfg.ROOT_PATH + "/" + AppConfig.LOGGING_INI,
+        f"{cfg.HOST_CONFIG_PATH}/{AppConfig.LOGGING_INI}",
+        f"{cfg.ROOT_PATH}/{AppConfig.LOGGING_INI}",
     ]
 
     for log_file in log_files:
@@ -142,8 +142,8 @@ def app_config_init() -> None:
 
     # load configuration from multiple INI files
     ini_paths = [
-        cfg.ROOT_PATH + "/" + AppConfig.APP_INI,
-        cfg.HOST_CONFIG_PATH + "/" + AppConfig.APP_INI,
+        f"{cfg.ROOT_PATH}/{AppConfig.APP_INI}",
+        f"{cfg.HOST_CONFIG_PATH}/{AppConfig.APP_INI}",
     ]
 
     for ini_path in ini_paths:
@@ -165,7 +165,7 @@ def app_config_init() -> None:
 
             break
 
-    logger.info("Environment: " + cfg.settings.ENV)
+    logger.info(f"Environment: {cfg.settings.ENV}")
     logger.info("Application config initialized successfully")
     # logger.debug(json.dumps(cfg.to_dict(), indent=4))
 
