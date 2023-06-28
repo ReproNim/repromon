@@ -8,7 +8,7 @@ from repromon_app.model import (BaseDTO, DataProviderEntity,
                                 StudyInfoDTO, UserInfoDTO)
 
 logger = logging.getLogger(__name__)
-logger.debug("name=" + __name__)
+logger.debug(f"name={__name__}")
 
 
 ############################################
