@@ -4,6 +4,7 @@ import sys
 import time
 from configparser import ConfigParser, ExtendedInterpolation
 from pathlib import Path
+from typing import Optional
 
 import pydantic
 
@@ -17,7 +18,7 @@ class BaseSectionConfig(pydantic.BaseModel):
 
 
 class DbConfig(BaseSectionConfig):
-    """Flask configuration under [db***] sections for SQLAlchemy"""
+    """Database configuration under [db***] sections for SQLAlchemy"""
 
     url: str = None
     echo: bool = False
@@ -25,25 +26,26 @@ class DbConfig(BaseSectionConfig):
     pool_recycle: int = 3600
 
 
-class FlaskConfig(BaseSectionConfig):
-    """Flask configuration under [flask] section"""
-
-    FLASK_ENV: str = None
-    DEBUG: bool = False
-    MAX_CONTENT_LENGTH: int = 1000000
-    MAX_COOKIE_SIZE: int = 4096
-    SERVER_NAME: str = "127.0.0.1:5050"
-    APPLICATION_ROOT: str = "/repromon"
-    PREFERRED_URL_SCHEME: str = None
-    EXPLAIN_TEMPLATE_LOADING: str = None
-    TEMPLATES_AUTO_RELOAD: str = None
-
-
 class SettingsConfig(BaseSectionConfig):
     """Basic configuration for [system] section"""
 
     ENV: str = "Unknown"
     DEBUG_USERNAME: str = None
+
+
+class UvicornConfig(BaseSectionConfig):
+    """Basic configuration for [uvicorn] section"""
+    host: Optional[str] = "127.0.0.1"
+    port: Optional[int] = 5050
+    # workers: Optional[int] = None
+    # reload: Optional[bool] = False
+    # log_level: Optional[str] = "info"
+    # access_log: Optional[bool] = True
+    # timeout_keep_alive: Optional[int] = 5
+    # limit_concurrency: Optional[int] = 100
+    # limit_max_requests: Optional[int] = 0
+    # ssl_keyfile: Optional[str] = None
+    # ssl_certfile: Optional[str] = None
 
 
 class AppConfig:
@@ -56,28 +58,30 @@ class AppConfig:
     APP_INI = "repromon.ini"
     #
     SECTION_SETTINGS = "settings"
-    SECTION_FLASK = "flask"
+    SECTION_UVICORN = "uvicorn"
     SECTION_DB = "db"
 
     # AppConfig members
     def __init__(self):
         self.ROOT_PATH = str(Path(__file__).parent.parent)
+        self.WEB_PATH = f"{self.ROOT_PATH}/repromon_app/app/web"
         self.HOST_CONFIG_PATH = "/etc/repronim/repromon"
         self.START_TIME = time.time()
         self.CONFIG_PATH = None
         self.settings: SettingsConfig = SettingsConfig()
-        self.flask: FlaskConfig = FlaskConfig()
+        self.uvicorn: UvicornConfig = UvicornConfig()
         self.db: DbConfig = DbConfig()
 
     def to_dict(self):
         return {
             "ROOT_PATH": self.ROOT_PATH,
+            "WEB_PATH": self.WEB_PATH,
             "HOST_CONFIG_PATH": self.HOST_CONFIG_PATH,
             "START_TIME": self.START_TIME,
             "CONFIG_PATH": self.CONFIG_PATH,
             "[settings]": self.settings.dict(),
             "[db]": self.db.dict(),
-            "[flask]": self.flask.dict(),
+            "[uvicorn]": self.uvicorn.dict(),
         }
 
 
@@ -160,7 +164,7 @@ def app_config_init() -> None:
                 cp.read_file(fd)
 
             cfg.settings = SettingsConfig(**cp[AppConfig.SECTION_SETTINGS])
-            cfg.flask = FlaskConfig(**cp[AppConfig.SECTION_FLASK])
+            cfg.uvicorn = UvicornConfig(**cp[AppConfig.SECTION_UVICORN])
             cfg.db = DbConfig(**cp[AppConfig.SECTION_DB])
 
             break

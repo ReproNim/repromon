@@ -1,58 +1,58 @@
 import logging
 import logging.config
 
-from flask import Flask
+import uvicorn
+from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
-from repromon_app.app.admin import admin_bp
-from repromon_app.app.root import root_bp
-from repromon_app.app.test import test_bp
+from repromon_app.app.admin import create_admin_router
+from repromon_app.app.root import create_root_router
+from repromon_app.app.test import create_test_router
 from repromon_app.config import app_config, app_config_init
-from repromon_app.db import db_init, db_session_done
+from repromon_app.db import db_init
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
 
 
-def create_flask_app() -> Flask:
-    """ Creates basic flask webapp
-
-    :return: Root flask webapp
-    """
+def create_fastapi_app() -> FastAPI:
     app_config_init()
-    logger.info("create_flask_app()")
+    logger.info("create_fastapi_app()")
 
     logger.debug("Initialize DB...")
     # ?? db_init(app_config().db.dict(), threading.get_ident)
     db_init(app_config().db.dict())
 
-    app_web: Flask = Flask(__name__, template_folder='app/web/templates',
-                           static_folder='app/web/static')
-    app_web.config.from_mapping(app_config().flask.dict())
+    app_web = FastAPI()
+    # app_web.add_middleware(SessionMiddleware, secret_key="RNRPID")
 
-    # register blueprints
-    with app_web.app_context():
-        logger.debug("Registering blueprint: root ...")
-        app_web.register_blueprint(root_bp, url_prefix='/')
+    # Configure static files (CSS, JavaScript, etc.)
+    app_web.mount("/static", StaticFiles(
+        directory=f"{app_config().WEB_PATH}/static"), name="static")
 
-        logger.debug("Registering blueprint: admin ...")
-        app_web.register_blueprint(admin_bp, url_prefix='/admin')
+    logger.debug("Registering router: /root ...")
+    app_web.include_router(create_root_router(), prefix="/root")
 
-        logger.debug("Registering blueprint: test ...")
-        app_web.register_blueprint(test_bp, url_prefix='/test')
+    logger.debug("Registering router: /admin ...")
+    app_web.include_router(create_admin_router(), prefix="/admin")
 
-    @app_web.teardown_appcontext
-    def teardown_appcontext(resp_or_exc):
-        # logger.debug("teardown_appcontext(...)")
-        _ = resp_or_exc
-        db_session_done()
+    logger.debug("Registering router: /test ...")
+    app_web.include_router(create_test_router(), prefix="/test")
+
+    @app_web.get("/")
+    async def root():
+        # url = app.url_path_for("root")
+        return RedirectResponse(url='/root')
 
     return app_web
 
 
 def main():
-    app = create_flask_app()
-    logger.debug("Running server ...")
-    app.run(use_reloader=False)
+    logger.info("Running server ...")
+    app = create_fastapi_app()
+    uvicorn.run(app, **app_config().uvicorn.dict())
+    logger.info("Server stopped.")
 
 
 if __name__ == "__main__":

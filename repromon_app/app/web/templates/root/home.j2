@@ -1,17 +1,17 @@
 <body>
     <head>
         <title>ReproMon Home</title>
-        <link rel="STYLESHEET" href="static/css/main.css" type="text/css">
+        <link rel="STYLESHEET" href="{{ url_for('static', path='/css/main.css') }}" type="text/css">
     </head>
 <body>
     <h3>ReproMon Home</h3>
     <table>
         <tr>
             <td>
-                <img src="static/img/repronim.png"/>
+                <img src="{{ url_for('static', path='/img/repronim.png') }}"/>
             </td>
             <td>
-                <img src="static/img/con.png"/>
+                <img src="{{ url_for('static', path='/img/con.png') }}"/>
             </td>
         </tr>
         <tr>
@@ -27,19 +27,19 @@
             <td></td>
         </tr>
         <tr>
-            <td><a href="/current_user">/current_user</a></td>
+            <td><a href="current_user">current_user</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="/feedback_screen?study_id=1">/feedback_screen</a></td>
+            <td><a href="feedback_screen?study_id=1">feedback_screen</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="/admin">/admin</a></td>
+            <td><a href="../admin">/admin</a></td>
             <td></td>
         </tr>
         <tr>
-            <td><a href="/test">/test</a></td>
+            <td><a href="../test">/test</a></td>
             <td></td>
         </tr>
     </table>

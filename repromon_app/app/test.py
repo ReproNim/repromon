@@ -1,38 +1,39 @@
 import logging
 
-from flask import Blueprint, make_response, render_template
+from fastapi import APIRouter, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
+from repromon_app.config import app_config
 from repromon_app.dao import DAO
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
 
-test_bp = Blueprint('test_bp', __name__)
 
+def create_test_router() -> APIRouter:
+    test_router = APIRouter()
+    _templates = Jinja2Templates(
+        directory=f"{app_config().WEB_PATH}/templates/test")
 
-def response_ok(res, mimetype):
-    response = make_response(res, 200)
-    response.mimetype = mimetype
-    return response
+    # @security: env=dev|qa|uat, auth, ??role=tester
+    @test_router.get("/", response_class=HTMLResponse)
+    def home(request: Request):
+        logger.debug("home")
+        return _templates.TemplateResponse("home.j2", {"request": request})
 
+    # @security: env=dev|qa|uat, auth, ??role=tester
+    @test_router.get('/test1', response_class=HTMLResponse)
+    def test1(request: Request):
+        logger.debug("test1")
+        dao: DAO = DAO()
 
-# @security: env=dev|qa|uat, auth, ??role=tester
-@test_bp.route('/')
-def home():
-    logger.debug("home")
-    return render_template('test/home.j2')
+        roles = dao.account.get_roles()
+        logger.debug(f"roles={str(roles)}")
 
+        role_infos = dao.account.get_role_infos()
+        logger.debug(f"role_infos={str(role_infos)}")
 
-# @security: env=dev|qa|uat, auth, ??role=tester
-@test_bp.route('/test1')
-def test1():
-    logger.debug("test1")
-    dao: DAO = DAO()
+        return HTMLResponse("Done")
 
-    roles = dao.account.get_roles()
-    logger.debug(f"roles={str(roles)}")
-
-    role_infos = dao.account.get_role_infos()
-    logger.debug(f"role_infos={str(role_infos)}")
-
-    return response_ok("Done", 'text/plain')
+    return test_router
