@@ -40,6 +40,9 @@ def create_fastapi_app() -> FastAPI:
     logger.debug("Registering router: /test ...")
     app_web.include_router(create_test_router(), prefix="/test")
 
+    # TODO: auto commit/rollback DB session using db_session_done
+    # under async fastapi execution context
+
     @app_web.get("/")
     async def root():
         # url = app.url_path_for("root")
