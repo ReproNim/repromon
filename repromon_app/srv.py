@@ -43,7 +43,7 @@ def create_fastapi_app() -> FastAPI:
     # TODO: auto commit/rollback DB session using db_session_done
     # under async fastapi execution context
 
-    @app_web.get("/")
+    @app_web.get("/", include_in_schema=False)
     async def root():
         # url = app.url_path_for("root")
         return RedirectResponse(url='/root')

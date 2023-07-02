@@ -29,13 +29,15 @@ def create_admin_router() -> APIRouter:
     )
 
     # @security: role=admin
-    @admin_router.get("/", response_class=HTMLResponse)
+    @admin_router.get("/", response_class=HTMLResponse,
+                      include_in_schema=False)
     def home(request: Request):
         logger.debug("home")
         return _templates.TemplateResponse("home.j2", {"request": request})
 
     # @security: role=admin
-    @admin_router.get("/send_fmessage", response_class=HTMLResponse)
+    @admin_router.get("/send_fmessage", response_class=HTMLResponse,
+                      include_in_schema=False)
     def send_fmessage(request: Request):
         logger.debug("send_fmessage")
         dao: DAO = DAO()
@@ -51,7 +53,8 @@ def create_admin_router() -> APIRouter:
         })
 
     # @security: role=admin
-    @admin_router.post('/send_fmessage_ctl', response_class=PlainTextResponse)
+    @admin_router.post('/send_fmessage_ctl', response_class=PlainTextResponse,
+                       include_in_schema=False)
     def send_fmessage_ctl(username: Annotated[str, Form()],
                           study_id: Annotated[int, Form()],
                           level_id: Annotated[int, Form()],
@@ -73,7 +76,8 @@ def create_admin_router() -> APIRouter:
                                  indent=4))
 
     # @security: role=admin
-    @admin_router.get('/view_config', response_class=PlainTextResponse)
+    @admin_router.get('/view_config', response_class=PlainTextResponse,
+                      include_in_schema=False)
     def view_config():
         logger.debug("view_config")
         return PlainTextResponse(

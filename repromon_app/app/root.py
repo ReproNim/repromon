@@ -21,19 +21,22 @@ def create_root_router() -> APIRouter:
         directory=f"{app_config().WEB_PATH}/templates/root")
 
     # @security: any
-    @root_router.get("/", response_class=HTMLResponse)
+    @root_router.get("/", response_class=HTMLResponse,
+                     include_in_schema=False)
     def home(request: Request):
         logger.debug("home")
         return _templates.TemplateResponse("home.j2", {"request": request})
 
     # @security: any
-    @root_router.get("/current_user", response_class=JSONResponse)
+    @root_router.get("/current_user", response_class=JSONResponse,
+                     include_in_schema=False)
     def current_user(request: Request):
         logger.debug("current_user")
         return JSONResponse(content=LoginService().get_current_user().dict())
 
     # @security: role=data_collector, auth
-    @root_router.get("/feedback_screen", response_class=HTMLResponse)
+    @root_router.get("/feedback_screen", response_class=HTMLResponse,
+                     include_in_schema=False)
     def feedback_screen(request: Request, study_id: int):
         logger.debug("feedback_screen")
 

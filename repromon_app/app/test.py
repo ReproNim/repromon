@@ -17,13 +17,15 @@ def create_test_router() -> APIRouter:
         directory=f"{app_config().WEB_PATH}/templates/test")
 
     # @security: env=dev|qa|uat, auth, ??role=tester
-    @test_router.get("/", response_class=HTMLResponse)
+    @test_router.get("/", response_class=HTMLResponse,
+                     include_in_schema=False)
     def home(request: Request):
         logger.debug("home")
         return _templates.TemplateResponse("home.j2", {"request": request})
 
     # @security: env=dev|qa|uat, auth, ??role=tester
-    @test_router.get('/test1', response_class=HTMLResponse)
+    @test_router.get('/test1', response_class=HTMLResponse,
+                     include_in_schema=False)
     def test1(request: Request):
         logger.debug("test1")
         dao: DAO = DAO()
