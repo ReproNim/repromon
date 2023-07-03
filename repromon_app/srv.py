@@ -7,6 +7,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from repromon_app.app.admin import create_admin_router
+from repromon_app.app.api_v1 import create_api_v1_router
 from repromon_app.app.root import create_root_router
 from repromon_app.app.test import create_test_router
 from repromon_app.config import app_config, app_config_init
@@ -24,12 +25,29 @@ def create_fastapi_app() -> FastAPI:
     # ?? db_init(app_config().db.dict(), threading.get_ident)
     db_init(app_config().db.dict())
 
-    app_web = FastAPI()
+    app_web = FastAPI(
+        title="ReproMon App",
+        description="ReproMon Web Application REST API v1",
+        version="1.0.0",
+        openapi_tags=[
+            {
+                "name": "LoginService",
+                "description": "LoginService operations."
+            },
+            {
+                "name": "FeedbackService",
+                "description": "FeedbackService operations."
+            },
+        ]
+    )
     # app_web.add_middleware(SessionMiddleware, secret_key="RNRPID")
 
     # Configure static files (CSS, JavaScript, etc.)
     app_web.mount("/static", StaticFiles(
         directory=f"{app_config().WEB_PATH}/static"), name="static")
+
+    logger.debug("Registering router: /admin ...")
+    app_web.include_router(create_api_v1_router(), prefix="/api/1")
 
     logger.debug("Registering router: /root ...")
     app_web.include_router(create_root_router(), prefix="/root")

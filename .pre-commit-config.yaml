@@ -23,6 +23,8 @@ repos:
     rev: 6.0.0
     hooks:
       - id: flake8
+        # B008 Do not perform function calls in argument defaults.
+        args: ["-j8", "--ignore=B008"]
         additional_dependencies:
           - flake8-bugbear
           - flake8-builtins
