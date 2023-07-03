@@ -14,7 +14,7 @@ logger.debug(f"name={__name__}")
 def create_test_router() -> APIRouter:
     test_router = APIRouter()
     _templates = Jinja2Templates(
-        directory=f"{app_config().WEB_PATH}/templates/test")
+        directory=f"{app_config().WEBCONTENT_PATH}/test/templates")
 
     # @security: env=dev|qa|uat, auth, ??role=tester
     @test_router.get("/", response_class=HTMLResponse,

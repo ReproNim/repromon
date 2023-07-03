@@ -21,11 +21,11 @@ def create_admin_router() -> APIRouter:
     admin_router = APIRouter()
     admin_router.mount("/static",
                        StaticFiles(
-                           directory=f"{app_config().WEB_PATH}/static"
+                           directory=f"{app_config().WEBCONTENT_PATH}/static"
                        ),
                        name="static")
     _templates = Jinja2Templates(
-        directory=f"{app_config().WEB_PATH}/templates/admin"
+        directory=f"{app_config().WEBCONTENT_PATH}/admin/templates"
     )
 
     # @security: role=admin

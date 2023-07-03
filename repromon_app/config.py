@@ -64,7 +64,7 @@ class AppConfig:
     # AppConfig members
     def __init__(self):
         self.ROOT_PATH = str(Path(__file__).parent.parent)
-        self.WEB_PATH = f"{self.ROOT_PATH}/repromon_app/app/web"
+        self.WEBCONTENT_PATH = f"{self.ROOT_PATH}/repromon_app/webcontent"
         self.HOST_CONFIG_PATH = "/etc/repronim/repromon"
         self.START_TIME = time.time()
         self.CONFIG_PATH = None
@@ -75,7 +75,7 @@ class AppConfig:
     def to_dict(self):
         return {
             "ROOT_PATH": self.ROOT_PATH,
-            "WEB_PATH": self.WEB_PATH,
+            "WEBCONTENT_PATH": self.WEBCONTENT_PATH,
             "HOST_CONFIG_PATH": self.HOST_CONFIG_PATH,
             "START_TIME": self.START_TIME,
             "CONFIG_PATH": self.CONFIG_PATH,

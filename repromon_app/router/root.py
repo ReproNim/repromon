@@ -16,9 +16,9 @@ logger.debug(f"name={__name__}")
 def create_root_router() -> APIRouter:
     root_router = APIRouter()
     root_router.mount("/static", StaticFiles(
-        directory=f"{app_config().WEB_PATH}/static"), name="static")
+        directory=f"{app_config().WEBCONTENT_PATH}/static"), name="static")
     _templates = Jinja2Templates(
-        directory=f"{app_config().WEB_PATH}/templates/root")
+        directory=f"{app_config().WEBCONTENT_PATH}/root/templates")
 
     # @security: any
     @root_router.get("/", response_class=HTMLResponse,

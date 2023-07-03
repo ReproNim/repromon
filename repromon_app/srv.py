@@ -43,7 +43,7 @@ def create_fastapi_app() -> FastAPI:
 
     # Configure static files (CSS, JavaScript, etc.)
     app_web.mount("/static", StaticFiles(
-        directory=f"{app_config().WEB_PATH}/static"), name="static")
+        directory=f"{app_config().WEBCONTENT_PATH}/static"), name="static")
 
     logger.debug("Registering router: /admin ...")
     app_web.include_router(create_api_v1_router(), prefix="/api/1")
