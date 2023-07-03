@@ -45,7 +45,7 @@ def create_fastapi_app() -> FastAPI:
     app_web.mount("/static", StaticFiles(
         directory=f"{app_config().WEBCONTENT_PATH}/static"), name="static")
 
-    logger.debug("Registering router: /admin ...")
+    logger.debug("Registering router: /api/1 ...")
     app_web.include_router(create_api_v1_router(), prefix="/api/1")
 
     logger.debug("Registering router: /app ...")
