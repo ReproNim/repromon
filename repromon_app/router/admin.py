@@ -72,8 +72,8 @@ def create_admin_router() -> APIRouter:
             description,
             payload
         )
-        return PlainTextResponse(content='Done: '+json.dumps(msg.to_dict(),
-                                 indent=4))
+        return PlainTextResponse(
+            content=f"Done: {json.dumps(msg.to_dict(), indent=4)}")
 
     # @security: role=admin
     @admin_router.get('/view_config', response_class=PlainTextResponse,

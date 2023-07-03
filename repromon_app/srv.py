@@ -1,4 +1,3 @@
-import logging
 import logging.config
 
 import uvicorn
@@ -6,12 +5,12 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from repromon_app.app.admin import create_admin_router
-from repromon_app.app.api_v1 import create_api_v1_router
-from repromon_app.app.root import create_root_router
-from repromon_app.app.test import create_test_router
 from repromon_app.config import app_config, app_config_init
 from repromon_app.db import db_init
+from repromon_app.router.admin import create_admin_router
+from repromon_app.router.api_v1 import create_api_v1_router
+from repromon_app.router.root import create_root_router
+from repromon_app.router.test import create_test_router
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
