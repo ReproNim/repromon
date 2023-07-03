@@ -13,30 +13,30 @@ logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
 
 
-def create_root_router() -> APIRouter:
-    root_router = APIRouter()
-    root_router.mount("/static", StaticFiles(
+def create_app_router() -> APIRouter:
+    app_router = APIRouter()
+    app_router.mount("/static", StaticFiles(
         directory=f"{app_config().WEBCONTENT_PATH}/static"), name="static")
     _templates = Jinja2Templates(
-        directory=f"{app_config().WEBCONTENT_PATH}/root/templates")
+        directory=f"{app_config().WEBCONTENT_PATH}/app/templates")
 
     # @security: any
-    @root_router.get("/", response_class=HTMLResponse,
-                     include_in_schema=False)
+    @app_router.get("/", response_class=HTMLResponse, include_in_schema=False)
     def home(request: Request):
         logger.debug("home")
         return _templates.TemplateResponse("home.j2", {"request": request})
 
     # @security: any
-    @root_router.get("/current_user", response_class=JSONResponse,
-                     include_in_schema=False)
+    @app_router.get("/current_user", response_class=JSONResponse,
+                    include_in_schema=False)
     def current_user(request: Request):
         logger.debug("current_user")
         return JSONResponse(content=LoginService().get_current_user().dict())
 
     # @security: role=data_collector, auth
-    @root_router.get("/feedback_screen", response_class=HTMLResponse,
-                     include_in_schema=False)
+    @app_router.get("/feedback_screen", response_class=HTMLResponse,
+                    include_in_schema=False
+                    )
     def feedback_screen(request: Request, study_id: int):
         logger.debug("feedback_screen")
 
@@ -54,4 +54,4 @@ def create_root_router() -> APIRouter:
             "ts": ts
         })
 
-    return root_router
+    return app_router

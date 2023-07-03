@@ -9,7 +9,7 @@ from repromon_app.config import app_config, app_config_init
 from repromon_app.db import db_init
 from repromon_app.router.admin import create_admin_router
 from repromon_app.router.api_v1 import create_api_v1_router
-from repromon_app.router.root import create_root_router
+from repromon_app.router.app import create_app_router
 from repromon_app.router.test import create_test_router
 
 logger = logging.getLogger(__name__)
@@ -48,8 +48,8 @@ def create_fastapi_app() -> FastAPI:
     logger.debug("Registering router: /admin ...")
     app_web.include_router(create_api_v1_router(), prefix="/api/1")
 
-    logger.debug("Registering router: /root ...")
-    app_web.include_router(create_root_router(), prefix="/root")
+    logger.debug("Registering router: /app ...")
+    app_web.include_router(create_app_router(), prefix="/app")
 
     logger.debug("Registering router: /admin ...")
     app_web.include_router(create_admin_router(), prefix="/admin")
@@ -61,9 +61,9 @@ def create_fastapi_app() -> FastAPI:
     # under async fastapi execution context
 
     @app_web.get("/", include_in_schema=False)
-    async def root():
-        # url = app.url_path_for("root")
-        return RedirectResponse(url='/root')
+    async def app_root():
+        # url = app.url_path_for("app")
+        return RedirectResponse(url='/app')
 
     return app_web
 
