@@ -2,6 +2,7 @@ import logging.config
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -40,6 +41,17 @@ def create_fastapi_app() -> FastAPI:
         ]
     )
     # app_web.add_middleware(SessionMiddleware, secret_key="RNRPID")
+    # configure CORS to allow REST calls from rich frontend
+    app_web.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:3000",
+            "https://localhost:3000",
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     # Configure static files (CSS, JavaScript, etc.)
     app_web.mount("/static", StaticFiles(
