@@ -41,6 +41,24 @@ def create_api_v1_router() -> APIRouter:
         logger.debug("feedback_get_study_header")
         return FeedbackService().get_study_header(study_id)
 
+    # @security: role=data_collector, auth
+    @api_v1_router.get("/feedback/set_message_log_visibility",
+                       response_model=int,
+                       tags=["FeedbackService"],
+                       summary="set_message_log_visibility",
+                       description="Update visibility for message log")
+    def set_message_log_visibility(request: Request,
+                                   study_id: int = Query(...,
+                                                         description="Study ID"),
+                                   visible: bool = Query(...,
+                                                         description="Is row visible"),
+                                   level: str = Query(...,
+                                                      description="Level to update "
+                                                                  "or * for any"),
+                                   ) -> int:
+        logger.debug("set_message_log_visibility")
+        return FeedbackService().set_message_log_visibility(study_id, visible, level)
+
     ##############################################
     # LoginService public API
 

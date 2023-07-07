@@ -1,9 +1,10 @@
-import logging
 import datetime
-from sqlalchemy import MetaData, Table, Column, Integer, Numeric, String, DateTime, \
-    ForeignKey, Float, Boolean, UniqueConstraint, Text, TIMESTAMP, Index, JSON
-from sqlalchemy.orm import as_declarative
+import logging
+
 from pydantic import BaseModel
+from sqlalchemy import (JSON, TIMESTAMP, Column, Index, Integer, String, Text,
+                        UniqueConstraint)
+from sqlalchemy.orm import as_declarative
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +23,27 @@ class DataProvider:
 
 class MessageCategory:
     ID_FEEDBACK: int = 1
+
+
+class MessageLevel:
+    ANY: str = "*"
+    INFO: str = "INFO"
+    WARN: str = "WARN"
+    ERROR: str = "ERROR"
+    #
+    ID_INFO: int = 1
+    ID_WARN: int = 2
+    ID_ERROR: int = 3
+
+    @classmethod
+    def parse(cls, level: str) -> int:
+        if level == MessageLevel.INFO:
+            return MessageLevel.ID_INFO
+        if level == MessageLevel.WARN:
+            return MessageLevel.ID_WARN
+        if level == MessageLevel.ERROR:
+            return MessageLevel.ID_ERROR
+        raise Exception(f"Unknown level: {level}")
 
 
 class Rolename:

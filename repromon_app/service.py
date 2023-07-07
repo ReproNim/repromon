@@ -3,14 +3,9 @@ import uuid
 from datetime import datetime
 
 from repromon_app.dao import DAO
-from repromon_app.model import (
-    LoginInfoDTO,
-    MessageLogEntity,
-    MessageLogInfoDTO,
-    MessagePayloadEntity,
-    StudyDataEntity,
-    StudyInfoDTO,
-)
+from repromon_app.model import (LoginInfoDTO, MessageLevel, MessageLogEntity,
+                                MessageLogInfoDTO, MessagePayloadEntity,
+                                StudyDataEntity, StudyInfoDTO)
 from repromon_app.security import security_context
 
 logger = logging.getLogger(__name__)
@@ -47,6 +42,19 @@ class FeedbackService(BaseService):
     def get_study_header(self, study_id: int) -> StudyInfoDTO:
         logger.debug(f"get_study_header(study_id={str(study_id)})")
         return self.dao.study.get_study_info(study_id)
+
+    def set_message_log_visibility(self, study_id: int,
+                                   visible: bool, level: str) -> int:
+        logger.debug(f"set_message_log_visibility(study_id={str(study_id)},"
+                     f" visible={visible}, level={level})")
+        l: list[int] = [MessageLevel.ID_INFO,
+                        MessageLevel.ID_WARN,
+                        MessageLevel.ID_ERROR] \
+            if level == MessageLevel.ANY else [MessageLevel.parse(level)]
+        v: str = 'Y' if visible else 'N'
+        res = self.dao.message.update_message_log_visibility(study_id, v, l)
+        self.dao.message.commit()
+        return res
 
 
 # Login service, provides login/logout functionality
