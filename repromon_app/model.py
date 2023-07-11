@@ -98,6 +98,14 @@ class MessageLogInfoDTO(BasePydantic):
     description: str = None
 
 
+class PushMessageDTO(BasePydantic):
+    """Basic envelope for server to client push messages
+    """
+
+    destination: str = None
+    body: object = None
+
+
 class RoleInfoDTO(BasePydantic):
     """Short role info DTO
     """

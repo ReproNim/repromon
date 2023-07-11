@@ -167,6 +167,38 @@ class MessageDAO(BaseDAO):
             .all(),
         )
 
+    def get_message_log_info(self, message_id: int) -> MessageLogInfoDTO:
+        return _dto(
+            MessageLogInfoDTO,
+            self.session()
+            .execute(
+                text(
+                    """
+                select
+                    ml.id,
+                    ml.study_id,
+                    time(ml.created_on) as time,
+                    ml.created_on as ts,
+                    mc.category,
+                    ss.status,
+                    ll.level,
+                    dp.provider,
+                    ml.description
+                from
+                    message_log ml
+                    left join message_category mc on ml.category_id = mc.id
+                    left join study_status ss on ml.status_id = ss.id
+                    left join message_level ll on ml.level_id = ll.id
+                    left join data_provider dp on ml.provider_id = dp.id
+                where
+                    ml.id = :message_id
+                """
+                ),
+                {"message_id": message_id},
+            )
+            .first(),
+        )
+
     def update_message_log_visibility(self, study_id: int,
                                       is_visible: str,
                                       levels: list[int]) -> int:

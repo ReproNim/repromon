@@ -5,7 +5,7 @@ from datetime import datetime
 from repromon_app.dao import DAO
 from repromon_app.model import (LoginInfoDTO, MessageLevel, MessageLogEntity,
                                 MessageLogInfoDTO, MessagePayloadEntity,
-                                StudyDataEntity, StudyInfoDTO)
+                                PushMessageDTO, StudyDataEntity, StudyInfoDTO)
 from repromon_app.security import security_context
 
 logger = logging.getLogger(__name__)
@@ -118,7 +118,27 @@ class MessageService(BaseService):
         self.dao.message.add(msg)
         self.dao.message.commit()
         logger.debug(f"msg={str(msg)}")
+
+        # send push notifications
+        # NOTE: in future it should be published to message broker
+        # rather than via PushService directly.
+        mli: MessageLogInfoDTO = self.dao.message.get_message_log_info(msg.id)
+        PushService().push_message("message_log_add", mli)
         return msg
+
+
+# service to handle push messaging functionality in client-server web app
+class PushService(BaseService):
+    websocket_channel: object = None
+
+    def push_message(self, destination: str, body: object):
+        logger.debug("push_message(...)")
+        if not PushService.websocket_channel:
+            logger.error("PushService.websocket_channel is not initialized yet")
+            return
+
+        msg: PushMessageDTO = PushMessageDTO(destination=destination, body=body)
+        PushService.websocket_channel.push(msg)
 
 
 # security system service to handle
