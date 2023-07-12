@@ -102,7 +102,9 @@ class PushMessageDTO(BasePydantic):
     """Basic envelope for server to client push messages
     """
 
-    destination: str = None
+    topic: str = None
+    ts: datetime.datetime = None
+    sender: str = None
     body: object = None
 
 

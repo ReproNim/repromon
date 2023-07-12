@@ -1,6 +1,7 @@
 import logging
 
-from fastapi import APIRouter, Query, Request, WebSocket
+from fastapi import (APIRouter, Query, Request, WebSocket, WebSocketDisconnect,
+                     WebSocketException)
 
 from repromon_app.model import (LoginInfoDTO, MessageLogInfoDTO,
                                 PushMessageDTO, StudyInfoDTO)
@@ -19,12 +20,12 @@ class WebsocketChannel:
         logger.debug("add(...)")
         self._connections.append(conn)
 
-    def push(self, msg: PushMessageDTO):
-        logger.debug("push(...)")
+    async def broadcast(self, msg: PushMessageDTO):
+        logger.debug(f"broadcast(msg={str(msg.json())})")
         logger.debug(f"connections count: {len(self._connections)}")
         txt: str = msg.json()
         for conn in self._connections:
-            conn.send_text(txt)
+            await conn.send_text(txt)
 
     def remove(self, conn: WebSocket):
         logger.debug("remove(...)")
@@ -34,10 +35,23 @@ class WebsocketChannel:
 def create_api_v1_router() -> APIRouter:
     api_v1_router = APIRouter()
     websocket_channel: WebsocketChannel = WebsocketChannel()
-    PushService.websocket_channel = websocket_channel
+    PushService.channel = websocket_channel
 
     ##############################################
     # FeedbackService public API
+
+    # @security: role=data_collector, auth
+    @api_v1_router.get("/feedback/get_message",
+                       response_model=MessageLogInfoDTO | None,
+                       tags=["FeedbackService"],
+                       summary="get_message",
+                       description="Get single message log info by message ID")
+    def feedback_get_message(request: Request,
+                             message_id: int = Query(...,
+                                                     description="Message ID")
+                             ) -> MessageLogInfoDTO | None:
+        logger.debug("feedback_get_message")
+        return FeedbackService().get_message(message_id)
 
     # @security: role=data_collector, auth
     @api_v1_router.get("/feedback/get_message_log",
@@ -107,6 +121,10 @@ def create_api_v1_router() -> APIRouter:
                 data = await websocket.receive_text()
                 logger.debug(f"data={str(data)}")
                 # await websocket.send_text(f"Message text was: {data}")
+        except WebSocketDisconnect as wsd:
+            logger.debug(f"websocket disconnect: {str(wsd)}")
+        except WebSocketException as wse:
+            logger.debug(f"websocket exception: {str(wse)}")
         finally:
             websocket_channel.remove(websocket)
 

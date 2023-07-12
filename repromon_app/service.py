@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import uuid
 from datetime import datetime
@@ -35,6 +36,10 @@ class FeedbackService(BaseService):
     def __init__(self):
         super().__init__()
 
+    def get_message(self, message_id: int) -> MessageLogInfoDTO:
+        logger.debug(f"get_message(message_id={str(message_id)})")
+        return self.dao.message.get_message_log_info(message_id)
+
     def get_message_log(self, study_id: int) -> list[MessageLogInfoDTO]:
         logger.debug(f"get_message_log(study_id={str(study_id)})")
         return self.dao.message.get_message_log_infos(study_id)
@@ -54,6 +59,8 @@ class FeedbackService(BaseService):
         v: str = 'Y' if visible else 'N'
         res = self.dao.message.update_message_log_visibility(study_id, v, l)
         self.dao.message.commit()
+        if res > 0:
+            PushService().push_message("feedback-log-refresh", {"study_id": study_id})
         return res
 
 
@@ -81,14 +88,14 @@ class MessageService(BaseService):
         super().__init__()
 
     def send_message(
-        self,
-        username: str,
-        study_id: int,
-        category_id: int,
-        level_id: int,
-        provider_id: int,
-        description: str,
-        payload: str,
+            self,
+            username: str,
+            study_id: int,
+            category_id: int,
+            level_id: int,
+            provider_id: int,
+            description: str,
+            payload: str,
     ) -> MessageLogEntity:
         logger.debug("send_message(...)")
         sd: StudyDataEntity = self.dao.study.get_study_data(study_id)
@@ -122,23 +129,29 @@ class MessageService(BaseService):
         # send push notifications
         # NOTE: in future it should be published to message broker
         # rather than via PushService directly.
-        mli: MessageLogInfoDTO = self.dao.message.get_message_log_info(msg.id)
-        PushService().push_message("message_log_add", mli)
+        PushService().push_message("feedback-log-add", {
+            "study_id": msg.study_id,
+            "message_id": msg.id}
+        )
         return msg
 
 
 # service to handle push messaging functionality in client-server web app
 class PushService(BaseService):
-    websocket_channel: object = None
+    channel: object = None
 
-    def push_message(self, destination: str, body: object):
-        logger.debug("push_message(...)")
-        if not PushService.websocket_channel:
-            logger.error("PushService.websocket_channel is not initialized yet")
+    def push_message(self, topic: str, body: object):
+        logger.debug(f"push_message(topic={topic}, body={str(body)})")
+        if not PushService.channel:
+            logger.error("PushService.channel is not initialized yet")
             return
 
-        msg: PushMessageDTO = PushMessageDTO(destination=destination, body=body)
-        PushService.websocket_channel.push(msg)
+        msg: PushMessageDTO = PushMessageDTO(
+            topic=topic,
+            ts=datetime.now(),
+            sender=security_context().username,
+            body=body)
+        asyncio.run(PushService.channel.broadcast(msg))
 
 
 # security system service to handle
