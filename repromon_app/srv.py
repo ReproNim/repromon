@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.datastructures import Headers
 
 from repromon_app.config import app_config, app_config_init, app_settings
 from repromon_app.db import db_init
@@ -16,6 +17,13 @@ from repromon_app.router.test import create_test_router
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
+
+
+class NoCacheStaticFiles(StaticFiles):
+    def is_not_modified(
+        self, response_headers: Headers, request_headers: Headers
+    ) -> bool:
+        return False
 
 
 def create_fastapi_app() -> FastAPI:
@@ -66,8 +74,9 @@ def create_fastapi_app() -> FastAPI:
     ui_path: str = app_settings().UI_APP_PATH
     if ui_path and os.path.exists(ui_path):
         logger.debug(f"Registering RIA app: /ui ... {str(ui_path)}")
-        app_web.mount("/ui", StaticFiles(
-            directory=ui_path), name="ui")
+        app_web.mount("/ui", NoCacheStaticFiles(
+            directory=ui_path
+        ), name="ui")
     else:
         logger.error(f"RIA /ui web content not found: {str(ui_path)}")
 
