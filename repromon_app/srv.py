@@ -47,8 +47,8 @@ def create_fastapi_app() -> FastAPI:
         allow_origins=[
             "http://localhost:3000",
             "https://localhost:3000",
-            "http://localhost:8080",
-            "https://localhost:8080",
+            "http://localhost:4200",
+            "https://localhost:4200",
         ],
         allow_credentials=True,
         allow_methods=["*"],
