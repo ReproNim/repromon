@@ -1,4 +1,5 @@
 import logging.config
+import os
 
 import uvicorn
 from fastapi import FastAPI
@@ -6,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from repromon_app.config import app_config, app_config_init
+from repromon_app.config import app_config, app_config_init, app_settings
 from repromon_app.db import db_init
 from repromon_app.router.admin import create_admin_router
 from repromon_app.router.api_v1 import create_api_v1_router
@@ -58,6 +59,15 @@ def create_fastapi_app() -> FastAPI:
     # Configure static files (CSS, JavaScript, etc.)
     app_web.mount("/static", StaticFiles(
         directory=f"{app_config().WEBCONTENT_PATH}/static"), name="static")
+
+    # Configure RIA /ui web content
+    ui_path: str = app_settings().UI_APP_PATH
+    if ui_path and os.path.exists(ui_path):
+        logger.debug(f"Registering RIA app: /ui ... {str(ui_path)}")
+        app_web.mount("/ui", StaticFiles(
+            directory=ui_path), name="ui")
+    else:
+        logger.error(f"RIA /ui web content not found: {str(ui_path)}")
 
     logger.debug("Registering router: /api/1 ...")
     app_web.include_router(create_api_v1_router(), prefix="/api/1")
