@@ -50,6 +50,8 @@ def create_fastapi_app() -> FastAPI:
             "https://localhost:3000",
             "http://localhost:4200",
             "https://localhost:4200",
+            "http://localhost:9095",
+            "https://localhost:9095",
         ],
         allow_credentials=True,
         allow_methods=["*"],
