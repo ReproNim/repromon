@@ -1,0 +1,12 @@
+<div class="header" style="display: flex; justify-content: space-between;">
+  <div>
+    <p>&nbsp;<b>ReproMon: </b>{{ screenName }}</p>
+  </div>
+  <div>
+    <p>
+      <b>Time:</b> {{ currentTime | date: 'yyyy/MM/dd HH:mm:ss' }} &nbsp;&nbsp;
+      <b>User:</b> {{ currentUser?.first_name }} {{ currentUser?.last_name }}&nbsp;
+    </p>
+  </div>
+</div>
+

@@ -1,0 +1,48 @@
+<div class="message-log-view">
+  <table style="width: 100%; padding: 0px; margin: 0px; padding-bottom: 4px;">
+    <tr>
+      <td style="text-align: left;">
+        <b style="color: red;">Errors:</b> {{ errorCount }},
+        <b>Warnings:</b> {{ warnCount }}
+        <button (click)="resetMessages()">Reset</button>
+      </td>
+      <td style="text-align: right; padding: 0px; margin: 0px;">
+        <div style="display: flex; justify-content: flex-end; padding: 0px; margin: 0px;">
+          <button (click)="clearMessages('*')">Clear All</button>&nbsp;
+          <button (click)="clearMessages('ERROR')">Clear ERROR</button>&nbsp;
+          <button (click)="clearMessages('WARN')">Clear WARN</button>&nbsp;
+          <button (click)="clearMessages('INFO')">Clear INFO</button>&nbsp;
+          <button (click)="reload()">Reload</button>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="data-grid">
+    <div class="header-row">
+      <div class="column" style="width: 30px;">#</div>
+      <div class="column" style="width: 110px;">Date</div>
+      <div class="column" style="width: 90px;">Time</div>
+      <div class="column" style="width: 70px;">Level</div>
+      <div class="column" style="width: 120px;">Provider</div>
+      <div class="column" style="width: 1000px;">Description</div>
+    </div>
+
+    <div class="body-rows">
+      <div
+        *ngFor="let item of messageLog; let index = index"
+        [class.row]="true"
+        [class.selected-row]="selectedItemId === item.id"
+        (click)="selectRow(item.id)"
+      >
+        <div class="column" style="width: 30px;">{{ index + 1 }}</div>
+        <div class="column" style="width: 110px;">{{ formatDate(item.ts) }}</div>
+        <div class="column" style="width: 90px;">{{ formatTime(item.ts) }}</div>
+        <div class="column" style="width: 70px;" [style.color]="item.level === 'ERROR' ? 'red' : 'inherit'">{{ item.level }}</div>
+        <div class="column" style="width: 120px;">{{ item.provider }}</div>
+        <div class="column flex-column" style="width: 1000px;">{{ item.description }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+

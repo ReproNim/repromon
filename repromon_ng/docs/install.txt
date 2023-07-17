@@ -1,0 +1,46 @@
+1) Install node.js
+
+https://nodejs.org/en
+
+brew install node
+
+
+node --version
+v20.3.1
+
+npm --version
+9.6.7
+
+2) Install Angular CLI:
+
+npm install -g @angular/cli
+
+ng v
+Angular CLI: 16.1.4
+Node: 20.3.1 (Unsupported)
+Package Manager: npm 9.6.7
+OS: darwin x64
+
+3) Create new project:
+
+ng new repromon_ng
+cd repromon_ng
+ng serve
+
+See http://localhost:4200
+
+
+4) Create component
+e.g. app-header
+
+ng generate component components/app-header --skip-tests=true
+ng generate component components/feedback-screen --skip-tests=true
+ng generate component components/study-header --skip-tests=true
+ng generate component components/message-log-view --skip-tests=true
+
+5) Deploy to fastapi server
+
+ng build --configuration production --base-href=/ui/
+# ng build --prod --base-href=/ui/
+
+

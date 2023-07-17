@@ -1,0 +1,55 @@
+.message-log-view {
+  /* Component styles */
+  padding: 13px;
+}
+
+.data-grid {
+  /* max-height: 300px; */
+  overflow-y: auto;
+  border: 1px solid #ccc;
+}
+
+.header-row {
+  display: flex;
+  /*grid-template-columns: repeat(6, 60px) 1fr;*/
+  background-color: #f0f0f0;
+  font-weight: bold;
+  padding: 8px;
+}
+
+.row {
+  display: flex;
+  /*grid-template-columns: repeat(6, 60px) 1fr;*/
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.row:hover {
+  background-color: #f0f0f0;
+}
+
+.row.selected-row {
+  background-color: #e0e0e0;
+}
+
+.column {
+  /*flex: 1;*/
+  padding: 2px;
+  /*border-right: 1px solid #ccc;*/
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.column-fixed-width {
+  width: 60px;
+}
+
+.flex-column {
+  flex: auto;
+  min-width: 0;
+  white-space: normal;
+  word-wrap: break-word;
+}
