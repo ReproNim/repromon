@@ -1,0 +1,50 @@
+1) Install node.js
+
+https://nodejs.org/en
+
+brew install node
+
+
+node --version
+v20.3.1
+
+npm --version
+9.6.7
+
+
+2) Install Vue.js
+
+npm install -g @vue/cli
+
+vue --version
+@vue/cli 5.0.8
+
+To update:
+npm update -g @vue/cli
+
+To see vue.js version
+npm v vue
+vue@3.3.4 | MIT | deps: 5 | versions: 445
+
+3) Create project
+
+vue create repromon_vue
+
+ $ cd repromon_vue
+ $ npm run serve
+
+
+3.b) Create view with typescript
+
+npx @vue/cli create typescript-app
+
+4) add axis
+npm add axios
+
+5) add moment
+npm add moment
+
+
+6) Deploy
+
+npm run build
