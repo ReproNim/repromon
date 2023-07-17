@@ -38,6 +38,8 @@ vue create repromon_vue
 
 npx @vue/cli create typescript-app
 
+3.c) npm install
+
 4) add axis
 npm add axios
 
