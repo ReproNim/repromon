@@ -31,5 +31,7 @@ repos:
           - flake8-builtins
 #          - flake8-unused-arguments
 
+exclude: 'repromon_vue/.*|repromon_ng/.*'
+
 default_language_version:
     python: python3.11
