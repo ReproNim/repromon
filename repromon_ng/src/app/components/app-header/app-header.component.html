@@ -1,12 +1,14 @@
 <div class="header" style="display: flex; justify-content: space-between;">
   <div>
-    <p>&nbsp;<b>ReproMon: </b>{{ screenName }}</p>
+    <p>&nbsp;&nbsp;<b>ReproMon: </b>{{ screenName }}</p>
   </div>
-  <div>
-    <p>
-      <b>Time:</b> {{ currentTime | date: 'yyyy/MM/dd HH:mm:ss' }} &nbsp;&nbsp;
-      <b>User:</b> {{ currentUser?.first_name }} {{ currentUser?.last_name }}&nbsp;
-    </p>
+  <div style="display: table;">
+    <div style="vertical-align: middle; display: table-cell; width: 110pt;">
+      {{ currentTime | date: 'yyyy/MM/dd HH:mm:ss' }}&nbsp;
+    </div>
+    <div style="vertical-align: middle; display: table-cell;">
+      <b>{{ currentUser?.first_name }} {{ currentUser?.last_name }}</b>&nbsp;&nbsp;
+    </div>
   </div>
 </div>
 
