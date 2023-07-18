@@ -2,7 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { AppConfig} from "../../config/AppConfig";
 import { FeedbackService } from '../../service/FeedbackService';
-import { MessageLogInfoDTO} from "../../model/MessageLogInfoDTO";
+import { MessageLogInfoDTO } from "../../model/MessageLogInfoDTO";
+import {PushMessageDTO} from "../../model/PushMessageDTO";
 
 
 @Component({
@@ -33,7 +34,7 @@ export class MessageLogViewComponent implements OnInit {
 
     socket.onmessage = (event) => {
       console.log('onmessage: data=' + event.data);
-      const msg = JSON.parse(event.data);
+      const msg = JSON.parse(event.data) as PushMessageDTO;
       console.log('topic=' + msg.topic);
 
       if (msg.topic === 'feedback-log-refresh' && msg.body.study_id === this.studyId) {
