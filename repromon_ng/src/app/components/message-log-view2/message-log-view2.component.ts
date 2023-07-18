@@ -28,6 +28,8 @@ export class MessageLogView2Component implements OnInit {
 
   @ViewChild(MatSort) sort: MatSort | null = null;
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
+  @ViewChild('dg', { static: true }) dg: any;
+
 
   constructor(
     private datePipe: DatePipe,
@@ -56,9 +58,13 @@ export class MessageLogView2Component implements OnInit {
 
   async addMessage(message_id: number): Promise<void> {
     console.log('addMessage(message_id=' + message_id + ')');
-    const msg = await this.feedbackService.getMessage(message_id).toPromise();
-    this.messageLog.push(msg as MessageLogInfoDTO);
-    this.updateCounters();
+    this.feedbackService.getMessage(message_id).subscribe( msg => {
+      this.messageLog.push(msg as MessageLogInfoDTO);
+      this.selectLastItem();
+      this.updateCounters();
+      // force grid redraw
+      this.dg.renderRows();
+    })
   }
 
   async clearMessages(mask: string): Promise<void> {
@@ -81,8 +87,7 @@ export class MessageLogView2Component implements OnInit {
           this.dataSource = new MatTableDataSource<MessageLogInfoDTO>(this.messageLog);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
-          if( this.messageLog.length>0 )
-            this.selectItem(this.messageLog[this.messageLog.length-1])
+          this.selectLastItem();
           this.updateCounters();
         }
       )
@@ -112,6 +117,11 @@ export class MessageLogView2Component implements OnInit {
         // this.reload();
       }
     );
+  }
+
+  selectLastItem(): void {
+    if( this.messageLog.length>0 )
+      this.selectItem(this.messageLog[this.messageLog.length-1])
   }
 
   selectItem(row: MessageLogInfoDTO): void {

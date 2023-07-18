@@ -11,7 +11,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Adjust this value if needed */
+  height: 100%;
 }
 
 .header-view {

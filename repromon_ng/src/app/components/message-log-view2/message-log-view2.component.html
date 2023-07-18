@@ -20,7 +20,7 @@
   </table>
 
   <div class="data-grid">
-    <mat-table [dataSource]="messageLog" matSort class="mat-elevation-z8">
+    <mat-table #dg [dataSource]="messageLog" matSort class="mat-elevation-z8">
 
       <!-- Column definitions -->
       <ng-container matColumnDef="index">
