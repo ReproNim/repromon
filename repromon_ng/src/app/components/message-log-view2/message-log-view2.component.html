@@ -21,7 +21,7 @@
   </table>
 
   <div class="data-grid">
-    <mat-table #dg [dataSource]="messageLog" matSort class="mat-elevation-z8">
+    <mat-table #dg [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
       <!-- Column definitions -->
       <ng-container matColumnDef="index">
@@ -63,7 +63,7 @@
       </mat-row>
     </mat-table>
 
-    <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons></mat-paginator>
   </div>
 
 </div>

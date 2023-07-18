@@ -24,11 +24,11 @@ export class MessageLogView2Component implements OnInit {
   warnCount: number = 0;
 
   displayedColumns: string[] = ['index', 'date', 'time', 'level', 'provider', 'description'];
-  dataSource: MatTableDataSource<MessageLogInfoDTO> | null = null;
+  dataSource!: MatTableDataSource<MessageLogInfoDTO>;
   selection: any;
 
-  @ViewChild(MatSort) sort: MatSort | null = null;
-  @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
+  @ViewChild(MatSort, { static:  true }) sort!: MatSort;
+  @ViewChild(MatPaginator, { static:  true }) paginator!: MatPaginator;
   @ViewChild('dg', { static: true }) dg: any;
 
 
@@ -53,6 +53,13 @@ export class MessageLogView2Component implements OnInit {
     this.fetchMessageLog();
   }
 
+  ngAfterViewInit(): void {
+    if( this.dataSource ) {
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+
   ngOnDestroy(): void {
     this.pushListenerService.onMessage.unsubscribe();
   }
@@ -64,7 +71,8 @@ export class MessageLogView2Component implements OnInit {
       this.selectLastItem();
       this.updateCounters();
       // force grid redraw
-      this.dg.renderRows();
+      this.dataSource._updateChangeSubscription();
+      //this.dg.renderRows();
     })
   }
 
