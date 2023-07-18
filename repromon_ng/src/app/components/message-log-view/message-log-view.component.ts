@@ -4,6 +4,7 @@ import { AppConfig} from "../../config/AppConfig";
 import { FeedbackService } from '../../service/FeedbackService';
 import { MessageLogInfoDTO } from "../../model/MessageLogInfoDTO";
 import {PushMessageDTO} from "../../model/PushMessageDTO";
+import {PushListenerService} from "../../service/PushListenerService";
 
 
 @Component({
@@ -20,23 +21,13 @@ export class MessageLogViewComponent implements OnInit {
 
   constructor(
     private datePipe: DatePipe,
-    private feedbackService: FeedbackService
+    private feedbackService: FeedbackService,
+    private pushListenerService: PushListenerService
   ) {
   }
 
   ngOnInit(): void {
-    this.fetchMessageLog();
-    this.setupWebSocket();
-  }
-
-  async setupWebSocket(): Promise<void> {
-    const socket = new WebSocket(`${AppConfig.WS_BASE_URL}/ws`);
-
-    socket.onmessage = (event) => {
-      console.log('onmessage: data=' + event.data);
-      const msg = JSON.parse(event.data) as PushMessageDTO;
-      console.log('topic=' + msg.topic);
-
+    this.pushListenerService.onMessage.subscribe(msg => {
       if (msg.topic === 'feedback-log-refresh' && msg.body.study_id === this.studyId) {
         this.reload();
       }
@@ -44,11 +35,12 @@ export class MessageLogViewComponent implements OnInit {
       if (msg.topic === 'feedback-log-add' && msg.body.study_id === this.studyId) {
         this.addMessage(msg.body.message_id);
       }
-    };
+    });
+    this.fetchMessageLog();
+  }
 
-    socket.onopen = function (event) {
-      console.log('onopen: ' + event);
-    };
+  ngOnDestroy(): void {
+    this.pushListenerService.onMessage.unsubscribe();
   }
 
   async addMessage(message_id: number): Promise<void> {
@@ -63,7 +55,7 @@ export class MessageLogViewComponent implements OnInit {
     this.feedbackService.setMessageLogVisibility(this.studyId, false, mask).subscribe(
       res => {
         console.log("clearMessages res="+res);
-        this.reload();
+        //this.reload();
       }
     );
     console.log("clearMessages(...) done")
