@@ -29,11 +29,7 @@ export class FeedbackService {
   }
 
   setMessageLogVisibility(studyId: number, visible_: boolean, level_: string): Observable<number>  {
-    console.log("setMessageLogVisibility")
     const url = `${this.apiUrl}/set_message_log_visibility?study_id=${studyId}&visible=${visible_}&level=${level_}`;
-    console.log("url="+url)
-    let o = this.http.get<number>(url);
-    console.log("o="+o)
-    return o;
+    return this.http.get<number>(url);
   }
 }
