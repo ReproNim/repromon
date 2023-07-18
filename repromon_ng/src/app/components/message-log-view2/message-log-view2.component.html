@@ -40,18 +40,21 @@
       </ng-container>
 
       <ng-container matColumnDef="level">
-        <mat-header-cell *matHeaderCellDef class="level-cell">Level</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef class="level-cell"
+                         mat-sort-header sortActionDescription="Sort by Level">Level</mat-header-cell>
         <mat-cell *matCellDef="let item" class="level-cell"
                   [style.color]="item.level === 'ERROR' ? 'red' : 'inherit'">{{ item.level }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="provider">
-        <mat-header-cell *matHeaderCellDef>Provider</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef
+                         mat-sort-header sortActionDescription="Sort by Provider">Provider</mat-header-cell>
         <mat-cell *matCellDef="let item" >{{ item.provider }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="description">
-        <mat-header-cell *matHeaderCellDef >Description</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef
+                         mat-sort-header sortActionDescription="Sort by Description">Description</mat-header-cell>
         <mat-cell *matCellDef="let item" >{{ item.description }}</mat-cell>
       </ng-container>
 
