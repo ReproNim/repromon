@@ -1,11 +1,16 @@
-<app-header
-  [screenName]="'Feedback Screen'"
-  [firstName]="'?'"
-  [lastName]="'?'">
-</app-header>
-<feedback-screen
-  [studyId]="1"
->
-</feedback-screen>
-
+<div class="container">
+  <div class="header-view">
+    <app-header
+      [screenName]="'Feedback Screen'"
+      [firstName]="'?'"
+      [lastName]="'?'">
+    </app-header>
+  </div>
+  <div class="screen-view">
+    <feedback-screen
+      [studyId]="1"
+    >
+    </feedback-screen>
+  </div>
+</div>
 <router-outlet></router-outlet>

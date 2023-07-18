@@ -1,0 +1,46 @@
+.container {
+  padding: 13px;
+}
+
+.data-grid {
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  width: 100%;
+  height: 100%;
+}
+
+.mat-column-index {
+  flex: 0 0 25px;
+}
+
+.mat-column-date {
+  flex: 0 0 110px;
+}
+
+.mat-column-time {
+  flex: 0 0 90px;
+}
+
+.mat-column-level {
+  flex: 0 0 65px;
+}
+
+.mat-column-provider {
+  flex: 0 0 90px;
+}
+
+.mat-column-description {
+  flex: 0 0 100%;
+}
+
+.mdc-data-table__row:hover {
+  background-color: #eee !important;;
+}
+
+.mat-row-selected {
+  background-color: #ddd;
+}
+
+.mat-row-normal {
+  background-color: inherit;
+}

@@ -43,4 +43,6 @@ ng generate component components/message-log-view --skip-tests=true
 ng build --configuration production --base-href=/ui/
 # ng build --prod --base-href=/ui/
 
+6) add @angular/material
 
+ng add @angular/material

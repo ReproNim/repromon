@@ -1,0 +1,69 @@
+<div class="container">
+
+  <table style="width: 100%; padding: 0px; margin: 0px; padding-bottom: 4px;">
+    <tr>
+      <td style="text-align: left;">
+        <b style="color: red;">Errors:</b> {{ errorCount }},
+        <b>Warnings:</b> {{ warnCount }}
+        <button (click)="resetMessages()">Reset</button>
+      </td>
+      <td style="text-align: right; padding: 0px; margin: 0px;">
+        <div style="display: flex; justify-content: flex-end; padding: 0px; margin: 0px;">
+          <button (click)="clearMessages('*')">Clear All</button>&nbsp;
+          <button (click)="clearMessages('ERROR')">Clear ERROR</button>&nbsp;
+          <button (click)="clearMessages('WARN')">Clear WARN</button>&nbsp;
+          <button (click)="clearMessages('INFO')">Clear INFO</button>&nbsp;
+          <button (click)="reload()">Reload</button>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="data-grid">
+    <mat-table [dataSource]="messageLog" matSort class="mat-elevation-z8">
+
+      <!-- Column definitions -->
+      <ng-container matColumnDef="index">
+        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+        <mat-cell *matCellDef="let item; let i = index">{{ i + 1 }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ formatDate(item.ts) }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="time">
+        <mat-header-cell *matHeaderCellDef>Time</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ formatTime(item.ts) }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="level">
+        <mat-header-cell *matHeaderCellDef class="level-cell">Level</mat-header-cell>
+        <mat-cell *matCellDef="let item" class="level-cell"
+                  [style.color]="item.level === 'ERROR' ? 'red' : 'inherit'">{{ item.level }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="provider">
+        <mat-header-cell *matHeaderCellDef>Provider</mat-header-cell>
+        <mat-cell *matCellDef="let item" >{{ item.provider }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef >Description</mat-header-cell>
+        <mat-cell *matCellDef="let item" >{{ item.description }}</mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"
+               (click)="selectItem(row)"
+               [ngClass]="selection.isSelected(row)?'mat-row-selected':'mat-row-normal'"
+      >
+      </mat-row>
+    </mat-table>
+
+    <mat-paginator [pageSizeOptions]="[20, 50, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+
+</div>
+

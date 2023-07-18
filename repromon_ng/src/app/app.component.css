@@ -7,3 +7,18 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Adjust this value if needed */
+}
+
+.header-view {
+  width: 100%;
+}
+
+.screen-view {
+  flex-grow: 1;
+  width: 100%;
+}
