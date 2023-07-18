@@ -5,15 +5,16 @@
       <td style="text-align: left;">
         <b style="color: red;">Errors:</b> {{ errorCount }},
         <b>Warnings:</b> {{ warnCount }}
-        <button (click)="resetMessages()">Reset</button>
+        &nbsp;
+        <button mat-stroked-button (click)="resetMessages()">Reset</button>
       </td>
       <td style="text-align: right; padding: 0px; margin: 0px;">
         <div style="display: flex; justify-content: flex-end; padding: 0px; margin: 0px;">
-          <button (click)="clearMessages('*')">Clear All</button>&nbsp;
-          <button (click)="clearMessages('ERROR')">Clear ERROR</button>&nbsp;
-          <button (click)="clearMessages('WARN')">Clear WARN</button>&nbsp;
-          <button (click)="clearMessages('INFO')">Clear INFO</button>&nbsp;
-          <button (click)="reload()">Reload</button>
+          <button mat-stroked-button (click)="clearMessages('*')">Clear All</button>&nbsp;
+          <button mat-stroked-button (click)="clearMessages('ERROR')">Clear ERROR</button>&nbsp;
+          <button mat-stroked-button (click)="clearMessages('WARN')">Clear WARN</button>&nbsp;
+          <button mat-stroked-button (click)="clearMessages('INFO')">Clear INFO</button>&nbsp;
+          <button mat-stroked-button (click)="reload()">Reload</button>
         </div>
       </td>
     </tr>
