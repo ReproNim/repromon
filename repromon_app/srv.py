@@ -75,7 +75,8 @@ def create_fastapi_app() -> FastAPI:
     if ui_path and os.path.exists(ui_path):
         logger.debug(f"Registering RIA app: /ui ... {str(ui_path)}")
         app_web.mount("/ui", NoCacheStaticFiles(
-            directory=ui_path
+            directory=ui_path,
+            html=True
         ), name="ui")
     else:
         logger.error(f"RIA /ui web content not found: {str(ui_path)}")

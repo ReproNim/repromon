@@ -41,6 +41,7 @@ ng generate component components/message-log-view --skip-tests=true
 5) Deploy to fastapi server
 
 ng build --configuration production --base-href=/ui/
+cp -R ./dist/repromon_ng/* ./build
 # ng build --prod --base-href=/ui/
 
 6) add @angular/material
