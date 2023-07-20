@@ -85,7 +85,7 @@ def create_fastapi_app() -> FastAPI:
     ui2_path: str = app_settings().UI2_APP_PATH
     if ui2_path and os.path.exists(ui2_path):
         logger.debug(f"Registering RIA app: /ui2 ... {str(ui2_path)}")
-        app_web.mount("/ui", NoCacheStaticFiles(
+        app_web.mount("/ui2", NoCacheStaticFiles(
             directory=ui2_path,
             html=True
         ), name="ui2")
