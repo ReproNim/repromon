@@ -50,3 +50,4 @@ npm add moment
 6) Deploy
 
 npm run build
+cp -R ./dist/* ./build
