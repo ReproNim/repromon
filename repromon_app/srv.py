@@ -81,6 +81,17 @@ def create_fastapi_app() -> FastAPI:
     else:
         logger.error(f"RIA /ui web content not found: {str(ui_path)}")
 
+    # Configure RIA /ui2 web content
+    ui2_path: str = app_settings().UI2_APP_PATH
+    if ui2_path and os.path.exists(ui2_path):
+        logger.debug(f"Registering RIA app: /ui2 ... {str(ui2_path)}")
+        app_web.mount("/ui", NoCacheStaticFiles(
+            directory=ui2_path,
+            html=True
+        ), name="ui2")
+    else:
+        logger.error(f"RIA /ui2 web content not found: {str(ui2_path)}")
+
     logger.debug("Registering router: /api/1 ...")
     app_web.include_router(create_api_v1_router(), prefix="/api/1")
 

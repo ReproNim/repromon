@@ -32,6 +32,7 @@ class SettingsConfig(BaseSectionConfig):
     ENV: str = "Unknown"
     DEBUG_USERNAME: str = None
     UI_APP_PATH: str = None
+    UI2_APP_PATH: str = None
 
 
 class UvicornConfig(BaseSectionConfig):
