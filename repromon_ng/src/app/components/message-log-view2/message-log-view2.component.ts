@@ -29,6 +29,7 @@ export class MessageLogView2Component implements OnInit {
 
   @ViewChild(MatSort, { static:  true }) sort!: MatSort;
   @ViewChild(MatPaginator, { static:  true }) paginator!: MatPaginator;
+  @ViewChild('div_dg', { static: true }) div_dg: any;
   @ViewChild('dg', { static: true }) dg: any;
 
 
@@ -60,6 +61,10 @@ export class MessageLogView2Component implements OnInit {
     }
   }
 
+  ngAfterContentInit(): void {
+    this.adjustPageSize();
+  }
+
   ngOnDestroy(): void {
     this.pushListenerService.onMessage.unsubscribe();
   }
@@ -74,6 +79,22 @@ export class MessageLogView2Component implements OnInit {
       this.dataSource._updateChangeSubscription();
       //this.dg.renderRows();
     })
+  }
+
+  adjustPageSize():void {
+    const elemHeight = this.div_dg.nativeElement.offsetHeight;
+    let n: number = 1;
+    if( elemHeight>200 ) {
+      n = Math.floor((elemHeight-142)/48);
+    }
+    if (this.paginator.pageSize != n) {
+      // console.log("set pageSize=" + n);
+      this.paginator.pageSize = n;
+      this.paginator._changePageSize(this.paginator.pageSize);
+      if( this.selection.hasValue() ) {
+        this.selectItem(this.selection.selected[0])
+      }
+    }
   }
 
   async clearMessages(mask: string): Promise<void> {
@@ -111,6 +132,10 @@ export class MessageLogView2Component implements OnInit {
 
   formatTime(timestamp: any): string {
     return this.datePipe.transform(timestamp, 'HH:mm:ss') as string;
+  }
+
+  onDataGridResize(event:any) {
+    this.adjustPageSize();
   }
 
   reload(): void {
