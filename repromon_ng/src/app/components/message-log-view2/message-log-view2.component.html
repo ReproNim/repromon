@@ -24,18 +24,21 @@
     <mat-table #dg [dataSource]="dataSource" matSort class="mat-elevation-z8 my-table">
 
       <!-- Column definitions -->
-      <ng-container matColumnDef="index">
-        <mat-header-cell *matHeaderCellDef >#</mat-header-cell>
-        <mat-cell *matCellDef="let item; let i = index">{{ i + 1 }}</mat-cell>
+      <ng-container matColumnDef="_index">
+        <mat-header-cell *matHeaderCellDef
+                         mat-sort-header sortActionDescription="Sort by Index">#</mat-header-cell>
+        <mat-cell *matCellDef="let item">{{ item._index }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="date">
-        <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef
+                         mat-sort-header sortActionDescription="Sort by Date">Date</mat-header-cell>
         <mat-cell *matCellDef="let item">{{ formatDate(item.ts) }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="time">
-        <mat-header-cell *matHeaderCellDef>Time</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef
+                         mat-sort-header sortActionDescription="Sort by Time">Time</mat-header-cell>
         <mat-cell *matCellDef="let item">{{ formatTime(item.ts) }}</mat-cell>
       </ng-container>
 

@@ -23,7 +23,7 @@ export class MessageLogView2Component implements OnInit {
   errorCount: number = 0;
   warnCount: number = 0;
 
-  displayedColumns: string[] = ['index', 'date', 'time', 'level', 'provider', 'description'];
+  displayedColumns: string[] = ['_index', 'date', 'time', 'level', 'provider', 'description'];
   dataSource!: MatTableDataSource<MessageLogInfoDTO>;
   selection: any;
 
@@ -41,6 +41,7 @@ export class MessageLogView2Component implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataSource = new MatTableDataSource<MessageLogInfoDTO>([]);
     this.selection = new SelectionModel<any>(false, []);
     this.pushListenerService.onMessage.subscribe(msg => {
       if (msg.topic === 'feedback-log-refresh' && msg.body.study_id === this.studyId) {
@@ -51,14 +52,22 @@ export class MessageLogView2Component implements OnInit {
         this.addMessage(msg.body.message_id);
       }
     });
-    this.fetchMessageLog();
   }
 
   ngAfterViewInit(): void {
     if( this.dataSource ) {
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
+      this.dataSource.sortingDataAccessor = (item: any, property) => {
+        if (property === 'date' ) {
+          return this.formatDate(item.ts);
+        } else if (property === 'time' ) {
+          return this.formatTime(item.ts);
+        } else
+          return item[property];
+      };
     }
+    this.fetchMessageLog();
   }
 
   ngAfterContentInit(): void {
@@ -72,6 +81,8 @@ export class MessageLogView2Component implements OnInit {
   async addMessage(message_id: number): Promise<void> {
     console.log('addMessage(message_id=' + message_id + ')');
     this.feedbackService.getMessage(message_id).subscribe( msg => {
+      if( msg )
+        msg._index = this.messageLog.length+1;
       this.messageLog.push(msg as MessageLogInfoDTO);
       this.selectLastItem();
       this.updateCounters();
@@ -113,10 +124,11 @@ export class MessageLogView2Component implements OnInit {
     try {
       this.feedbackService.getMessageLog(this.studyId).subscribe(
         lst => {
+          lst.forEach((element, index) => {
+            element._index = index + 1;
+          });
           this.messageLog = lst;
-          this.dataSource = new MatTableDataSource<MessageLogInfoDTO>(this.messageLog);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
+          this.dataSource.data = this.messageLog;
           this.selectLastItem();
           this.updateCounters();
         }
@@ -161,6 +173,14 @@ export class MessageLogView2Component implements OnInit {
   selectItem(row: MessageLogInfoDTO): void {
     console.log("selectItem: "+row.id)
     this.selection.select(row);
+
+    if( row!=null && this.paginator!=null && this.dataSource!=null ) {
+      const idx = this.dataSource.data.indexOf(row);
+      const pageSize = this.paginator.pageSize || 1;
+      const pageIndex = Math.floor(idx / pageSize);
+      this.paginator.pageIndex = pageIndex;
+      this.paginator._changePageSize(this.paginator.pageSize);
+    }
   }
 
   private updateCounters(): void {
