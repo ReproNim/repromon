@@ -1,4 +1,5 @@
 export interface MessageLogInfoDTO {
+  _index?: number; // <-- added in runtime
   id: number;
   study_id: number;
   time: string;
