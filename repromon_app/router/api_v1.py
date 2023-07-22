@@ -4,7 +4,8 @@ from fastapi import (APIRouter, Query, Request, WebSocket, WebSocketDisconnect,
                      WebSocketException)
 
 from repromon_app.model import (LoginInfoDTO, MessageLogInfoDTO,
-                                PushMessageDTO, StudyInfoDTO)
+                                PushMessageDTO, Rolename, StudyInfoDTO)
+from repromon_app.security import security_check
 from repromon_app.service import FeedbackService, LoginService, PushService
 
 logger = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ def create_api_v1_router() -> APIRouter:
                                                      description="Message ID")
                              ) -> MessageLogInfoDTO | None:
         logger.debug("feedback_get_message")
+        security_check(rolename=Rolename.DATA_COLLECTOR)
         return FeedbackService().get_message(message_id)
 
     # @security: role=data_collector, auth
@@ -64,6 +66,7 @@ def create_api_v1_router() -> APIRouter:
                                                        description="Study ID")
                                  ) -> list[MessageLogInfoDTO]:
         logger.debug("feedback_get_message_log")
+        security_check(rolename=Rolename.DATA_COLLECTOR)
         return FeedbackService().get_message_log(study_id)
 
     # @security: role=data_collector, auth
@@ -77,6 +80,7 @@ def create_api_v1_router() -> APIRouter:
                                                         description="Study ID")
                                   ) -> StudyInfoDTO:
         logger.debug("feedback_get_study_header")
+        security_check(rolename=Rolename.DATA_COLLECTOR)
         return FeedbackService().get_study_header(study_id)
 
     # @security: role=data_collector, auth
@@ -95,6 +99,7 @@ def create_api_v1_router() -> APIRouter:
                                                                   "or * for any"),
                                    ) -> int:
         logger.debug("set_message_log_visibility")
+        security_check(rolename=Rolename.DATA_COLLECTOR)
         return FeedbackService().set_message_log_visibility(study_id, visible, level)
 
     ##############################################
@@ -108,6 +113,7 @@ def create_api_v1_router() -> APIRouter:
                        description="Get current user info")
     def login_get_current_user(request: Request) -> LoginInfoDTO:
         logger.debug("login_get_current_user")
+        security_check(rolename=Rolename.ANY)
         return LoginService().get_current_user()
 
     ##############################################

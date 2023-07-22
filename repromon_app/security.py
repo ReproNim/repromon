@@ -2,7 +2,7 @@ import logging
 
 from repromon_app.config import app_settings
 from repromon_app.dao import DAO
-from repromon_app.model import UserInfoDTO
+from repromon_app.model import Rolename, UserInfoDTO
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -23,6 +23,12 @@ class SecurityContext:
 
     def is_empty(self) -> bool:
         return not (bool(self.__username))
+
+    def has_device(self, device) -> bool:
+        return True if device == '*' else int(device) in self.__devices
+
+    def has_role(self, rolename: str) -> bool:
+        return True if rolename == Rolename.ANY else rolename in self.__rolenames
 
     @property
     def devices(self) -> list[int]:
@@ -105,3 +111,39 @@ o = SecurityManager.instance()
 
 def security_context() -> SecurityContext:
     return SecurityManager.instance().get_context()
+
+
+# NOTE: in future can be extended with @security(rolename, device, ...) decorator
+# to be applied around target method or function
+def security_check(rolename=Rolename.ANY, device='*', env='*',
+                   raise_exception: bool = True) -> list[str]:
+    ctx: SecurityContext = security_context()
+    errors: list[str] = []
+
+    f_role: bool = any([ctx.has_role(r) for r in rolename]) \
+        if isinstance(rolename, (list, tuple)) else ctx.has_role(rolename)
+
+    if not f_role:
+        logger.error(f"Security check, role mismatch: ctx={str(ctx)}, "
+                     f"required rolename={str(rolename)}")
+        errors.append("User role mismatch")
+
+    f_device: bool = any([ctx.has_device(d) for d in device]) \
+        if isinstance(device, (list, tuple)) else ctx.has_device(device)
+
+    if not f_device:
+        logger.error(f"Security check, device mismatch: ctx={str(ctx)}, "
+                     f"required device={str(device)}")
+        errors.append("User not allowed to work with this device")
+
+    f_env: bool = app_settings().ENV in env if isinstance(env, (list, tuple)) \
+        else env == app_settings().ENV or env == '*'
+
+    if not f_env:
+        logger.error(f"Security check, environment mismatch: ctx={str(ctx)}, "
+                     f" required env={str(env)}")
+        errors.append("Environment mismatch")
+
+    if raise_exception and len(errors) > 0:
+        raise Exception(f"Access denied. {'. '.join(errors)}")
+    return errors

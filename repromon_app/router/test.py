@@ -6,6 +6,8 @@ from fastapi.templating import Jinja2Templates
 
 from repromon_app.config import app_config
 from repromon_app.dao import DAO
+from repromon_app.model import Rolename
+from repromon_app.security import security_check
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -21,6 +23,7 @@ def create_test_router() -> APIRouter:
                      include_in_schema=False)
     def home(request: Request):
         logger.debug("home")
+        security_check(rolename=Rolename.TESTER, env=('local', 'dev', 'qa', 'uat'))
         return _templates.TemplateResponse("home.j2", {"request": request})
 
     # @security: env=dev|qa|uat, auth, ??role=tester
@@ -28,6 +31,7 @@ def create_test_router() -> APIRouter:
                      include_in_schema=False)
     def test1(request: Request):
         logger.debug("test1")
+        security_check(rolename=Rolename.TESTER, env=('local', 'dev', 'qa', 'uat'))
         dao: DAO = DAO()
 
         roles = dao.account.get_roles()

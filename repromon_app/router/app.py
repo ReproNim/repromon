@@ -7,6 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from repromon_app.config import app_config
+from repromon_app.model import Rolename
+from repromon_app.security import security_check
 from repromon_app.service import FeedbackService, LoginService
 
 logger = logging.getLogger(__name__)
@@ -24,6 +26,7 @@ def create_app_router() -> APIRouter:
     @app_router.get("/", response_class=HTMLResponse, include_in_schema=False)
     def home(request: Request):
         logger.debug("home")
+        security_check(rolename=Rolename.ANY)
         return _templates.TemplateResponse("home.j2", {"request": request})
 
     # @security: any
@@ -31,6 +34,7 @@ def create_app_router() -> APIRouter:
                     include_in_schema=False)
     def current_user(request: Request):
         logger.debug("current_user")
+        security_check(rolename=Rolename.ANY)
         return JSONResponse(content=LoginService().get_current_user().dict())
 
     # @security: role=data_collector, auth
@@ -39,6 +43,7 @@ def create_app_router() -> APIRouter:
                     )
     def feedback_screen(request: Request, study_id: int):
         logger.debug("feedback_screen")
+        security_check(rolename=Rolename.DATA_COLLECTOR)
 
         # study_id = int(request.form["study_id"])
         # study_id = int(request.args.get("study_id"))

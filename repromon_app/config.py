@@ -29,7 +29,7 @@ class DbConfig(BaseSectionConfig):
 class SettingsConfig(BaseSectionConfig):
     """Basic configuration for [system] section"""
 
-    ENV: str = "Unknown"
+    ENV: str = "local"
     DEBUG_USERNAME: str = None
     UI_APP_PATH: str = None
     UI2_APP_PATH: str = None

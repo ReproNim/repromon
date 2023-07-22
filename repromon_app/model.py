@@ -47,6 +47,7 @@ class MessageLevel:
 
 
 class Rolename:
+    ANY: str = "*"
     ADMIN: str = "admin"
     DATA_COLLECTOR: str = "data_collector"
     MRI_OPERATOR: str = "mri_operator"

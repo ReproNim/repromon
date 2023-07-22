@@ -9,8 +9,8 @@ from fastapi.templating import Jinja2Templates
 
 from repromon_app.config import app_config
 from repromon_app.dao import DAO
-from repromon_app.model import MessageCategory, MessageLogEntity
-from repromon_app.security import security_context
+from repromon_app.model import MessageCategory, MessageLogEntity, Rolename
+from repromon_app.security import security_check, security_context
 from repromon_app.service import MessageService
 
 logger = logging.getLogger(__name__)
@@ -33,6 +33,7 @@ def create_admin_router() -> APIRouter:
                       include_in_schema=False)
     def home(request: Request):
         logger.debug("home")
+        security_check(rolename=Rolename.ADMIN)
         return _templates.TemplateResponse("home.j2", {"request": request})
 
     # @security: role=admin
@@ -40,6 +41,7 @@ def create_admin_router() -> APIRouter:
                       include_in_schema=False)
     def send_fmessage(request: Request):
         logger.debug("send_fmessage")
+        security_check(rolename=Rolename.ADMIN)
         dao: DAO = DAO()
         levels = dao.message.get_message_levels()
         logger.debug(f"levels={str(levels)}")
@@ -63,6 +65,7 @@ def create_admin_router() -> APIRouter:
                           payload: Annotated[str, Form()]
                           ):
         logger.debug("send_fmessage_ctl")
+        security_check(rolename=Rolename.ADMIN)
         msg: MessageLogEntity = MessageService().send_message(
             username,
             study_id,
@@ -80,6 +83,7 @@ def create_admin_router() -> APIRouter:
                       include_in_schema=False)
     def view_config():
         logger.debug("view_config")
+        security_check(rolename=Rolename.ADMIN)
         return PlainTextResponse(
             content=json.dumps(app_config().to_dict(), indent=4))
 
