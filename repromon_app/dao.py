@@ -218,6 +218,27 @@ class SecSysDAO(BaseDAO):
     def __init__(self):
         pass
 
+    def get_device_id_by_username(self, username: str) -> list[str]:
+        return _list_scalar(
+            int,
+            self.session()
+            .execute(
+                text(
+                    """
+                select
+                    ud.device_id
+                from
+                    user u, sec_user_device ud
+                where
+                    u.username = :username and
+                    u.id = ud.user_id
+            """
+                ),
+                {"username": username},
+            )
+            .all(),
+        )
+
     def get_rolename_by_username(self, username: str) -> list[str]:
         return _list_scalar(
             str,

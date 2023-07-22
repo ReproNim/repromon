@@ -14,13 +14,19 @@ logger.debug(f"name={__name__}")
 
 # class representing current security context
 class SecurityContext:
-    def __init__(self, user_id: int, username: str, rolenames: list[str]):
+    def __init__(self, user_id: int, username: str,
+                 rolenames: list[str], devices: list[int]):
         self.__user_id = user_id
         self.__username = username
         self.__rolenames = rolenames
+        self.__devices = devices
 
     def is_empty(self) -> bool:
         return not (bool(self.__username))
+
+    @property
+    def devices(self) -> list[int]:
+        return self.__devices
 
     @property
     def user_id(self) -> int:
@@ -37,7 +43,9 @@ class SecurityContext:
     def __repr__(self):
         return (
             f"SecurityContext(user_id={self.__user_id}, "
-            f"username={self.__username}, rolenames={str(self.__rolenames)})"
+            f"username={self.__username}, "
+            f"rolenames={str(self.__rolenames)}, "
+            f"devices={str(self.__devices)})"
         )
 
 
@@ -54,7 +62,7 @@ class SecurityManager:
         self.__debug_context: SecurityContext = None
 
     def create_empty_context(self) -> SecurityContext:
-        return SecurityContext(0, None, ())
+        return SecurityContext(0, None, [], [])
 
     def create_context_by_username(self, username: str) -> SecurityContext:
         logger.debug(f"create_context_by_username(username={username})")
@@ -64,7 +72,8 @@ class SecurityManager:
                 f"Failed create security context. User not found: {username}"
             )
         roles: list[str] = DAO.sec_sys.get_rolename_by_username(username)
-        ctx = SecurityContext(u.id, u.username, roles)
+        devices: list[int] = DAO.sec_sys.get_device_id_by_username(username)
+        ctx = SecurityContext(u.id, u.username, roles, devices)
         return ctx
 
     def get_debug_context(self) -> SecurityContext:
@@ -74,6 +83,7 @@ class SecurityManager:
                 ctx = SecurityManager().create_context_by_username(
                     app_settings().DEBUG_USERNAME
                 )
+                logger.debug(f"created debug context: {str(ctx)}")
             else:
                 ctx = SecurityManager.create_empty_context()
 
