@@ -281,7 +281,7 @@ class StudyDAO(BaseDAO):
                     sd.id,
                     md.description as device,
                     ss.status,
-                    sd.description as study,
+                    sd.name as study,
                     sd.start_ts,
                     sd.end_ts
                 from

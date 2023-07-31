@@ -329,7 +329,7 @@ class StudyDataEntity(BaseEntity):
     __tablename__ = 'study_data'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    description = Column(String(128))
+    name = Column(String(128))
     device_id = Column(Integer)
     status_id = Column(Integer)
     start_ts = Column(TIMESTAMP)
@@ -338,7 +338,7 @@ class StudyDataEntity(BaseEntity):
 
     def __repr__(self):
         return "StudyDataEntity(id={self.id}, " \
-               "description='{self.description}', " \
+               "name='{self.name}', " \
                "device_id='{self.device_id}', " \
                "status_id='{self.status_id}', "\
                "start_ts='{self.start_ts}', " \
