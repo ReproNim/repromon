@@ -19,6 +19,7 @@ class DataProvider:
     ID_PACS: int = 4
     ID_NOISSEUR: int = 5
     ID_DICOM_QA: int = 6
+    ID_MRI: int = 7
 
 
 class MessageCategory:
