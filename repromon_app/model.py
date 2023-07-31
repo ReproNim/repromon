@@ -227,25 +227,37 @@ class MessageLogEntity(BaseEntity):
     id = Column(Integer, primary_key=True, autoincrement=True)
     level_id = Column(Integer)
     category_id = Column(Integer)
+    device_id = Column(Integer)
     provider_id = Column(Integer)
     study_id = Column(Integer)
+    study_name = Column(String(255))
     status_id = Column(Integer)
     is_visible = Column(String(1), default='Y')
+    visible_updated_on = Column(TIMESTAMP)
+    visible_updated_by = Column(String(15))
     description = Column(String(255))
     payload_id = Column(Integer)
+    event_ts = Column(TIMESTAMP)
+    processing_ts = Column(TIMESTAMP)
     created_on = Column(TIMESTAMP)
     created_by = Column(String(15))
 
     def __repr__(self):
         return "MessageLogEntity(id={self.id}, " \
                "level_id='{self.level_id}', " \
-               "category_id='{self.category_id}', "\
+               "category_id='{self.category_id}', " \
+               "device_id='{self.device_id}', " \
                "provider_id='{self.provider_id}', " \
                "study_id='{self.study_id}', " \
+               "study_name='{self.study_name}', " \
                "status_id='{self.status_id}', " \
                "is_visible='{self.is_visible}', " \
+               "visible_updated_on='{self.visible_updated_on}', " \
+               "visible_updated_by='{self.visible_updated_by}', " \
                "description='{self.description}', " \
                "payload_id='{self.payload_id}', " \
+               "event_ts='{self.event_ts}', " \
+               "processing_ts='{self.processing_ts}', " \
                "created_on='{self.created_on}', " \
                "created_by='{self.created_by}')".format(self=self)
 
