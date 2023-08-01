@@ -1,5 +1,6 @@
 import datetime
 import logging
+from typing import Optional
 
 from pydantic import BaseModel
 from sqlalchemy import (JSON, TIMESTAMP, Column, Index, Integer, String, Text,
@@ -90,7 +91,7 @@ class MessageLogInfoDTO(BasePydantic):
     """
 
     id: int = 0
-    study_id: int = 0
+    study_id: Optional[int] = None
     study: str = None
     time: datetime.time = None
     ts: datetime.datetime = None

@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from fastapi import (APIRouter, Query, Request, WebSocket, WebSocketDisconnect,
                      WebSocketException)
@@ -62,8 +63,8 @@ def create_api_v1_router() -> APIRouter:
                        summary="get_message_log",
                        description="Get study message log info")
     def feedback_get_message_log(request: Request,
-                                 study_id: int = Query(...,
-                                                       description="Study ID")
+                                 study_id: Optional[int] = Query(None,
+                                                                 description="Study ID")
                                  ) -> list[MessageLogInfoDTO]:
         logger.debug("feedback_get_message_log")
         security_check(rolename=Rolename.DATA_COLLECTOR)
