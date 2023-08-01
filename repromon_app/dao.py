@@ -143,11 +143,16 @@ class MessageDAO(BaseDAO):
                 select
                     ml.id,
                     ml.study_id,
+                    ml.study_name as study,
                     time(ml.created_on) as time,
                     ml.created_on as ts,
+                    ml.event_ts,
+                    ml.processing_ts,
                     mc.category,
                     ss.status,
                     ll.level,
+                    ml.device_id,
+                    dv.kind as device,
                     dp.provider,
                     ml.description
                 from
@@ -155,11 +160,12 @@ class MessageDAO(BaseDAO):
                     left join message_category mc on ml.category_id = mc.id
                     left join study_status ss on ml.status_id = ss.id
                     left join message_level ll on ml.level_id = ll.id
+                    left join device dv on ml.device_id = dv.id
                     left join data_provider dp on ml.provider_id = dp.id
                 where
                     ml.study_id = :study_id and
                     ml.is_visible = 'Y'
-                order by ml.created_on asc
+                order by ml.event_ts, ml.created_on asc
                 """
                 ),
                 {"study_id": study_id},
@@ -177,11 +183,16 @@ class MessageDAO(BaseDAO):
                 select
                     ml.id,
                     ml.study_id,
+                    ml.study_name as study,
                     time(ml.created_on) as time,
                     ml.created_on as ts,
+                    ml.event_ts,
+                    ml.processing_ts,
                     mc.category,
                     ss.status,
                     ll.level,
+                    ml.device_id,
+                    dv.kind as device,
                     dp.provider,
                     ml.description
                 from
@@ -189,6 +200,7 @@ class MessageDAO(BaseDAO):
                     left join message_category mc on ml.category_id = mc.id
                     left join study_status ss on ml.status_id = ss.id
                     left join message_level ll on ml.level_id = ll.id
+                    left join device dv on ml.device_id = dv.id
                     left join data_provider dp on ml.provider_id = dp.id
                 where
                     ml.id = :message_id

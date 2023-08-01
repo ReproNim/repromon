@@ -91,11 +91,16 @@ class MessageLogInfoDTO(BasePydantic):
 
     id: int = 0
     study_id: int = 0
+    study: str = None
     time: datetime.time = None
     ts: datetime.datetime = None
+    event_ts: datetime.datetime = None
+    processing_ts: datetime.datetime = None
     category: str = None
     status: str = None
     level: str = None
+    device_id: int = 0
+    device: str = None
     provider: str = None
     description: str = None
 
