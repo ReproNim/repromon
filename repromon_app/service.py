@@ -40,9 +40,11 @@ class FeedbackService(BaseService):
         logger.debug(f"get_message(message_id={str(message_id)})")
         return self.dao.message.get_message_log_info(message_id)
 
-    def get_message_log(self, study_id: int) -> list[MessageLogInfoDTO]:
-        logger.debug(f"get_message_log(study_id={str(study_id)})")
-        return self.dao.message.get_message_log_infos(study_id)
+    def get_message_log(self, category_id: int = None,
+                        study_id: int = None) -> list[MessageLogInfoDTO]:
+        logger.debug(f"get_message_log(category_id={str(category_id)} "
+                     f"study_id={str(study_id)})")
+        return self.dao.message.get_message_log_infos(category_id, study_id)
 
     def get_study_header(self, study_id: int) -> StudyInfoDTO:
         logger.debug(f"get_study_header(study_id={str(study_id)})")

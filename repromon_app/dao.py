@@ -133,7 +133,8 @@ class MessageDAO(BaseDAO):
     def get_message_levels(self) -> list[MessageLevelEntity]:
         return self.session().query(MessageLevelEntity).all()
 
-    def get_message_log_infos(self, study_id: int) -> list[MessageLogInfoDTO]:
+    def get_message_log_infos(self, category_id: int,
+                              study_id: int) -> list[MessageLogInfoDTO]:
         return _list_dto(
             MessageLogInfoDTO,
             self.session()
@@ -164,11 +165,16 @@ class MessageDAO(BaseDAO):
                     left join data_provider dp on ml.provider_id = dp.id
                 where
                     (:study_id is null or ml.study_id = :study_id) and
+                    (:category_id is null or ml.category_id = :category_id) and
                     ml.is_visible = 'Y'
                 order by ml.event_ts, ml.created_on asc
+                limit 10000
                 """
                 ),
-                {"study_id": study_id},
+                {
+                    "study_id": study_id,
+                    "category_id": category_id,
+                },
             )
             .all(),
         )

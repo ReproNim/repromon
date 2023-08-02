@@ -7,7 +7,7 @@
     <h3>Feedback Screen Mock </h3>
 
 {% set study_header = feedback_service.get_study_header(study_id) %}
-{% set message_log = feedback_service.get_message_log(study_id) %}
+{% set message_log = feedback_service.get_message_log(study_id=study_id) %}
 {% set ce =  message_log | selectattr('level', 'eq', 'ERROR') | list | length %}
 {% set cw =  message_log | selectattr('level', 'eq', 'WARN') | list | length %}
 
