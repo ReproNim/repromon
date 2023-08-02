@@ -6,9 +6,12 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./feedback-screen.component.css']
 })
 export class FeedbackScreenComponent implements OnInit {
+  @Input() categoryId: number;
   @Input() studyId: number;
 
+
   constructor() {
+    this.categoryId = 0;
     this.studyId = 0;
   }
 
@@ -18,6 +21,6 @@ export class FeedbackScreenComponent implements OnInit {
   }
 
   async reload(): Promise<void> {
-    console.log('reload, studyId='+this.studyId);
+    console.log('reload, categoryId='+this.categoryId);
   }
 }

@@ -18,12 +18,12 @@ import {SelectionModel} from "@angular/cdk/collections";
   styleUrls: ['./message-log-view2.component.css']
 })
 export class MessageLogView2Component implements OnInit {
-  @Input() studyId: number = 0;
+  @Input() categoryId: number = 0;
   messageLog: MessageLogInfoDTO[] = [];
   errorCount: number = 0;
   warnCount: number = 0;
 
-  displayedColumns: string[] = ['_index', 'date', 'time', 'level', 'provider', 'description'];
+  displayedColumns: string[] = ['_index', 'date', 'time', 'level', 'provider', 'study', 'description'];
   dataSource!: MatTableDataSource<MessageLogInfoDTO>;
   selection: any;
 
@@ -44,11 +44,11 @@ export class MessageLogView2Component implements OnInit {
     this.dataSource = new MatTableDataSource<MessageLogInfoDTO>([]);
     this.selection = new SelectionModel<any>(false, []);
     this.pushListenerService.onMessage.subscribe(msg => {
-      if (msg.topic === 'feedback-log-refresh' && msg.body.study_id === this.studyId) {
+      if (msg.topic === 'feedback-log-refresh' && msg.body.category_id === this.categoryId) {
         this.reload();
       }
 
-      if (msg.topic === 'feedback-log-add' && msg.body.study_id === this.studyId) {
+      if (msg.topic === 'feedback-log-add' && msg.body.category_id === this.categoryId) {
         this.addMessage(msg.body.message_id);
       }
     });
@@ -110,7 +110,7 @@ export class MessageLogView2Component implements OnInit {
 
   async clearMessages(mask: string): Promise<void> {
     console.log("clearMessages(mask="+mask+")")
-    this.feedbackService.setMessageLogVisibility(this.studyId, false, mask).subscribe(
+    this.feedbackService.setMessageLogVisibility(this.categoryId, false, mask).subscribe(
       res => {
         console.log("clearMessages res="+res);
         //this.reload();
@@ -122,7 +122,7 @@ export class MessageLogView2Component implements OnInit {
   async fetchMessageLog(): Promise<void> {
     console.log('fetchMessageLog');
     try {
-      this.feedbackService.getMessageLog(this.studyId).subscribe(
+      this.feedbackService.getMessageLog(null, this.categoryId).subscribe(
         lst => {
           lst.forEach((element, index) => {
             element._index = index + 1;
@@ -157,7 +157,7 @@ export class MessageLogView2Component implements OnInit {
 
   async resetMessages(): Promise<void> {
     console.log('resetMessages');
-    this.feedbackService.setMessageLogVisibility(this.studyId, true, '*').subscribe(
+    this.feedbackService.setMessageLogVisibility(this.categoryId, true, '*').subscribe(
       res => {
         console.log("setMessageLogVisibility res="+res)
         // this.reload();

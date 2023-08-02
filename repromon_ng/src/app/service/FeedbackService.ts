@@ -18,9 +18,20 @@ export class FeedbackService {
     const url = `${this.apiUrl}/get_message?message_id=${messageId}`;
     return this.http.get<MessageLogInfoDTO | null>(url);
   }
-  getMessageLog(studyId: number): Observable<MessageLogInfoDTO[]> {
-    const url = `${this.apiUrl}/get_message_log?study_id=${studyId}`;
-    return this.http.get<MessageLogInfoDTO[]>(url);
+  getMessageLog(studyId: number | null, categoryId: number | null): Observable<MessageLogInfoDTO[]> {
+    let url = `${this.apiUrl}/get_message_log?`;
+    let q: string = "";
+    if( studyId!==null ) {
+      if( q.length>0 )
+        q += "&";
+      q += `study_id=${studyId}`;
+    }
+    if( categoryId!==null ) {
+      if( q.length>0 )
+        q += "&";
+      q += `category_id=${categoryId}`;
+    }
+    return this.http.get<MessageLogInfoDTO[]>(url+q);
   }
 
   getStudyHeader(studyId: number): Observable<StudyInfoDTO> {
@@ -28,8 +39,8 @@ export class FeedbackService {
     return this.http.get<StudyInfoDTO>(url);
   }
 
-  setMessageLogVisibility(studyId: number, visible_: boolean, level_: string): Observable<number>  {
-    const url = `${this.apiUrl}/set_message_log_visibility?study_id=${studyId}&visible=${visible_}&level=${level_}`;
+  setMessageLogVisibility(categoryId: number, visible_: boolean, level_: string): Observable<number>  {
+    const url = `${this.apiUrl}/set_message_log_visibility?category_id=${categoryId}&visible=${visible_}&level=${level_}`;
     return this.http.get<number>(url);
   }
 }

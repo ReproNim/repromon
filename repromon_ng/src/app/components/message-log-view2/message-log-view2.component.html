@@ -33,13 +33,13 @@
       <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef
                          mat-sort-header sortActionDescription="Sort by Date">Date</mat-header-cell>
-        <mat-cell *matCellDef="let item">{{ formatDate(item.ts) }}</mat-cell>
+        <mat-cell *matCellDef="let item">{{ formatDate(item.event_ts) }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="time">
         <mat-header-cell *matHeaderCellDef
                          mat-sort-header sortActionDescription="Sort by Time">Time</mat-header-cell>
-        <mat-cell *matCellDef="let item">{{ formatTime(item.ts) }}</mat-cell>
+        <mat-cell *matCellDef="let item">{{ formatTime(item.event_ts) }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="level">
@@ -47,6 +47,18 @@
                          mat-sort-header sortActionDescription="Sort by Level">Level</mat-header-cell>
         <mat-cell *matCellDef="let item" class="level-cell"
                   [style.color]="item.level === 'ERROR' ? 'red' : 'inherit'">{{ item.level }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="study">
+        <mat-header-cell *matHeaderCellDef
+                         mat-sort-header sortActionDescription="Sort by Study">Study</mat-header-cell>
+        <mat-cell *matCellDef="let item" >
+          <div *ngIf="item.study">
+            <div *ngFor="let part of item.study.split('/')">
+              {{ part }}
+            </div>
+          </div>
+          </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="provider">

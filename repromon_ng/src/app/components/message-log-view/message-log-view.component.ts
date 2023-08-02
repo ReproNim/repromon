@@ -64,7 +64,7 @@ export class MessageLogViewComponent implements OnInit {
   async fetchMessageLog(): Promise<void> {
     console.log('fetchMessageLog');
     try {
-      this.feedbackService.getMessageLog(this.studyId).subscribe(
+      this.feedbackService.getMessageLog(this.studyId, null).subscribe(
         lst => {
           this.messageLog = lst;
           this.updateCounters();

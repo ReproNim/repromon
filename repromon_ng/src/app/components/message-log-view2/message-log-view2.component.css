@@ -18,19 +18,23 @@
 }
 
 .mat-column-date {
-  flex: 0 0 110px;
+  flex: 0 0 106px;
 }
 
 .mat-column-time {
-  flex: 0 0 90px;
+  flex: 0 0 74px;
 }
 
 .mat-column-level {
-  flex: 0 0 65px;
+  flex: 0 0 60px;
 }
 
 .mat-column-provider {
   flex: 0 0 90px;
+}
+
+.mat-column-study {
+  flex: 0 0 135px;
 }
 
 .mat-column-description {
