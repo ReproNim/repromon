@@ -100,7 +100,7 @@ class MessageLogInfoDTO(BasePydantic):
     category: str = None
     status: str = None
     level: str = None
-    device_id: int = 0
+    device_id: Optional[int] = 0
     device: str = None
     provider: str = None
     description: str = None

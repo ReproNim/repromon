@@ -116,13 +116,18 @@ class MessageService(BaseService):
 
         msg: MessageLogEntity = MessageLogEntity()
         msg.study_id = study_id
+        if sd:
+            msg.study_name = sd.name
+            msg.status_id = sd.status_id
         msg.category_id = category_id
         msg.level_id = level_id
         msg.provider_id = provider_id
-        msg.status_id = sd.status_id
         msg.is_visible = "Y"
         msg.description = description
         msg.payload_id = p.id
+        msg.event_ts = datetime.now()
+        msg.processing_ts = datetime.now()
+        msg.device_id = 1  # TODO: hardcode MRI device for testing
         msg.created_on = datetime.now()
         msg.created_by = username
 
@@ -134,6 +139,7 @@ class MessageService(BaseService):
         # NOTE: in future it should be published to message broker
         # rather than via PushService directly.
         PushService().push_message("feedback-log-add", {
+            "category_id": category_id,
             "study_id": msg.study_id,
             "message_id": msg.id}
         )
