@@ -50,19 +50,21 @@ class FeedbackService(BaseService):
         logger.debug(f"get_study_header(study_id={str(study_id)})")
         return self.dao.study.get_study_info(study_id)
 
-    def set_message_log_visibility(self, study_id: int,
+    def set_message_log_visibility(self, category_id: int,
                                    visible: bool, level: str) -> int:
-        logger.debug(f"set_message_log_visibility(study_id={str(study_id)},"
+        logger.debug(f"set_message_log_visibility(category_id={str(category_id)},"
                      f" visible={visible}, level={level})")
         l: list[int] = [MessageLevel.ID_INFO,
                         MessageLevel.ID_WARN,
                         MessageLevel.ID_ERROR] \
             if level == MessageLevel.ANY else [MessageLevel.parse(level)]
         v: str = 'Y' if visible else 'N'
-        res = self.dao.message.update_message_log_visibility(study_id, v, l)
+        res = self.dao.message.update_message_log_visibility(category_id, v, l,
+                                                             security_context().username)
         self.dao.message.commit()
         if res > 0:
-            PushService().push_message("feedback-log-refresh", {"study_id": study_id})
+            PushService().push_message("feedback-log-refresh",
+                                       {"category_id": category_id})
         return res
 
 

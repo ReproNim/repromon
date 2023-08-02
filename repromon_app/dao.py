@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy.sql import text
+from sqlalchemy.sql import func, text
 
 from repromon_app.model import (BaseDTO, DataProviderEntity,
                                 MessageLevelEntity, MessageLogEntity,
@@ -217,15 +217,18 @@ class MessageDAO(BaseDAO):
             .first(),
         )
 
-    def update_message_log_visibility(self, study_id: int,
+    def update_message_log_visibility(self, category_id: int,
                                       is_visible: str,
-                                      levels: list[int]) -> int:
+                                      levels: list[int],
+                                      updated_by: str) -> int:
         return self.session().query(MessageLogEntity).filter(
-            MessageLogEntity.study_id == study_id,
+            MessageLogEntity.category_id == category_id,
             MessageLogEntity.level_id.in_(levels)
         ).update(
             {
-                MessageLogEntity.is_visible: is_visible
+                MessageLogEntity.is_visible: is_visible,
+                MessageLogEntity.visible_updated_by: updated_by,
+                MessageLogEntity.visible_updated_on: func.current_timestamp()
             },
             synchronize_session=False
         )

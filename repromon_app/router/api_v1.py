@@ -95,8 +95,8 @@ def create_api_v1_router() -> APIRouter:
                        summary="set_message_log_visibility",
                        description="Update visibility for message log")
     def set_message_log_visibility(request: Request,
-                                   study_id: int = Query(...,
-                                                         description="Study ID"),
+                                   category_id: int = Query(...,
+                                                            description="Category ID"),
                                    visible: bool = Query(...,
                                                          description="Is row visible"),
                                    level: str = Query(...,
@@ -105,7 +105,7 @@ def create_api_v1_router() -> APIRouter:
                                    ) -> int:
         logger.debug("set_message_log_visibility")
         security_check(rolename=Rolename.DATA_COLLECTOR)
-        return FeedbackService().set_message_log_visibility(study_id, visible, level)
+        return FeedbackService().set_message_log_visibility(category_id, visible, level)
 
     ##############################################
     # LoginService public API
