@@ -145,12 +145,11 @@ class MessageDAO(BaseDAO):
                     ml.id,
                     ml.study_id,
                     ml.study_name as study,
-                    time(ml.created_on) as time,
-                    ml.created_on as ts,
-                    ml.event_ts,
-                    ml.processing_ts,
+                    ml.event_on,
+                    ml.registered_on,
+                    ml.recorded_on,
+                    ml.recorded_by,
                     mc.category,
-                    ss.status,
                     ll.level,
                     ml.device_id,
                     dv.kind as device,
@@ -159,7 +158,6 @@ class MessageDAO(BaseDAO):
                 from
                     message_log ml
                     left join message_category mc on ml.category_id = mc.id
-                    left join study_status ss on ml.status_id = ss.id
                     left join message_level ll on ml.level_id = ll.id
                     left join device dv on ml.device_id = dv.id
                     left join data_provider dp on ml.provider_id = dp.id
@@ -167,7 +165,7 @@ class MessageDAO(BaseDAO):
                     (:study_id is null or ml.study_id = :study_id) and
                     (:category_id is null or ml.category_id = :category_id) and
                     ml.is_visible = 'Y'
-                order by ml.event_ts, ml.created_on asc
+                order by ml.event_on, ml.recorded_on asc
                 limit 10000
                 """
                 ),
@@ -190,12 +188,11 @@ class MessageDAO(BaseDAO):
                     ml.id,
                     ml.study_id,
                     ml.study_name as study,
-                    time(ml.created_on) as time,
-                    ml.created_on as ts,
-                    ml.event_ts,
-                    ml.processing_ts,
+                    ml.event_on,
+                    ml.registered_on,
+                    ml.recorded_on,
+                    ml.recorded_by,
                     mc.category,
-                    ss.status,
                     ll.level,
                     ml.device_id,
                     dv.kind as device,
@@ -204,7 +201,6 @@ class MessageDAO(BaseDAO):
                 from
                     message_log ml
                     left join message_category mc on ml.category_id = mc.id
-                    left join study_status ss on ml.status_id = ss.id
                     left join message_level ll on ml.level_id = ll.id
                     left join device dv on ml.device_id = dv.id
                     left join data_provider dp on ml.provider_id = dp.id

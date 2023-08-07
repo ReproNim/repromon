@@ -36,8 +36,8 @@
         (click)="selectRow(item.id)"
       >
         <div class="column" style="width: 30px;">{{ index + 1 }}</div>
-        <div class="column" style="width: 110px;">{{ formatDate(item.ts) }}</div>
-        <div class="column" style="width: 90px;">{{ formatTime(item.ts) }}</div>
+        <div class="column" style="width: 110px;">{{ formatDate(item.event_on) }}</div>
+        <div class="column" style="width: 90px;">{{ formatTime(item.event_on) }}</div>
         <div class="column" style="width: 70px;" [style.color]="item.level === 'ERROR' ? 'red' : 'inherit'">{{ item.level }}</div>
         <div class="column" style="width: 120px;">{{ item.provider }}</div>
         <div class="column flex-column" style="width: 1000px;">{{ item.description }}</div>

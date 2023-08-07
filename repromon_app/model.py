@@ -93,12 +93,11 @@ class MessageLogInfoDTO(BasePydantic):
     id: int = 0
     study_id: Optional[int] = None
     study: str = None
-    time: datetime.time = None
-    ts: datetime.datetime = None
-    event_ts: datetime.datetime = None
-    processing_ts: datetime.datetime = None
+    event_on: datetime.datetime = None
+    registered_on: datetime.datetime = None
+    recorded_on: datetime.datetime = None
+    recorded_by: str = None
     category: str = None
-    status: str = None
     level: str = None
     device_id: Optional[int] = 0
     device: str = None
@@ -237,16 +236,15 @@ class MessageLogEntity(BaseEntity):
     provider_id = Column(Integer)
     study_id = Column(Integer)
     study_name = Column(String(255))
-    status_id = Column(Integer)
     is_visible = Column(String(1), default='Y')
     visible_updated_on = Column(TIMESTAMP)
     visible_updated_by = Column(String(15))
     description = Column(String(255))
     payload = Column(JSON)
-    event_ts = Column(TIMESTAMP)
-    processing_ts = Column(TIMESTAMP)
-    created_on = Column(TIMESTAMP)
-    created_by = Column(String(15))
+    event_on = Column(TIMESTAMP)
+    registered_on = Column(TIMESTAMP)
+    recorded_on = Column(TIMESTAMP)
+    recorded_by = Column(String(15))
 
     def __repr__(self):
         return "MessageLogEntity(id={self.id}, " \
@@ -256,16 +254,15 @@ class MessageLogEntity(BaseEntity):
                "provider_id='{self.provider_id}', " \
                "study_id='{self.study_id}', " \
                "study_name='{self.study_name}', " \
-               "status_id='{self.status_id}', " \
                "is_visible='{self.is_visible}', " \
                "visible_updated_on='{self.visible_updated_on}', " \
                "visible_updated_by='{self.visible_updated_by}', " \
                "description='{self.description}', " \
                "payload='{self.payload}', " \
-               "event_ts='{self.event_ts}', " \
-               "processing_ts='{self.processing_ts}', " \
-               "created_on='{self.created_on}', " \
-               "created_by='{self.created_by}')".format(self=self)
+               "event_on='{self.event_on}', " \
+               "registered_on='{self.registered_on}', " \
+               "recorded_on='{self.recorded_on}', " \
+               "recorded_by='{self.recorded_by}')".format(self=self)
 
 
 class RoleEntity(BaseEntity):

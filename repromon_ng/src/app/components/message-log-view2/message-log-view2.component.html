@@ -33,13 +33,13 @@
       <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef
                          mat-sort-header sortActionDescription="Sort by Date">Date</mat-header-cell>
-        <mat-cell *matCellDef="let item">{{ formatDate(item.event_ts) }}</mat-cell>
+        <mat-cell *matCellDef="let item">{{ formatDate(item.event_on) }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="time">
         <mat-header-cell *matHeaderCellDef
                          mat-sort-header sortActionDescription="Sort by Time">Time</mat-header-cell>
-        <mat-cell *matCellDef="let item">{{ formatTime(item.event_ts) }}</mat-cell>
+        <mat-cell *matCellDef="let item">{{ formatTime(item.event_on) }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="level">

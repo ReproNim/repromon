@@ -107,17 +107,16 @@ class MessageService(BaseService):
         msg.study_id = study_id
         if sd:
             msg.study_name = sd.name
-            msg.status_id = sd.status_id
         msg.category_id = category_id
         msg.level_id = level_id
         msg.provider_id = provider_id
         msg.is_visible = "Y"
         msg.description = description
         msg.payload = payload
-        msg.event_ts = datetime.now()
-        msg.processing_ts = datetime.now()
+        msg.event_on = datetime.now()
+        msg.registered_on = datetime.now()
         msg.device_id = 1  # TODO: hardcode MRI device for testing
-        msg.created_on = datetime.now()
+        msg.recorded_on = datetime.now()
         msg.created_by = username
 
         self.dao.message.add(msg)

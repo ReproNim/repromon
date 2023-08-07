@@ -3,12 +3,11 @@ export interface MessageLogInfoDTO {
   id: number;
   study_id: number;
   study: string
-  time: string;
-  ts: string;
-  event_ts: string;
-  processing_ts: string;
+  event_on: string;
+  registered_on: string;
+  recorded_on: string;
+  recorded_by: string;
   category: string;
-  status: string;
   level: string;
   device_id: number;
   device: string;
