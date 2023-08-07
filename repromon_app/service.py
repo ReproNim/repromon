@@ -1,12 +1,11 @@
 import asyncio
 import logging
-import uuid
 from datetime import datetime
 
 from repromon_app.dao import DAO
 from repromon_app.model import (LoginInfoDTO, MessageLevel, MessageLogEntity,
-                                MessageLogInfoDTO, MessagePayloadEntity,
-                                PushMessageDTO, StudyDataEntity, StudyInfoDTO)
+                                MessageLogInfoDTO, PushMessageDTO,
+                                StudyDataEntity, StudyInfoDTO)
 from repromon_app.security import security_context
 
 logger = logging.getLogger(__name__)
@@ -104,16 +103,6 @@ class MessageService(BaseService):
         logger.debug("send_message(...)")
         sd: StudyDataEntity = self.dao.study.get_study_data(study_id)
 
-        p: MessagePayloadEntity = MessagePayloadEntity()
-        p.uid = str(uuid.uuid4())
-        p.payload = payload
-        p.created_on = datetime.now()
-        p.created_by = username
-
-        self.dao.message.add(p)
-        self.dao.message.flush()
-        logger.debug(f"p={str(p)}")
-
         msg: MessageLogEntity = MessageLogEntity()
         msg.study_id = study_id
         if sd:
@@ -124,7 +113,7 @@ class MessageService(BaseService):
         msg.provider_id = provider_id
         msg.is_visible = "Y"
         msg.description = description
-        msg.payload_id = p.id
+        msg.payload = payload
         msg.event_ts = datetime.now()
         msg.processing_ts = datetime.now()
         msg.device_id = 1  # TODO: hardcode MRI device for testing

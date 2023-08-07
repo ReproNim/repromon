@@ -3,7 +3,7 @@ import logging
 from typing import Optional
 
 from pydantic import BaseModel
-from sqlalchemy import (JSON, TIMESTAMP, Column, Index, Integer, String, Text,
+from sqlalchemy import (JSON, TIMESTAMP, Column, Index, Integer, String,
                         UniqueConstraint)
 from sqlalchemy.orm import as_declarative
 
@@ -242,7 +242,7 @@ class MessageLogEntity(BaseEntity):
     visible_updated_on = Column(TIMESTAMP)
     visible_updated_by = Column(String(15))
     description = Column(String(255))
-    payload_id = Column(Integer)
+    payload = Column(JSON)
     event_ts = Column(TIMESTAMP)
     processing_ts = Column(TIMESTAMP)
     created_on = Column(TIMESTAMP)
@@ -261,28 +261,9 @@ class MessageLogEntity(BaseEntity):
                "visible_updated_on='{self.visible_updated_on}', " \
                "visible_updated_by='{self.visible_updated_by}', " \
                "description='{self.description}', " \
-               "payload_id='{self.payload_id}', " \
+               "payload='{self.payload}', " \
                "event_ts='{self.event_ts}', " \
                "processing_ts='{self.processing_ts}', " \
-               "created_on='{self.created_on}', " \
-               "created_by='{self.created_by}')".format(self=self)
-
-
-class MessagePayloadEntity(BaseEntity):
-    """Entity for "message_payload" table
-    """
-    __tablename__ = 'message_payload'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    uid = Column(String(36))
-    payload = Column(Text)
-    created_on = Column(TIMESTAMP)
-    created_by = Column(String(15))
-
-    def __repr__(self):
-        return "MessagePayloadEntity(id={self.id}, " \
-               "uid='{self.uid}', " \
-               "payload='{self.payload}', " \
                "created_on='{self.created_on}', " \
                "created_by='{self.created_by}')".format(self=self)
 
