@@ -69,8 +69,10 @@ def create_admin_router() -> APIRouter:
         msg: MessageLogEntity = MessageService().send_message(
             username,
             study_id,
+            None,
             MessageCategoryId.FEEDBACK,
             level_id,
+            1,
             provider_id,
             description,
             payload

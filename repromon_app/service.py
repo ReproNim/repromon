@@ -95,30 +95,37 @@ class MessageService(BaseService):
             self,
             username: str,
             study_id: int,
+            study_name: str,
             category_id: int,
             level_id: int,
+            device_id: int,
             provider_id: int,
             description: str,
             payload: str,
+            event_on: datetime = None,
+            registered_on: datetime = None
     ) -> MessageLogEntity:
         logger.debug("send_message(...)")
-        sd: StudyDataEntity = self.dao.study.get_study_data(study_id)
+        sd: StudyDataEntity = self.dao.study.get_study_data(study_id) \
+            if study_id else None
 
         msg: MessageLogEntity = MessageLogEntity()
         msg.study_id = study_id
         if sd:
             msg.study_name = sd.name
+        if study_name:
+            msg.study_name = study_name
         msg.category_id = category_id
         msg.level_id = level_id
         msg.provider_id = provider_id
         msg.is_visible = "Y"
         msg.description = description
         msg.payload = payload
-        msg.event_on = datetime.now()
-        msg.registered_on = datetime.now()
-        msg.device_id = 1  # TODO: hardcode MRI device for testing
+        msg.event_on = event_on if event_on else datetime.now()
+        msg.registered_on = registered_on if registered_on else datetime.now()
+        msg.device_id = device_id
         msg.recorded_on = datetime.now()
-        msg.created_by = username
+        msg.recorded_by = username
 
         self.dao.message.add(msg)
         self.dao.message.commit()

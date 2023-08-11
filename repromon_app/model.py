@@ -1,6 +1,6 @@
 import datetime
 import logging
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Optional
 
 from pydantic import BaseModel
@@ -14,7 +14,24 @@ logger = logging.getLogger(__name__)
 ############################################
 # Model/Constants
 
-class DataProviderId(int, Enum):
+class IntEnumEx(IntEnum):
+    @classmethod
+    def parse(cls, v: str) -> int:
+        try:
+            n: int = int(v)  # parse as an integer first
+            if n in iter(cls):
+                return n
+            raise Exception(f"'{v}' is not a valid ID for {cls.__name__}")
+        except ValueError:
+            pass
+
+        try:
+            return cls[v.upper()]
+        except KeyError:
+            raise ValueError(f"'{v}' is not a valid {cls.__name__}")
+
+
+class DataProviderId(IntEnumEx):
     REPROIN = 1
     REPROSTIM = 2
     REPROEVENTS = 3
@@ -24,11 +41,11 @@ class DataProviderId(int, Enum):
     MRI = 7
 
 
-class MessageCategoryId(int, Enum):
+class MessageCategoryId(IntEnumEx):
     FEEDBACK = 1
 
 
-class MessageLevelId(int, Enum):
+class MessageLevelId(IntEnumEx):
     ANY = -1
     INFO = 1
     WARN = 2
@@ -37,7 +54,7 @@ class MessageLevelId(int, Enum):
     @classmethod
     def parse(cls, v: str) -> int:
         try:
-            return MessageLevelId.ANY if v == '*' else cls[v.upper()]
+            return MessageLevelId.ANY if v == '*' else super().parse(v)
         except KeyError:
             raise ValueError(f"'{v}' is not a valid MessageLevel")
 

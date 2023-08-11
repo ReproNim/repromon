@@ -1,13 +1,17 @@
 import logging
+from datetime import datetime
 from typing import Optional
 
 from fastapi import (APIRouter, Query, Request, WebSocket, WebSocketDisconnect,
                      WebSocketException)
 
-from repromon_app.model import (LoginInfoDTO, MessageLogInfoDTO,
+from repromon_app.model import (DataProviderId, LoginInfoDTO,
+                                MessageCategoryId, MessageLevelId,
+                                MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, Rolename, StudyInfoDTO)
-from repromon_app.security import security_check
-from repromon_app.service import FeedbackService, LoginService, PushService
+from repromon_app.security import security_check, security_context
+from repromon_app.service import (FeedbackService, LoginService,
+                                  MessageService, PushService)
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -120,6 +124,57 @@ def create_api_v1_router() -> APIRouter:
         logger.debug("login_get_current_user")
         security_check(rolename=Rolename.ANY)
         return LoginService().get_current_user()
+
+    ##############################################
+    # MessageService public API
+
+    # @security: admin | sys_data_entry
+    @api_v1_router.post("/message/send_message",
+                        tags=["MessageService"],
+                        summary="send_message",
+                        description="Send ReproMon message")
+    def send_message(request: Request,
+                     study: Optional[str] = Query(None,
+                                                  description="Study name or ID if any"),
+                     category: str = Query(...,
+                                           description="Category name or ID"),
+                     level: str = Query(...,
+                                        description="Message level, int ID or  "
+                                                    "level name"),
+                     device: Optional[str] = Query(None,
+                                                   description="Device ID if any"),
+                     provider: str = Query(...,
+                                           description="Provider name or ID"),
+                     description: str = Query(...,
+                                              description="Message description"),
+                     payload: Optional[str] = Query(None,
+                                                    description="Message JSON"
+                                                                " payload if any"),
+                     event_on: Optional[datetime] = Query(None,
+                                                          description="Timestamp "
+                                                                      "of the event"),
+                     registered_on: Optional[datetime] =
+                     Query(None,
+                           description="Timestamp of "
+                                       "registration"),
+                     ) -> int:
+        logger.debug("send_message")
+        security_check(rolename=[Rolename.ADMIN, Rolename.SYS_DATA_ENTRY])
+        o: MessageLogEntity = MessageService().send_message(
+            security_context().username,
+            None,
+            study,
+            MessageCategoryId.parse(category),
+            MessageLevelId.parse(level),
+            1,  # TODO: device ID
+            DataProviderId.parse(provider),
+            description,
+            payload,
+            event_on,
+            registered_on
+        )
+        logger.debug(f"id={o.id}")
+        return o.id
 
     ##############################################
     # WebSocket public API
