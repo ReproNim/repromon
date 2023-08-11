@@ -1,5 +1,6 @@
 import datetime
 import logging
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
@@ -13,42 +14,35 @@ logger = logging.getLogger(__name__)
 ############################################
 # Model/Constants
 
-class DataProvider:
-    ID_REPROIN: int = 1
-    ID_REPROSTIM: int = 2
-    ID_REPROEVENTS: int = 3
-    ID_PACS: int = 4
-    ID_NOISSEUR: int = 5
-    ID_DICOM_QA: int = 6
-    ID_MRI: int = 7
+class DataProviderId(int, Enum):
+    REPROIN = 1
+    REPROSTIM = 2
+    REPROEVENTS = 3
+    PACS = 4
+    NOISSEUR = 5
+    DICOM_QA = 6
+    MRI = 7
 
 
-class MessageCategory:
-    ID_FEEDBACK: int = 1
+class MessageCategoryId(int, Enum):
+    FEEDBACK = 1
 
 
-class MessageLevel:
-    ANY: str = "*"
-    INFO: str = "INFO"
-    WARN: str = "WARN"
-    ERROR: str = "ERROR"
-    #
-    ID_INFO: int = 1
-    ID_WARN: int = 2
-    ID_ERROR: int = 3
+class MessageLevelId(int, Enum):
+    ANY = -1
+    INFO = 1
+    WARN = 2
+    ERROR = 3
 
     @classmethod
-    def parse(cls, level: str) -> int:
-        if level == MessageLevel.INFO:
-            return MessageLevel.ID_INFO
-        if level == MessageLevel.WARN:
-            return MessageLevel.ID_WARN
-        if level == MessageLevel.ERROR:
-            return MessageLevel.ID_ERROR
-        raise Exception(f"Unknown level: {level}")
+    def parse(cls, v: str) -> int:
+        try:
+            return MessageLevelId.ANY if v == '*' else cls[v.upper()]
+        except KeyError:
+            raise ValueError(f"'{v}' is not a valid MessageLevel")
 
 
-class Rolename:
+class Rolename(str, Enum):
     ANY: str = "*"
     ADMIN: str = "admin"
     DATA_COLLECTOR: str = "data_collector"

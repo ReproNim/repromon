@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 from repromon_app.config import app_config
 from repromon_app.dao import DAO
-from repromon_app.model import MessageCategory, MessageLogEntity, Rolename
+from repromon_app.model import MessageCategoryId, MessageLogEntity, Rolename
 from repromon_app.security import security_check, security_context
 from repromon_app.service import MessageService
 
@@ -69,7 +69,7 @@ def create_admin_router() -> APIRouter:
         msg: MessageLogEntity = MessageService().send_message(
             username,
             study_id,
-            MessageCategory.ID_FEEDBACK,
+            MessageCategoryId.FEEDBACK,
             level_id,
             provider_id,
             description,
