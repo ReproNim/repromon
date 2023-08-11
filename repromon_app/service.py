@@ -54,9 +54,9 @@ class FeedbackService(BaseService):
         logger.debug(f"set_message_log_visibility(category_id={str(category_id)},"
                      f" visible={visible}, level={level})")
         level_parsed: int = MessageLevelId.parse(level)
-        l: list[int] = [MessageLevelId.ID_INFO,
-                        MessageLevelId.ID_WARN,
-                        MessageLevelId.ID_ERROR] \
+        l: list[int] = [MessageLevelId.INFO,
+                        MessageLevelId.WARN,
+                        MessageLevelId.ERROR] \
             if level_parsed == MessageLevelId.ANY else [level_parsed]
         v: str = 'Y' if visible else 'N'
         res = self.dao.message.update_message_log_visibility(category_id, v, l,
