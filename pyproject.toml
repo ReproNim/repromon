@@ -35,6 +35,7 @@ build-backend = "poetry.masonry.api"
 #        poetry run srv
 
 srv = "repromon_app.srv:main"
+test_send_message = "repromon_app.tests.send_message:main"
 test_model = "repromon_app.tests.test_model:test_1"
 
 [tool.codespell]
