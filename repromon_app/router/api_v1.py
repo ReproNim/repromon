@@ -71,12 +71,17 @@ def create_api_v1_router() -> APIRouter:
                                  Query(None,
                                        description="Category ID"),
                                  study_id: Optional[int] = Query(None,
-                                                                 description="Study ID")
+                                                                 description="Study ID"),
+                                 interval_sec: Optional[int] =
+                                 Query(None,
+                                       description="Interval in "
+                                                   "seconds for latest messages"),
                                  ) -> list[MessageLogInfoDTO]:
         logger.debug("feedback_get_message_log")
         security_check(rolename=Rolename.DATA_COLLECTOR)
         return FeedbackService().get_message_log(category_id=category_id,
-                                                 study_id=study_id)
+                                                 study_id=study_id,
+                                                 interval_sec=interval_sec)
 
     # @security: role=data_collector, auth
     @api_v1_router.get("/feedback/get_study_header",

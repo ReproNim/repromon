@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timedelta
 
 from sqlalchemy.sql import func, text
 
@@ -134,7 +135,11 @@ class MessageDAO(BaseDAO):
         return self.session().query(MessageLevelEntity).all()
 
     def get_message_log_infos(self, category_id: int,
-                              study_id: int) -> list[MessageLogInfoDTO]:
+                              study_id: int,
+                              interval_sec: int) -> list[MessageLogInfoDTO]:
+        start_event_on: datetime.datetime = \
+            (datetime.now() - timedelta(seconds=interval_sec))\
+            if interval_sec else None
         return _list_dto(
             MessageLogInfoDTO,
             self.session()
@@ -164,6 +169,8 @@ class MessageDAO(BaseDAO):
                 where
                     (:study_id is null or ml.study_id = :study_id) and
                     (:category_id is null or ml.category_id = :category_id) and
+                    (:start_event_on is null or
+                        ml.event_on >= :start_event_on) and
                     ml.is_visible = 'Y'
                 order by ml.event_on, ml.recorded_on asc
                 limit 10000
@@ -172,6 +179,7 @@ class MessageDAO(BaseDAO):
                 {
                     "study_id": study_id,
                     "category_id": category_id,
+                    "start_event_on": start_event_on,
                 },
             )
             .all(),
