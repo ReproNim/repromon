@@ -1,6 +1,8 @@
+import json
 import logging.config
 import random
 import time
+from datetime import datetime, timedelta
 
 import requests
 
@@ -119,6 +121,16 @@ def send_message():
     try:
         # Define your query parameters
         params = random.choice(SAMPLE_MESSAGES)
+
+        # set sporadically event_on/registered_on time manually
+        if random.choice([False, True, False]):
+            dt_sec = random.randint(10, 600)
+            params["event_on"] = (datetime.now() - timedelta(seconds=dt_sec)).isoformat()
+            if random.choice([True, False, True]):
+                params["registered_on"] = \
+                    (datetime.now() - timedelta(seconds=int(dt_sec / 2))).isoformat()
+
+        logger.debug(f"params={json.dumps(params, indent=4)}")
 
         response = requests.post(f"{API_BASE_URL}/message/send_message", params=params)
 
