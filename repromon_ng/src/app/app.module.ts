@@ -15,15 +15,18 @@ import { StudyHeaderComponent } from './components/study-header/study-header.com
 import { MessageLogViewComponent } from './components/message-log-view/message-log-view.component';
 import { MessageLogView2Component } from './components/message-log-view2/message-log-view2.component';
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FeedbackHeaderComponent } from './components/feedback-header/feedback-header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AppHeaderComponent,
+    FeedbackHeaderComponent,
     FeedbackScreenComponent,
     StudyHeaderComponent,
     MessageLogViewComponent,
-    MessageLogView2Component
+    MessageLogView2Component,
+    FeedbackHeaderComponent
   ],
   imports: [
     AppRoutingModule,

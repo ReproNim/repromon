@@ -46,7 +46,7 @@
         <mat-header-cell *matHeaderCellDef class="level-cell"
                          mat-sort-header sortActionDescription="Sort by Level">Level</mat-header-cell>
         <mat-cell *matCellDef="let item" class="level-cell"
-                  [style.color]="item.level === 'ERROR' ? 'red' : 'inherit'">{{ item.level }}</mat-cell>
+                  [style.color]="item.level === 'ERROR' ? 'red' : (item.level === 'WARN' ? 'peru' : 'inherit')">{{ item.level }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="study">
