@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from sqlalchemy.sql import func, text
 
-from repromon_app.model import (BaseDTO, DataProviderEntity,
+from repromon_app.model import (BaseDTO, DataProviderEntity, DeviceEntity,
                                 MessageLevelEntity, MessageLogEntity,
                                 MessageLogInfoDTO, RoleEntity, RoleInfoDTO,
                                 StudyDataEntity, StudyInfoDTO, UserInfoDTO)
@@ -130,6 +130,9 @@ class MessageDAO(BaseDAO):
 
     def get_data_providers(self) -> list[DataProviderEntity]:
         return self.session().query(DataProviderEntity).all()
+
+    def get_devices(self) -> list[DeviceEntity]:
+        return self.session().query(DeviceEntity).all()
 
     def get_message_levels(self) -> list[MessageLevelEntity]:
         return self.session().query(MessageLevelEntity).all()

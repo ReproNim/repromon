@@ -3,9 +3,9 @@ import logging
 from datetime import datetime
 
 from repromon_app.dao import DAO
-from repromon_app.model import (LoginInfoDTO, MessageLevelId, MessageLogEntity,
-                                MessageLogInfoDTO, PushMessageDTO,
-                                StudyDataEntity, StudyInfoDTO)
+from repromon_app.model import (DeviceEntity, LoginInfoDTO, MessageLevelId,
+                                MessageLogEntity, MessageLogInfoDTO,
+                                PushMessageDTO, StudyDataEntity, StudyInfoDTO)
 from repromon_app.security import security_context
 
 logger = logging.getLogger(__name__)
@@ -34,6 +34,10 @@ class AccountService(BaseService):
 class FeedbackService(BaseService):
     def __init__(self):
         super().__init__()
+
+    def get_devices(self) -> list[DeviceEntity]:
+        logger.debug("get_devices()")
+        return self.dao.message.get_devices()
 
     def get_message(self, message_id: int) -> MessageLogInfoDTO:
         logger.debug(f"get_message(message_id={str(message_id)})")

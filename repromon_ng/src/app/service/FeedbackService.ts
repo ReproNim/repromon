@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AppConfig } from '../config/AppConfig';
 import { MessageLogInfoDTO } from '../model/MessageLogInfoDTO';
 import { StudyInfoDTO } from '../model/StudyInfoDTO';
+import {DeviceEntity} from "../model/DeviceEntity";
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,10 @@ export class FeedbackService {
 
   constructor(private http: HttpClient) { }
 
+  getDevices(): Observable<DeviceEntity[]> {
+    const url = `${this.apiUrl}/get_devices`;
+    return this.http.get<DeviceEntity[]>(url);
+  }
   getMessage(messageId: number): Observable<MessageLogInfoDTO | null> {
     const url = `${this.apiUrl}/get_message?message_id=${messageId}`;
     return this.http.get<MessageLogInfoDTO | null>(url);

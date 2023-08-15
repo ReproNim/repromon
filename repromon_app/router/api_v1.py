@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import (APIRouter, Query, Request, WebSocket, WebSocketDisconnect,
                      WebSocketException)
 
-from repromon_app.model import (DataProviderId, LoginInfoDTO,
+from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
                                 MessageCategoryId, MessageLevelId,
                                 MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, Rolename, StudyInfoDTO)
@@ -45,6 +45,17 @@ def create_api_v1_router() -> APIRouter:
 
     ##############################################
     # FeedbackService public API
+
+    # @security: role=data_collector, auth
+    @api_v1_router.get("/feedback/get_devices",
+                       response_model=list,
+                       tags=["FeedbackService"],
+                       summary="get_devices",
+                       description="Get DeviceEntity device list")
+    def feedback_get_devices(request: Request) -> list[DeviceEntity]:
+        logger.debug("feedback_get_devices()")
+        security_check(rolename=Rolename.DATA_COLLECTOR)
+        return FeedbackService().get_devices()
 
     # @security: role=data_collector, auth
     @api_v1_router.get("/feedback/get_message",
