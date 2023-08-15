@@ -18,7 +18,8 @@ export class FeedbackService {
     const url = `${this.apiUrl}/get_message?message_id=${messageId}`;
     return this.http.get<MessageLogInfoDTO | null>(url);
   }
-  getMessageLog(studyId: number | null, categoryId: number | null): Observable<MessageLogInfoDTO[]> {
+  getMessageLog(studyId: number | null, categoryId: number | null,
+                intervalSec: number | null): Observable<MessageLogInfoDTO[]> {
     let url = `${this.apiUrl}/get_message_log?`;
     let q: string = "";
     if( studyId!==null ) {
@@ -30,6 +31,11 @@ export class FeedbackService {
       if( q.length>0 )
         q += "&";
       q += `category_id=${categoryId}`;
+    }
+    if( intervalSec!==null ) {
+      if( q.length>0 )
+        q += "&";
+      q += `interval_sec=${intervalSec}`;
     }
     return this.http.get<MessageLogInfoDTO[]>(url+q);
   }

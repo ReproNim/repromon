@@ -122,7 +122,8 @@ export class MessageLogView2Component implements OnInit {
   async fetchMessageLog(): Promise<void> {
     console.log('fetchMessageLog');
     try {
-      this.feedbackService.getMessageLog(null, this.categoryId).subscribe(
+      this.feedbackService.getMessageLog(null, this.categoryId,
+          AppConfig.FEEDBACK_INTERVAL_SEC).subscribe(
         lst => {
           lst.forEach((element, index) => {
             element._index = index + 1;
