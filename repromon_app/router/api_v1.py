@@ -111,10 +111,16 @@ def create_api_v1_router() -> APIRouter:
                                    level: str = Query(...,
                                                       description="Level to update "
                                                                   "or * for any"),
+                                   interval_sec: Optional[int] =
+                                   Query(None,
+                                         description="Interval in "
+                                                     "seconds for latest messages"),
                                    ) -> int:
         logger.debug("set_message_log_visibility")
         security_check(rolename=Rolename.DATA_COLLECTOR)
-        return FeedbackService().set_message_log_visibility(category_id, visible, level)
+        return FeedbackService().set_message_log_visibility(category_id,
+                                                            visible, level,
+                                                            interval_sec)
 
     ##############################################
     # LoginService public API

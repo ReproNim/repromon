@@ -224,11 +224,19 @@ class MessageDAO(BaseDAO):
     def update_message_log_visibility(self, category_id: int,
                                       is_visible: str,
                                       levels: list[int],
+                                      interval_sec: int,
                                       updated_by: str) -> int:
-        return self.session().query(MessageLogEntity).filter(
+        query = self.session().query(MessageLogEntity).filter(
             MessageLogEntity.category_id == category_id,
             MessageLogEntity.level_id.in_(levels)
-        ).update(
+        )
+
+        if interval_sec and interval_sec > 0:
+            start_event_on: datetime.datetime = \
+                (datetime.now() - timedelta(seconds=interval_sec))
+            query = query.filter(MessageLogEntity.event_on >= start_event_on)
+
+        return query.update(
             {
                 MessageLogEntity.is_visible: is_visible,
                 MessageLogEntity.visible_updated_by: updated_by,

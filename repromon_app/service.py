@@ -53,9 +53,11 @@ class FeedbackService(BaseService):
         return self.dao.study.get_study_info(study_id)
 
     def set_message_log_visibility(self, category_id: int,
-                                   visible: bool, level: str) -> int:
+                                   visible: bool, level: str,
+                                   interval_sec: int) -> int:
         logger.debug(f"set_message_log_visibility(category_id={str(category_id)},"
-                     f" visible={visible}, level={level})")
+                     f" visible={visible}, level={level}, "
+                     f"interval_sec={interval_sec})")
         level_parsed: int = MessageLevelId.parse(level)
         l: list[int] = [MessageLevelId.INFO,
                         MessageLevelId.WARN,
@@ -63,6 +65,7 @@ class FeedbackService(BaseService):
             if level_parsed == MessageLevelId.ANY else [level_parsed]
         v: str = 'Y' if visible else 'N'
         res = self.dao.message.update_message_log_visibility(category_id, v, l,
+                                                             interval_sec,
                                                              security_context().username)
         self.dao.message.commit()
         if res > 0:
