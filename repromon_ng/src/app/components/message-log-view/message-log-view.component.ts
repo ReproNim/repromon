@@ -52,7 +52,8 @@ export class MessageLogViewComponent implements OnInit {
 
   async clearMessages(mask: string): Promise<void> {
     console.log("clearMessages(mask="+mask+")")
-    this.feedbackService.setMessageLogVisibility(this.studyId, false, mask).subscribe(
+    this.feedbackService.setMessageLogVisibility(this.studyId, false,
+      mask, AppConfig.FEEDBACK_INTERVAL_SEC).subscribe(
       res => {
         console.log("clearMessages res="+res);
         //this.reload();
@@ -91,7 +92,8 @@ export class MessageLogViewComponent implements OnInit {
 
   async resetMessages(): Promise<void> {
     console.log('resetMessages');
-    this.feedbackService.setMessageLogVisibility(this.studyId, true, '*').subscribe(
+    this.feedbackService.setMessageLogVisibility(this.studyId, true, '*',
+      AppConfig.FEEDBACK_INTERVAL_SEC).subscribe(
       res => {
         console.log("setMessageLogVisibility res="+res)
         // this.reload();

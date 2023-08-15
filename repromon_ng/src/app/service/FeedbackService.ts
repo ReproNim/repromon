@@ -45,8 +45,11 @@ export class FeedbackService {
     return this.http.get<StudyInfoDTO>(url);
   }
 
-  setMessageLogVisibility(categoryId: number, visible_: boolean, level_: string): Observable<number>  {
-    const url = `${this.apiUrl}/set_message_log_visibility?category_id=${categoryId}&visible=${visible_}&level=${level_}`;
+  setMessageLogVisibility(categoryId: number, visible_: boolean, level_: string,
+                          intervalSec: number | null): Observable<number>  {
+    let url = `${this.apiUrl}/set_message_log_visibility?category_id=${categoryId}&visible=${visible_}&level=${level_}`;
+    if( intervalSec!==null )
+      url += `&interval_sec=${intervalSec}`;
     return this.http.get<number>(url);
   }
 }
