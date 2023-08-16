@@ -81,14 +81,27 @@ export class MessageLogView2Component implements OnInit {
   async addMessage(message_id: number): Promise<void> {
     console.log('addMessage(message_id=' + message_id + ')');
     this.feedbackService.getMessage(message_id).subscribe( msg => {
-      if( msg )
-        msg._index = this.messageLog.length+1;
-      this.messageLog.push(msg as MessageLogInfoDTO);
-      this.selectLastItem();
-      this.updateCounters();
-      // force grid redraw
-      this.dataSource._updateChangeSubscription();
-      //this.dg.renderRows();
+      if( msg ) {
+        // find item in sorted array based on event_on timestamp
+        let index = this.messageLog.findIndex(
+          (item) => new Date(msg.event_on) < new Date(item.event_on)
+        );
+        console.log("insert index="+index)
+
+        if (index === -1)
+          index = this.messageLog.length;
+
+        this.messageLog.splice(index, 0, msg);
+        // update _index for message and all subsequent items
+        for( let i=index; i<this.messageLog.length; i++)
+          this.messageLog[i]._index = i+1;
+
+        this.selectLastItem();
+        this.updateCounters();
+        // force grid redraw
+        this.dataSource._updateChangeSubscription();
+        //this.dg.renderRows();
+      }
     })
   }
 

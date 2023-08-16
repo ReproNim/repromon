@@ -1,3 +1,4 @@
+import copy
 import json
 import logging.config
 import random
@@ -120,7 +121,7 @@ def send_message():
     count_all += 1
     try:
         # Define your query parameters
-        params = random.choice(SAMPLE_MESSAGES)
+        params = copy.copy(random.choice(SAMPLE_MESSAGES))
 
         # set sporadically event_on/registered_on time manually
         if random.choice([False, True, False]):
