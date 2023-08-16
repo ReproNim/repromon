@@ -31,6 +31,9 @@ class SettingsConfig(BaseSectionConfig):
 
     ENV: str = "local"
     DEBUG_USERNAME: str = None
+    TOKEN_SECRET_KEY: str = None
+    TOKEN_ALGORITHM: str = "HS256"
+    TOKEN_EXPIRE_SEC: int = 24 * 60 * 60
     UI_APP_PATH: str = None
     UI2_APP_PATH: str = None
 

@@ -50,3 +50,8 @@ poetry install
 poetry build
 
 poetry run srv
+
+[Security/Auth]
+1) Generate TOKEN_SECRET_KEY:
+
+openssl rand -hex 32
