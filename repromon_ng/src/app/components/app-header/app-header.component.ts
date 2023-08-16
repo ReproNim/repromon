@@ -2,6 +2,7 @@ import { Component, Input, OnInit} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { AppConfig } from '../../config/AppConfig';
 import { LoginService } from '../../service/LoginService';
+import {PushListenerService} from "../../service/PushListenerService";
 
 @Component({
   selector: 'app-header',
@@ -16,7 +17,8 @@ export class AppHeaderComponent {
   currentUser: any;
 
   constructor(private datePipe: DatePipe,
-              private loginService: LoginService) {
+              private loginService: LoginService,
+              public pushListenerService: PushListenerService) {
     this.screenName = '';
     this.currentTime = '';
     this.currentUser = {};
@@ -27,6 +29,10 @@ export class AppHeaderComponent {
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
     this.getCurrentUser();
+    this.pushListenerService.onConnectedChange.subscribe(isConnected => {
+      if (isConnected)
+        this.getCurrentUser();
+    });
   }
 
   updateTime(): void {
@@ -34,14 +40,17 @@ export class AppHeaderComponent {
     this.currentTime = this.datePipe.transform(now, 'yyyy/MM/dd HH:mm:ss');
   }
 
-  async getCurrentUser(): Promise<void> {
-    try {
-      this.currentUser = await this.loginService.getCurrentUser().toPromise();
-      AppConfig.CURRENT_USER = this.currentUser;
-      console.log('set AppConfig.CURRENT_USER=' + JSON.stringify(AppConfig.CURRENT_USER));
-    } catch (error) {
-      console.error('Failed to get current user:', error);
-    }
+  getCurrentUser(): void {
+    this.loginService.getCurrentUser().subscribe(
+      (user) => {
+        this.currentUser = user;
+        AppConfig.CURRENT_USER = this.currentUser;
+        console.log('set AppConfig.CURRENT_USER=' + JSON.stringify(AppConfig.CURRENT_USER));
+      },
+      (error) => {
+        console.error('Failed to get current user:', error);
+      }
+    );
   }
 
 }

@@ -1,4 +1,8 @@
-<div class="header" style="display: flex; justify-content: space-between;">
+<div
+    [class.header]="pushListenerService.isConnected"
+    [class.header-error]="!pushListenerService.isConnected"
+    style="display: flex; justify-content: space-between;"
+>
   <div>
     <p>&nbsp;&nbsp;<b>ReproMon: </b>{{ screenName }}</p>
   </div>

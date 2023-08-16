@@ -2,3 +2,8 @@
   color: white;
   background-color: darkcyan;
 }
+
+.header-error {
+  color: white;
+  background-color: darkred;
+}

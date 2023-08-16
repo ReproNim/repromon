@@ -52,6 +52,10 @@ export class MessageLogView2Component implements OnInit {
         this.addMessage(msg.body.message_id);
       }
     });
+    this.pushListenerService.onConnectedChange.subscribe(isConnected => {
+      if (isConnected)
+        this.reload();
+    });
   }
 
   ngAfterViewInit(): void {

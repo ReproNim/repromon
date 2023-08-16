@@ -8,9 +8,21 @@ import {PushMessageDTO} from "../model/PushMessageDTO";
 export class PushListenerService {
   private socket?: WebSocket;
   public onMessage: EventEmitter<PushMessageDTO> = new EventEmitter<PushMessageDTO>();
+  public onConnectedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+  public isConnected: boolean = false;
 
   constructor() {
     this.connect();
+    // try to reconnect each 1 minute in case of problems
+    setInterval(() => {
+      if (!this.isConnected)
+        this.autoReconnect();
+    }, 1*60*1000);
+  }
+
+  private autoReconnect(): void {
+    console.log("autoReconnect() attempt")
+    this.connect()
   }
 
   private connect(): void {
@@ -25,6 +37,14 @@ export class PushListenerService {
 
     this.socket.onopen = (event) => {
       console.log('onopen: ' + event);
+      this.isConnected = true;
+      this.onConnectedChange.emit(true);
+    };
+
+    this.socket.onclose = (event) => {
+      console.log('onclose: ' + event);
+      this.isConnected = false;
+      this.onConnectedChange.emit(false);
     };
   }
 
