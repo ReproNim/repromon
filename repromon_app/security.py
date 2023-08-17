@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 
 from jose import JWTError, jwt
-from passlib.hash import bcrypt
+from passlib.context import CryptContext
 
 from repromon_app.config import app_settings
 from repromon_app.dao import DAO
@@ -70,6 +70,8 @@ class SecurityManager:
 
     def __init__(self):
         self.__debug_context: SecurityContext = None
+        self.__crypt_context: CryptContext = \
+            CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     def create_access_token(self, username: str, expire_sec: int = -1) -> str:
         logger.debug(f"create_access_token(username={username}, "
@@ -132,7 +134,8 @@ class SecurityManager:
         return None
 
     def get_password_hash(self, pwd: str) -> str:
-        return bcrypt.hash(pwd)
+        # return bcrypt.hash(pwd)
+        return self.__crypt_context.hash(pwd)
 
     def get_username_by_token(self, token: str) -> str:
         logger.debug("get_username_by_token(...)")
@@ -155,7 +158,8 @@ class SecurityManager:
 
     def verify_password(self, pwd: str, pwd_hash: str) -> bool:
         if pwd and pwd_hash:
-            return bcrypt.verify(pwd, pwd_hash)
+            # return bcrypt.verify(pwd, pwd_hash)
+            return self.__crypt_context.verify(pwd, pwd_hash)
         return False
 
 
