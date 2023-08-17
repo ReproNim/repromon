@@ -1,0 +1,22 @@
+<body>
+    <head>
+        <title>ReproMon Admin Get Username By Access Token</title>
+        <link rel="STYLESHEET" href="{{ url_for('static', path='/css/main.css') }}" type="text/css">
+    </head>
+<body>
+    <h3>ReproMon Admin Get Username By Access Token</h3>
+    <form method="post" action="username_by_token_ctl">
+        <input type="hidden" name="action" value="username_by_token_ctl"/>
+        <table>
+            <tr>
+                <td>Token:</td>
+                <td><input type="text" name="token" value=""/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Get Username By Token" /></td>
+            </tr>
+        </table>
+    </form><br>
+</body>
+</html>

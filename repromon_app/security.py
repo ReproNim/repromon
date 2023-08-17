@@ -1,4 +1,8 @@
 import logging
+from datetime import datetime, timedelta
+
+from jose import JWTError, jwt
+from passlib.hash import bcrypt
 
 from repromon_app.config import app_settings
 from repromon_app.dao import DAO
@@ -67,6 +71,28 @@ class SecurityManager:
     def __init__(self):
         self.__debug_context: SecurityContext = None
 
+    def create_access_token(self, username: str, expire_sec: int = -1) -> str:
+        logger.debug(f"create_access_token(username={username}, "
+                     f"expire_sec={expire_sec})")
+        if expire_sec <= 0:
+            expire_sec = app_settings().TOKEN_EXPIRE_SEC
+        if username and len(username) > 0:
+            expire: datetime.datetime = \
+                datetime.utcnow() + timedelta(seconds=expire_sec)
+            data = {
+                "sub": username,
+                "exp": expire
+            }
+            logger.debug(f"data={str(data)}")
+            token: str = jwt.encode(data,
+                                    app_settings().TOKEN_SECRET_KEY,
+                                    algorithm=app_settings().TOKEN_ALGORITHM
+                                    )
+            return token
+        else:
+            logger.error("Invalid user name")
+            raise Exception("Invalid user name")
+
     def create_empty_context(self) -> SecurityContext:
         return SecurityContext(0, None, [], [])
 
@@ -104,6 +130,33 @@ class SecurityManager:
 
         logger.error("get_context not implemented")
         return None
+
+    def get_password_hash(self, pwd: str) -> str:
+        return bcrypt.hash(pwd)
+
+    def get_username_by_token(self, token: str) -> str:
+        logger.debug("get_username_by_token(...)")
+        if token and len(token) > 0:
+            try:
+                data = jwt.decode(token,
+                                  app_settings().TOKEN_SECRET_KEY,
+                                  algorithms=[app_settings().TOKEN_ALGORITHM]
+                                  )
+                logger.debug(f"decoded data: {str(data)}")
+                username: str = data.get("sub")
+                if username:
+                    return username
+                raise Exception("Failed validate username credentials")
+            except JWTError as e1:
+                logger.error("Failed validate credentials", e1)
+                raise Exception("Failed validate credentials")
+        else:
+            raise Exception("Invalid token")
+
+    def verify_password(self, pwd: str, pwd_hash: str) -> bool:
+        if pwd and pwd_hash:
+            return bcrypt.verify(pwd, pwd_hash)
+        return False
 
 
 o = SecurityManager.instance()

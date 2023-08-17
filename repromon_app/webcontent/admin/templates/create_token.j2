@@ -1,0 +1,27 @@
+<body>
+    <head>
+        <title>ReproMon Admin Create Access Token</title>
+        <link rel="STYLESHEET" href="{{ url_for('static', path='/css/main.css') }}" type="text/css">
+    </head>
+<body>
+    <h3>ReproMon Admin Create Access Token</h3>
+    <form method="post" action="create_token_ctl">
+        <input type="hidden" name="action" value="create_token_ctl"/>
+        <table>
+            <tr>
+                <td>Username:</td>
+                <td><input type="text" name="username" value=""/></td>
+            </tr>
+            <tr>
+                <td>Expire seconds:</td>
+                <td><input type="text" name="expire_sec" value="{{ expire_sec }}"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Create Access Token" /></td>
+            </tr>
+        </table>
+    </form><br>
+
+</body>
+</html>

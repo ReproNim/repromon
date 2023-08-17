@@ -7,10 +7,11 @@ from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from repromon_app.config import app_config
+from repromon_app.config import app_config, app_settings
 from repromon_app.dao import DAO
 from repromon_app.model import MessageCategoryId, MessageLogEntity, Rolename
-from repromon_app.security import security_check, security_context
+from repromon_app.security import (SecurityManager, security_check,
+                                   security_context)
 from repromon_app.service import MessageService
 
 logger = logging.getLogger(__name__)
@@ -35,6 +36,46 @@ def create_admin_router() -> APIRouter:
         logger.debug("home")
         security_check(rolename=Rolename.ADMIN)
         return _templates.TemplateResponse("home.j2", {"request": request})
+
+    # @security: role=admin
+    @admin_router.get("/create_token", response_class=HTMLResponse,
+                      include_in_schema=False)
+    def create_token(request: Request):
+        logger.debug("create_token")
+        security_check(rolename=Rolename.ADMIN)
+        return _templates.TemplateResponse("create_token.j2", {
+            "request": request,
+            "expire_sec": app_settings().TOKEN_EXPIRE_SEC,
+        })
+
+    # @security: role=admin
+    @admin_router.post('/create_token_ctl', response_class=PlainTextResponse,
+                       include_in_schema=False)
+    def create_token_ctl(username: Annotated[str, Form()],
+                         expire_sec: Annotated[int, Form()]):
+        logger.debug("create_token_ctl")
+        security_check(rolename=Rolename.ADMIN)
+        res: str = SecurityManager.instance().create_access_token(username, expire_sec)
+        return PlainTextResponse(content=res)
+
+    # @security: role=admin
+    @admin_router.get("/password_hash", response_class=HTMLResponse,
+                      include_in_schema=False)
+    def password_hash(request: Request):
+        logger.debug("password_hash")
+        security_check(rolename=Rolename.ADMIN)
+        return _templates.TemplateResponse("password_hash.j2", {
+            "request": request,
+        })
+
+    # @security: role=admin
+    @admin_router.post('/password_hash_ctl', response_class=PlainTextResponse,
+                       include_in_schema=False)
+    def password_hash_ctl(password: Annotated[str, Form()]):
+        logger.debug("password_hash_ctl")
+        security_check(rolename=Rolename.ADMIN)
+        res: str = SecurityManager.instance().get_password_hash(password)
+        return PlainTextResponse(content=res)
 
     # @security: role=admin
     @admin_router.get("/send_fmessage", response_class=HTMLResponse,
@@ -79,6 +120,25 @@ def create_admin_router() -> APIRouter:
         )
         return PlainTextResponse(
             content=f"Done: {json.dumps(msg.to_dict(), indent=4)}")
+
+    # @security: role=admin
+    @admin_router.get("/username_by_token", response_class=HTMLResponse,
+                      include_in_schema=False)
+    def username_by_token(request: Request):
+        logger.debug("username_by_token")
+        security_check(rolename=Rolename.ADMIN)
+        return _templates.TemplateResponse("username_by_token.j2", {
+            "request": request,
+        })
+
+    # @security: role=admin
+    @admin_router.post('/username_by_token_ctl', response_class=PlainTextResponse,
+                       include_in_schema=False)
+    def username_by_token_ctl(token: Annotated[str, Form()]):
+        logger.debug("username_by_token_ctl")
+        security_check(rolename=Rolename.ADMIN)
+        res: str = SecurityManager.instance().get_username_by_token(token)
+        return PlainTextResponse(content=res)
 
     # @security: role=admin
     @admin_router.get('/view_config', response_class=PlainTextResponse,
