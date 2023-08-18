@@ -7,10 +7,11 @@ from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from pydantic.main import BaseModel
 
 from repromon_app.config import app_settings
 from repromon_app.dao import DAO
-from repromon_app.model import Rolename, UserInfoDTO
+from repromon_app.model import Rolename, UserEntity, UserInfoDTO
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -79,6 +80,27 @@ class SecurityManager:
         self.__context_cache: dict = {}
         self.__crypt_context: CryptContext = \
             CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+    def auth_user(self, username: str, password: str) -> bool:
+        logger.debug(f"auth_user(username={username})")
+        if not username:
+            raise Exception("Invalid user name")
+        user: UserEntity = DAO.account.get_user(username)
+
+        if not user:
+            raise Exception(f"User not found: {username}")
+
+        if user.is_active != 'Y':
+            raise Exception(f"User is not active: {username}")
+
+        if not self.verify_password(password, user.password):
+            raise Exception("Invalid password")
+
+        ctx = self.create_context_by_username(user.username)
+        if not ctx:
+            raise Exception("Auth internal error")
+
+        return True
 
     def create_access_token(self, username: str, expire_sec: int = -1) -> str:
         logger.debug(f"create_access_token(username={username}, "
@@ -234,6 +256,11 @@ def security_check(rolename=Rolename.ANY, device='*', env='*',
 ############################################
 # FastAPI security things
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 
 async def security_web_context(

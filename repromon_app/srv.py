@@ -1,10 +1,12 @@
 import logging.config
 import os
+from typing import Annotated
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from starlette.datastructures import Headers
 
@@ -14,7 +16,7 @@ from repromon_app.router.admin import create_admin_router
 from repromon_app.router.api_v1 import create_api_v1_router
 from repromon_app.router.app import create_app_router
 from repromon_app.router.test import create_test_router
-from repromon_app.security import current_web_request
+from repromon_app.security import SecurityManager, Token, current_web_request
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -110,6 +112,26 @@ def create_fastapi_app() -> FastAPI:
         # url = app.url_path_for("app")
         return RedirectResponse(url='/app')
 
+    @app_web.post("/token", include_in_schema=False,
+                  response_model=Token)
+    async def app_token(
+            form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    ):
+        mgr: SecurityManager = SecurityManager.instance()
+        try:
+            if not mgr.auth_user(form_data.username, form_data.password):
+                raise Exception("Auth failed")
+        except BaseException as ex1:
+            logger.debug(f"Auth failed: {str(ex1)}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=str(ex1),
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        access_token: str = mgr.create_access_token(form_data.username)
+        res: Token = Token(access_token=access_token, token_type="bearer")
+        return res
+
     @app_web.middleware("http")
     async def app_request_context(request: Request, call_next):
         # TODO: auto commit/rollback DB session using db_session_done
@@ -121,6 +143,7 @@ def create_fastapi_app() -> FastAPI:
         response = await call_next(request)
         # logger.debug(f"app_request_context leave: {request.url}")
         return response
+
     return app_web
 
 

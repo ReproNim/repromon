@@ -6,7 +6,8 @@ from sqlalchemy.sql import func, text
 from repromon_app.model import (BaseDTO, DataProviderEntity, DeviceEntity,
                                 MessageLevelEntity, MessageLogEntity,
                                 MessageLogInfoDTO, RoleEntity, RoleInfoDTO,
-                                StudyDataEntity, StudyInfoDTO, UserInfoDTO)
+                                StudyDataEntity, StudyInfoDTO, UserEntity,
+                                UserInfoDTO)
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -97,6 +98,14 @@ class AccountDAO(BaseDAO):
                 )
             )
             .all(),
+        )
+
+    def get_user(self, username: str) -> UserEntity:
+        return (
+            self.session()
+            .query(UserEntity)
+            .filter(UserEntity.username == username)
+            .first()
         )
 
     def get_user_info(self, username: str) -> UserInfoDTO:
