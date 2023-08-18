@@ -16,6 +16,9 @@ logger.debug(f"name={__name__}")
 
 
 API_BASE_URL = "http://localhost:9095/api/1"
+ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." \
+               "eyJzdWIiOiJwb3dlcnVzZXIiLCJleHAiOjE3MjIzNjI4NzR9." \
+               "jwbOzIVemgzxV6A2HHR-iBtNyGYXQA1B4S4uFj6x-9A"
 SAMPLE_MESSAGES = [
     {
         "study": None,
@@ -133,13 +136,20 @@ def send_message():
 
         logger.debug(f"params={json.dumps(params, indent=4)}")
 
-        response = requests.post(f"{API_BASE_URL}/message/send_message", params=params)
+        headers = {
+            "Authorization": f"Bearer {ACCESS_TOKEN}"
+        }
+
+        response = requests.post(f"{API_BASE_URL}/message/send_message",
+                                 params=params,
+                                 headers=headers)
 
         if response.status_code == 200:
             logger.debug("Message sent successfully")
             count_success += 1
         else:
-            logger.error("Message sending failed")
+            logger.error(f"Message sending failed, {response.status_code}: "
+                         f"{response.content}")
     except BaseException as ex:
         logger.error(f"UNHANDLED ERROR: {str(ex)}")
 

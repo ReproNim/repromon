@@ -1,15 +1,16 @@
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Annotated, Optional
 
-from fastapi import (APIRouter, Query, Request, WebSocket, WebSocketDisconnect,
-                     WebSocketException)
+from fastapi import (APIRouter, Depends, Query, Request, WebSocket,
+                     WebSocketDisconnect, WebSocketException)
 
 from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
                                 MessageCategoryId, MessageLevelId,
                                 MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, Rolename, StudyInfoDTO)
-from repromon_app.security import security_check, security_context
+from repromon_app.security import (SecurityContext, security_check,
+                                   security_context, security_web_context)
 from repromon_app.service import (FeedbackService, LoginService,
                                   MessageService, PushService)
 
@@ -156,6 +157,7 @@ def create_api_v1_router() -> APIRouter:
                         summary="send_message",
                         description="Send ReproMon message")
     def send_message(request: Request,
+                     sec_ctx: Annotated[SecurityContext, Depends(security_web_context)],
                      study: Optional[str] = Query(None,
                                                   description="Study name or ID if any"),
                      category: str = Query(...,

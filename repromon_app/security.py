@@ -1,6 +1,10 @@
+import contextvars
 import logging
 from datetime import datetime, timedelta
+from typing import Annotated
 
+from fastapi import Depends, HTTPException, Request, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
@@ -14,6 +18,8 @@ logger.debug(f"name={__name__}")
 
 ############################################
 # security things
+# TODO: FastAPI move in some common web place
+current_web_request = contextvars.ContextVar("current_web_request")
 
 
 # class representing current security context
@@ -70,6 +76,7 @@ class SecurityManager:
 
     def __init__(self):
         self.__debug_context: SecurityContext = None
+        self.__context_cache: dict = {}
         self.__crypt_context: CryptContext = \
             CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -100,6 +107,11 @@ class SecurityManager:
 
     def create_context_by_username(self, username: str) -> SecurityContext:
         logger.debug(f"create_context_by_username(username={username})")
+        if username and username in self.__context_cache:
+            logger.debug(f"use cached security_context: {username}")
+            return self.__context_cache[username]
+
+        logger.debug("create new security_context")
         u: UserInfoDTO = DAO.account.get_user_info(username)
         if not u:
             raise Exception(
@@ -108,6 +120,8 @@ class SecurityManager:
         roles: list[str] = DAO.sec_sys.get_rolename_by_username(username)
         devices: list[int] = DAO.sec_sys.get_device_id_by_username(username)
         ctx = SecurityContext(u.id, u.username, roles, devices)
+        logger.debug(f"register security_context: {username}")
+        self.__context_cache[username] = ctx
         return ctx
 
     def get_debug_context(self) -> SecurityContext:
@@ -126,7 +140,14 @@ class SecurityManager:
         return self.__debug_context
 
     def get_context(self) -> SecurityContext:
-        ctx: SecurityContext = self.get_debug_context()
+        ctx: SecurityContext = None
+        request = current_web_request.get()
+        if request:
+            ctx = getattr(request.state, "security_context", None)
+            if ctx:
+                return ctx
+
+        ctx = self.get_debug_context()
         if not ctx.is_empty():
             return ctx
 
@@ -155,6 +176,10 @@ class SecurityManager:
                 raise Exception("Failed validate credentials")
         else:
             raise Exception("Invalid token")
+
+    def reset_context_cache(self):
+        logger.debug("reset_context_cache")
+        self.__context_cache = {}
 
     def verify_password(self, pwd: str, pwd_hash: str) -> bool:
         if pwd and pwd_hash:
@@ -204,3 +229,32 @@ def security_check(rolename=Rolename.ANY, device='*', env='*',
     if raise_exception and len(errors) > 0:
         raise Exception(f"Access denied. {'. '.join(errors)}")
     return errors
+
+
+############################################
+# FastAPI security things
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+async def security_web_context(
+        request: Request,
+        token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Unauthorized: Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    logger.debug(f"security_web_context, token: {token}")
+    try:
+        mgr: SecurityManager = SecurityManager.instance()
+        username: str = mgr.get_username_by_token(token)
+        if username is None:
+            raise credentials_exception
+        ctx: SecurityContext = mgr.create_context_by_username(username)
+        request.state.security_context = ctx
+        return ctx
+    except JWTError:
+        raise credentials_exception
+    except BaseException as be:
+        credentials_exception.detail = f"Unauthorized: {str(be)}"
+        raise credentials_exception

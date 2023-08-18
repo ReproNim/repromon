@@ -2,7 +2,7 @@ import logging.config
 import os
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -14,6 +14,7 @@ from repromon_app.router.admin import create_admin_router
 from repromon_app.router.api_v1 import create_api_v1_router
 from repromon_app.router.app import create_app_router
 from repromon_app.router.test import create_test_router
+from repromon_app.security import current_web_request
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -104,14 +105,22 @@ def create_fastapi_app() -> FastAPI:
     logger.debug("Registering router: /test ...")
     app_web.include_router(create_test_router(), prefix="/test")
 
-    # TODO: auto commit/rollback DB session using db_session_done
-    # under async fastapi execution context
-
     @app_web.get("/", include_in_schema=False)
     async def app_root():
         # url = app.url_path_for("app")
         return RedirectResponse(url='/app')
 
+    @app_web.middleware("http")
+    async def app_request_context(request: Request, call_next):
+        # TODO: auto commit/rollback DB session using db_session_done
+        # under async fastapi execution context
+
+        # logger.debug(f"app_request_context enter: {request.url}")
+        # request.state.custom_data = {"key": "value"}
+        current_web_request.set(request)
+        response = await call_next(request)
+        # logger.debug(f"app_request_context leave: {request.url}")
+        return response
     return app_web
 
 
