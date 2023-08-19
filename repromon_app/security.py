@@ -263,7 +263,7 @@ class Token(BaseModel):
     token_type: str
 
 
-async def security_web_context(
+async def web_token_context(
         request: Request,
         token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
@@ -271,7 +271,7 @@ async def security_web_context(
         detail="Unauthorized: Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    logger.debug(f"security_web_context, token: {token}")
+    logger.debug(f"web_token_context, token: {token}")
     try:
         mgr: SecurityManager = SecurityManager.instance()
         username: str = mgr.get_username_by_token(token)
