@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import (HTTPBasic, HTTPBasicCredentials,
+                              OAuth2PasswordBearer)
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic.main import BaseModel
@@ -15,7 +16,6 @@ from repromon_app.model import Rolename, UserEntity, UserInfoDTO
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
-
 
 ############################################
 # security things
@@ -78,6 +78,7 @@ class SecurityManager:
     def __init__(self):
         self.__debug_context: SecurityContext = None
         self.__context_cache: dict = {}
+        self.__user_cache: dict = {}
         self.__crypt_context: CryptContext = \
             CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -85,7 +86,14 @@ class SecurityManager:
         logger.debug(f"auth_user(username={username})")
         if not username:
             raise Exception("Invalid user name")
-        user: UserEntity = DAO.account.get_user(username)
+
+        user: UserEntity = None
+        if username and username in self.__user_cache:
+            user = self.__user_cache[username]
+        else:
+            user = DAO.account.get_user(username)
+            if user:
+                self.__user_cache[user.username] = user
 
         if not user:
             raise Exception(f"User not found: {username}")
@@ -95,6 +103,9 @@ class SecurityManager:
 
         if not self.verify_password(password, user.password):
             raise Exception("Invalid password")
+
+        if user.username != username:
+            raise Exception("Username mismatch")
 
         ctx = self.create_context_by_username(user.username)
         if not ctx:
@@ -203,6 +214,10 @@ class SecurityManager:
         logger.debug("reset_context_cache")
         self.__context_cache = {}
 
+    def reset_user_cache(self):
+        logger.debug("reset_user_cache")
+        self.__user_cache = {}
+
     def verify_password(self, pwd: str, pwd_hash: str) -> bool:
         if pwd and pwd_hash:
             # return bcrypt.verify(pwd, pwd_hash)
@@ -256,6 +271,7 @@ def security_check(rolename=Rolename.ANY, device='*', env='*',
 ############################################
 # FastAPI security things
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+basic_scheme = HTTPBasic()
 
 
 class Token(BaseModel):
@@ -263,15 +279,40 @@ class Token(BaseModel):
     token_type: str
 
 
-async def web_token_context(
+async def web_basic_context(
         request: Request,
-        token: Annotated[str, Depends(oauth2_scheme)]):
+        credentials: Annotated[HTTPBasicCredentials, Depends(basic_scheme)]
+) -> SecurityContext:
+    logger.debug("web_basic_context(...)")
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Incorrect username or password",
+        headers={"WWW-Authenticate": "Basic"},
+    )
+    try:
+        mgr: SecurityManager = SecurityManager.instance()
+        username: str = credentials.username
+        logger.debug(f"username={username}")
+        pwd: str = credentials.password
+        if not mgr.auth_user(username, pwd):
+            raise credentials_exception
+        ctx: SecurityContext = mgr.create_context_by_username(username)
+        request.state.security_context = ctx
+        return ctx
+    except BaseException as be:
+        credentials_exception.detail = f"Unauthorized: {str(be)}"
+        raise credentials_exception
+
+
+async def web_oauth2_context(
+        request: Request,
+        token: Annotated[str, Depends(oauth2_scheme)]) -> SecurityContext:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Unauthorized: Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    logger.debug(f"web_token_context, token: {token}")
+    logger.debug(f"web_oauth2_context, token: {token}")
     try:
         mgr: SecurityManager = SecurityManager.instance()
         username: str = mgr.get_username_by_token(token)

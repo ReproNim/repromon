@@ -10,7 +10,7 @@ from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
                                 MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, Rolename, StudyInfoDTO)
 from repromon_app.security import (SecurityContext, security_check,
-                                   security_context, web_token_context)
+                                   security_context, web_oauth2_context)
 from repromon_app.service import (FeedbackService, LoginService,
                                   MessageService, PushService)
 
@@ -157,7 +157,7 @@ def create_api_v1_router() -> APIRouter:
                         summary="send_message",
                         description="Send ReproMon message")
     def send_message(request: Request,
-                     sec_ctx: Annotated[SecurityContext, Depends(web_token_context)],
+                     sec_ctx: Annotated[SecurityContext, Depends(web_oauth2_context)],
                      study: Optional[str] = Query(None,
                                                   description="Study name or ID if any"),
                      category: str = Query(...,

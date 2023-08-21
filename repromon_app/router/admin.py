@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Form, Request
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,8 +10,9 @@ from fastapi.templating import Jinja2Templates
 from repromon_app.config import app_config, app_settings
 from repromon_app.dao import DAO
 from repromon_app.model import MessageCategoryId, MessageLogEntity, Rolename
-from repromon_app.security import (SecurityManager, security_check,
-                                   security_context)
+from repromon_app.security import (SecurityContext, SecurityManager,
+                                   security_check, security_context,
+                                   web_basic_context)
 from repromon_app.service import MessageService
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,9 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.get("/", response_class=HTMLResponse,
                       include_in_schema=False)
-    def home(request: Request):
+    def home(request: Request,
+             sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)]
+             ):
         logger.debug("home")
         security_check(rolename=Rolename.ADMIN)
         return _templates.TemplateResponse("home.j2", {"request": request})
