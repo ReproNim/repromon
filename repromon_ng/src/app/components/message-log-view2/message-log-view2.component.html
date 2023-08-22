@@ -11,9 +11,9 @@
       <td style="text-align: right; padding: 0px; margin: 0px;">
         <div style="display: flex; justify-content: flex-end; padding: 0px; margin: 0px;">
           <button mat-stroked-button (click)="clearMessages('*')">Clear All</button>&nbsp;
-          <button mat-stroked-button (click)="clearMessages('ERROR')">Clear ERROR</button>&nbsp;
-          <button mat-stroked-button (click)="clearMessages('WARN')">Clear WARN</button>&nbsp;
-          <button mat-stroked-button (click)="clearMessages('INFO')">Clear INFO</button>&nbsp;
+          <button mat-stroked-button (click)="clearMessagesByIds('ERROR')">Clear ERROR</button>&nbsp;
+          <button mat-stroked-button (click)="clearMessagesByIds('WARN')">Clear WARN</button>&nbsp;
+          <button mat-stroked-button (click)="clearMessagesByIds('INFO')">Clear INFO</button>&nbsp;
           <button mat-stroked-button (click)="reload()">Reload</button>
         </div>
       </td>

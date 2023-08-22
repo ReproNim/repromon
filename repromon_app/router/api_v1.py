@@ -134,6 +134,29 @@ def create_api_v1_router() -> APIRouter:
                                                             visible, level,
                                                             interval_sec)
 
+    # @security: role=data_collector, auth
+    @api_v1_router.get("/feedback/set_message_log_visibility_by_ids",
+                       response_model=int,
+                       tags=["FeedbackService"],
+                       summary="set_message_log_visibility_by_ids",
+                       description="Update visibility for message log by message IDs")
+    def set_message_log_visibility_by_ids(request: Request,
+                                          category_id: int =
+                                          Query(...,
+                                                description="Category ID"),
+                                          message_ids: list[int] =
+                                          Query(...,
+                                                description="Message ID list"),
+                                          visible: bool =
+                                          Query(...,
+                                                description="Is row visible"),
+                                          ) -> int:
+        logger.debug("set_message_log_visibility_by_ids")
+        security_check(rolename=Rolename.DATA_COLLECTOR)
+        return FeedbackService().set_message_log_visibility_by_ids(category_id,
+                                                                   message_ids,
+                                                                   visible)
+
     ##############################################
     # LoginService public API
 

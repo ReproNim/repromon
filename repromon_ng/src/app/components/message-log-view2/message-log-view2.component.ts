@@ -51,6 +51,11 @@ export class MessageLogView2Component implements OnInit {
       if (msg.topic === 'feedback-log-add' && msg.body.category_id === this.categoryId) {
         this.addMessage(msg.body.message_id);
       }
+
+      if (msg.topic === 'feedback-log-delete' && msg.body.category_id === this.categoryId) {
+        this.deleteMessages(msg.body.message_ids);
+      }
+
     });
     this.pushListenerService.onConnectedChange.subscribe(isConnected => {
       if (isConnected)
@@ -135,6 +140,40 @@ export class MessageLogView2Component implements OnInit {
       }
     );
     console.log("clearMessages(...) done")
+  }
+
+  async clearMessagesByIds(mask: string): Promise<void> {
+    console.log("clearMessagesByIds(mask="+mask+")")
+    const messageIds: number[] = this.messageLog
+      .filter(item => item.level === mask)
+      .map(item => item.id);
+
+    if( messageIds.length>0 ) {
+      this.feedbackService.setMessageLogVisibilityByIds(this.categoryId,
+        messageIds,
+        false).subscribe(
+        res => {
+          console.log("clearMessagesByIds res=" + res);
+        }
+      );
+    }
+    console.log("clearMessagesByIds(...) done")
+  }
+
+  async deleteMessages(message_ids: number[]): Promise<void> {
+    console.log('deleteMessages(message_ids=' + message_ids + ')');
+    this.messageLog = this.messageLog.filter(item => !message_ids.includes(item.id));
+
+    // update _index for message and all subsequent items
+    for( let i=0; i<this.messageLog.length; i++)
+      this.messageLog[i]._index = i+1;
+
+    this.dataSource.data = this.messageLog;
+    this.selectLastItem();
+    this.updateCounters();
+    // force grid redraw
+    this.dataSource._updateChangeSubscription();
+    //this.dg.renderRows();
   }
 
   async fetchMessageLog(): Promise<void> {

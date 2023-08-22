@@ -60,8 +60,8 @@ class FeedbackService(BaseService):
                                    visible: bool, level: str,
                                    interval_sec: int) -> int:
         logger.debug(f"set_message_log_visibility(category_id={str(category_id)},"
-                     f" visible={visible}, level={level}, "
-                     f"interval_sec={interval_sec})")
+                     f" visible={visible}, level={level},"
+                     f" interval_sec={interval_sec})")
         level_parsed: int = MessageLevelId.parse(level)
         l: list[int] = [MessageLevelId.INFO,
                         MessageLevelId.WARN,
@@ -75,6 +75,29 @@ class FeedbackService(BaseService):
         if res > 0:
             PushService().push_message("feedback-log-refresh",
                                        {"category_id": category_id})
+        return res
+
+    def set_message_log_visibility_by_ids(self,
+                                          category_id: int,
+                                          ids: list[int],
+                                          visible: bool) -> int:
+        logger.debug(f"set_message_log_visibility_ids(category_id={str(category_id)},"
+                     f" ids={str(ids)},"
+                     f" visible={visible})")
+        v: str = 'Y' if visible else 'N'
+        res = self.dao.message.update_message_log_visibility_by_ids(
+            ids, v, security_context().username)
+        self.dao.message.commit()
+        if res > 0:
+            if visible:
+                PushService().push_message("feedback-log-refresh",
+                                           {"category_id": category_id})
+            else:
+                PushService().push_message("feedback-log-delete",
+                                           {
+                                               "category_id": category_id,
+                                               "message_ids": ids
+                                           })
         return res
 
 
@@ -147,8 +170,7 @@ class MessageService(BaseService):
         PushService().push_message("feedback-log-add", {
             "category_id": category_id,
             "study_id": msg.study_id,
-            "message_id": msg.id}
-        )
+            "message_id": msg.id})
         return msg
 
 

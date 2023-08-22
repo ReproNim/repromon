@@ -57,4 +57,15 @@ export class FeedbackService {
       url += `&interval_sec=${intervalSec}`;
     return this.http.get<number>(url);
   }
+
+  setMessageLogVisibilityByIds(categoryId: number, messageIds: number[], visible_: boolean): Observable<number>  {
+    let url = `${this.apiUrl}/set_message_log_visibility_by_ids`;
+    const p = {
+      category_id: categoryId,
+      message_ids: messageIds,
+      visible: visible_
+    };
+    return this.http.get<number>(url, { params: p });
+  }
+
 }

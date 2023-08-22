@@ -257,6 +257,20 @@ class MessageDAO(BaseDAO):
             synchronize_session=False
         )
 
+    def update_message_log_visibility_by_ids(self, ids: list[int],
+                                             is_visible: str, updated_by: str) -> int:
+        query = self.session().query(MessageLogEntity)\
+            .filter(MessageLogEntity.id.in_(ids))
+
+        return query.update(
+            {
+                MessageLogEntity.is_visible: is_visible,
+                MessageLogEntity.visible_updated_by: updated_by,
+                MessageLogEntity.visible_updated_on: func.current_timestamp()
+            },
+            synchronize_session=False
+        )
+
 
 # Security system DAO
 class SecSysDAO(BaseDAO):
