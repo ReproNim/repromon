@@ -176,6 +176,7 @@ def create_api_v1_router() -> APIRouter:
 
     # @security: admin | sys_data_entry
     @api_v1_router.post("/message/send_message",
+                        response_model=MessageLogInfoDTO,
                         tags=["MessageService"],
                         summary="send_message",
                         description="Send ReproMon message")
@@ -184,27 +185,40 @@ def create_api_v1_router() -> APIRouter:
                      study: Optional[str] = Query(None,
                                                   description="Study name or ID if any"),
                      category: str = Query(...,
-                                           description="Category name or ID"),
+                                           description="Category name or ID, "
+                                                       "e.g. Feedback | 1"),
                      level: str = Query(...,
                                         description="Message level, int ID or  "
-                                                    "level name"),
+                                                    "level name, "
+                                                    "e.g ERROR | WARNING | INFO"),
+
                      device: Optional[str] = Query(None,
-                                                   description="Device ID if any"),
+                                                   description="Device ID if any, "
+                                                               "e.g. MRI or 1"),
                      provider: str = Query(...,
-                                           description="Provider name or ID"),
+                                           description="Provider name or ID, "
+                                                       "e.g. ReproIn | ReproStim | "
+                                                       "ReproEvents | PACS | "
+                                                       "Noisseur | DICOM/QA | "
+                                                       "MRI etc"),
                      description: str = Query(...,
                                               description="Message description"),
                      payload: Optional[str] = Query(None,
                                                     description="Message JSON"
                                                                 " payload if any"),
-                     event_on: Optional[datetime] = Query(None,
-                                                          description="Timestamp "
-                                                                      "of the event"),
+                     event_on: Optional[datetime] =
+                     Query(None,
+                           description="Timestamp "
+                                       "of the event in the "
+                                       "ISO 8601 format like "
+                                       "YYYY-MM-DDTHH:MM:SS"
+                                       ".ssssss"),
                      registered_on: Optional[datetime] =
                      Query(None,
                            description="Timestamp of "
-                                       "registration"),
-                     ) -> int:
+                                       "registration in the ISO 8601 format like "
+                                       "YYYY-MM-DDTHH:MM:SS.ssssss"),
+                     ) -> MessageLogInfoDTO:
         logger.debug("send_message")
         security_check(rolename=[Rolename.ADMIN, Rolename.SYS_DATA_ENTRY])
         o: MessageLogEntity = MessageService().send_message(
@@ -221,7 +235,8 @@ def create_api_v1_router() -> APIRouter:
             registered_on
         )
         logger.debug(f"id={o.id}")
-        return o.id
+        res: MessageLogInfoDTO = FeedbackService().get_message(o.id)
+        return res
 
     ##############################################
     # WebSocket public API
