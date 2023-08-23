@@ -64,7 +64,7 @@ class FeedbackService(BaseService):
                      f" interval_sec={interval_sec})")
         level_parsed: int = MessageLevelId.parse(level)
         l: list[int] = [MessageLevelId.INFO,
-                        MessageLevelId.WARN,
+                        MessageLevelId.WARNING,
                         MessageLevelId.ERROR] \
             if level_parsed == MessageLevelId.ANY else [level_parsed]
         v: str = 'Y' if visible else 'N'

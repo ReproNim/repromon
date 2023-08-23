@@ -48,7 +48,7 @@ class MessageCategoryId(IntEnumEx):
 class MessageLevelId(IntEnumEx):
     ANY = -1
     INFO = 1
-    WARN = 2
+    WARNING = 2
     ERROR = 3
 
     @classmethod

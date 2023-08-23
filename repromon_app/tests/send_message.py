@@ -47,7 +47,7 @@ SAMPLE_MESSAGES = [
     {
         "study": None,
         "category": MessageCategoryId.FEEDBACK,
-        "level": MessageLevelId.WARN,
+        "level": MessageLevelId.WARNING,
         "device": 1,
         "provider": DataProviderId.REPROSTIM,
         "description": "stimuli display caution",
@@ -106,7 +106,7 @@ SAMPLE_MESSAGES = [
     {
         "study": None,
         "category": MessageCategoryId.FEEDBACK,
-        "level": MessageLevelId.WARN,
+        "level": MessageLevelId.WARNING,
         "device": 1,
         "provider": DataProviderId.DICOM_QA,
         "description": "Warning in DICOM/QA"
