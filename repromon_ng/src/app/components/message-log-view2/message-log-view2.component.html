@@ -12,7 +12,7 @@
         <div style="display: flex; justify-content: flex-end; padding: 0px; margin: 0px;">
           <button mat-stroked-button (click)="clearMessages('*')">Clear All</button>&nbsp;
           <button mat-stroked-button (click)="clearMessagesByIds('ERROR')">Clear ERROR</button>&nbsp;
-          <button mat-stroked-button (click)="clearMessagesByIds('WARN')">Clear WARN</button>&nbsp;
+          <button mat-stroked-button (click)="clearMessagesByIds('WARNING')">Clear WARNING</button>&nbsp;
           <button mat-stroked-button (click)="clearMessagesByIds('INFO')">Clear INFO</button>&nbsp;
           <button mat-stroked-button (click)="reload()">Reload</button>
         </div>
@@ -46,7 +46,7 @@
         <mat-header-cell *matHeaderCellDef class="level-cell"
                          mat-sort-header sortActionDescription="Sort by Level">Level</mat-header-cell>
         <mat-cell *matCellDef="let item" class="level-cell"
-                  [style.color]="item.level === 'ERROR' ? 'red' : (item.level === 'WARN' ? 'peru' : 'inherit')">{{ item.level }}</mat-cell>
+                  [style.color]="item.level === 'ERROR' ? 'red' : (item.level === 'WARNING' ? 'peru' : 'inherit')">{{ item.level }}</mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="study">

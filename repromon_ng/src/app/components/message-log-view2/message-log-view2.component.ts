@@ -244,7 +244,7 @@ export class MessageLogView2Component implements OnInit {
 
   private updateCounters(): void {
     this.errorCount = this.messageLog.filter((message) => message.level === 'ERROR').length;
-    this.warnCount = this.messageLog.filter((message) => message.level === 'WARN').length;
+    this.warnCount = this.messageLog.filter((message) => message.level === 'WARNING').length;
   }
 
   protected readonly console = console;
