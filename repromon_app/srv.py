@@ -43,12 +43,20 @@ def create_fastapi_app() -> FastAPI:
         version="1.0.0",
         openapi_tags=[
             {
-                "name": "LoginService",
-                "description": "LoginService operations."
+                "name": "AccountService",
+                "description": "AccountService admin operations."
             },
             {
                 "name": "FeedbackService",
                 "description": "FeedbackService operations."
+            },
+            {
+                "name": "LoginService",
+                "description": "LoginService operations."
+            },
+            {
+                "name": "MessageService",
+                "description": "MessageService operations."
             },
         ]
     )

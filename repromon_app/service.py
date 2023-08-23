@@ -5,7 +5,8 @@ from datetime import datetime
 from repromon_app.dao import DAO
 from repromon_app.model import (DeviceEntity, LoginInfoDTO, MessageLevelId,
                                 MessageLogEntity, MessageLogInfoDTO,
-                                PushMessageDTO, StudyDataEntity, StudyInfoDTO)
+                                PushMessageDTO, RoleEntity, StudyDataEntity,
+                                StudyInfoDTO, UserEntity)
 from repromon_app.security import security_context
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,23 @@ class BaseService:
 class AccountService(BaseService):
     def __init__(self):
         super().__init__()
+
+    def add_role(self, rolename: str, description: str) -> RoleEntity:
+        logger.debug(f"add_role(rolename={rolename},"
+                     f" description={description})")
+        return self.dao.account.add_role(rolename, description)
+
+    def get_roles(self) -> list[RoleEntity]:
+        logger.debug("get_roles()")
+        return self.dao.account.get_roles()
+
+    def get_user(self, username: str) -> UserEntity:
+        logger.debug(f"get_user(username={username})")
+        return self.dao.account.get_user(username)
+
+    def get_users(self) -> list[UserEntity]:
+        logger.debug("get_users()")
+        return self.dao.account.get_users()
 
 
 # service for feedback screen

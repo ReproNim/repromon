@@ -67,6 +67,12 @@ class AccountDAO(BaseDAO):
     def __init__(self):
         pass
 
+    def add_role(self, rolename: str, description: str) -> RoleEntity:
+        o: RoleEntity = RoleEntity(rolename, description)
+        self.session().add(o)
+        self.session().commit()
+        return o
+
     def get_roles(self) -> list[RoleEntity]:
         return self.session().query(RoleEntity).all()
 
@@ -107,6 +113,9 @@ class AccountDAO(BaseDAO):
             .filter(UserEntity.username == username)
             .first()
         )
+
+    def get_users(self) -> list[UserEntity]:
+        return self.session().query(UserEntity).all()
 
     def get_user_info(self, username: str) -> UserInfoDTO:
         return _dto(

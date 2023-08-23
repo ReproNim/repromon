@@ -8,11 +8,12 @@ from fastapi import (APIRouter, Depends, Query, Request, WebSocket,
 from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
                                 MessageCategoryId, MessageLevelId,
                                 MessageLogEntity, MessageLogInfoDTO,
-                                PushMessageDTO, Rolename, StudyInfoDTO)
+                                PushMessageDTO, RoleEntity, Rolename,
+                                StudyInfoDTO, UserEntity)
 from repromon_app.security import (SecurityContext, security_check,
                                    security_context, web_oauth2_context)
-from repromon_app.service import (FeedbackService, LoginService,
-                                  MessageService, PushService)
+from repromon_app.service import (AccountService, FeedbackService,
+                                  LoginService, MessageService, PushService)
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -43,6 +44,56 @@ def create_api_v1_router() -> APIRouter:
     api_v1_router = APIRouter()
     websocket_channel: WebsocketChannel = WebsocketChannel()
     PushService.channel = websocket_channel
+
+    ##############################################
+    # AccountService public API
+
+    # @security: admin
+    @api_v1_router.get("/account/get_roles",
+                       response_model=list,
+                       tags=["AccountService"],
+                       summary="get_roles",
+                       description="Get all roles")
+    def account_get_roles(request: Request,
+                          sec_ctx:
+                          Annotated[SecurityContext, Depends(web_oauth2_context)],
+                          ) -> list[RoleEntity]:
+        logger.debug("account_get_roles")
+        security_check(rolename=Rolename.ADMIN)
+        return AccountService().get_roles()
+
+    # @security: admin
+    @api_v1_router.get("/account/get_user",
+                       response_model=object,
+                       tags=["AccountService"],
+                       summary="get_user",
+                       description="Get user by username")
+    def account_get_user(request: Request,
+                         sec_ctx:
+                         Annotated[SecurityContext, Depends(web_oauth2_context)],
+                         username: str = Query(...,
+                                               description="Username"),
+                         ) -> UserEntity:
+        logger.debug(f"account_get_user(username={username})")
+        security_check(rolename=Rolename.ADMIN)
+        o: UserEntity = AccountService().get_user(username)
+        return o.clean_sensitive_info() if o else None
+
+    # @security: admin
+    @api_v1_router.get("/account/get_users",
+                       response_model=list,
+                       tags=["AccountService"],
+                       summary="get_users",
+                       description="Get all users")
+    def account_get_users(request: Request,
+                          sec_ctx:
+                          Annotated[SecurityContext, Depends(web_oauth2_context)],
+                          ) -> list[UserEntity]:
+        logger.debug("account_get_users")
+        security_check(rolename=Rolename.ADMIN)
+        users: list[UserEntity] = [user.copy().clean_sensitive_info()
+                                   for user in AccountService().get_users()]
+        return users
 
     ##############################################
     # FeedbackService public API

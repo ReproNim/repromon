@@ -170,6 +170,12 @@ class BaseEntity(BaseDTO):
     def __init__(self):
         pass
 
+    def copy(self):
+        o = self.__class__()
+        for column in self.__table__.columns:
+            setattr(o, column.name, getattr(self, column.name))
+        return o
+
     def to_dict(self):
         return {
             column.name: getattr(self, column.name)
@@ -388,6 +394,10 @@ class UserEntity(BaseEntity):
     password_changed_on = Column(TIMESTAMP)
     last_login = Column(TIMESTAMP)
 
+    def clean_sensitive_info(self):
+        self.password = "***"
+        return self
+
     def __repr__(self):
         return "RoleEntity(id={self.id}, " \
                "username='{self.username}', " \
@@ -398,6 +408,6 @@ class UserEntity(BaseEntity):
                "email='{self.email}', " \
                "phone='{self.phone}', " \
                "description='{self.description}', " \
-               "password='{self.password}', " \
+               "password='***', " \
                "password_changed_on='{self.password_changed_on}', " \
                "last_login='{self.last_login}')".format(self=self)
