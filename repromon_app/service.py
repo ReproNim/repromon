@@ -2,12 +2,13 @@ import asyncio
 import logging
 from datetime import datetime
 
+from repromon_app.config import app_settings
 from repromon_app.dao import DAO
 from repromon_app.model import (DeviceEntity, LoginInfoDTO, MessageLevelId,
                                 MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, RoleEntity, StudyDataEntity,
                                 StudyInfoDTO, UserEntity)
-from repromon_app.security import SecurityManager, security_context
+from repromon_app.security import SecurityManager, Token, security_context
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -238,6 +239,18 @@ class PushService(BaseService):
 class SecSysService(BaseService):
     def __init__(self):
         super().__init__()
+
+    def create_access_token(self, username: str,
+                            expire_sec: int = 0) -> Token:
+        logger.debug(f"create_access_token(username={username}, "
+                     f"expire_sec={expire_sec})")
+        if expire_sec <= 0:
+            expire_sec = app_settings().TOKEN_EXPIRE_SEC
+        logger.debug(f"expire_sec={expire_sec}")
+        token: str = SecurityManager.instance().create_access_token(
+            username, expire_sec)
+        res: Token = Token(access_token=token, token_type="bearer")
+        return res
 
     def set_user_password(self, username: str,
                           pwd: str) -> UserEntity:

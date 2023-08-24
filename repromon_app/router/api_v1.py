@@ -10,7 +10,7 @@ from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
                                 MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, RoleEntity, Rolename,
                                 StudyInfoDTO, UserEntity)
-from repromon_app.security import (SecurityContext, security_check,
+from repromon_app.security import (SecurityContext, Token, security_check,
                                    security_context, web_oauth2_context)
 from repromon_app.service import (AccountService, FeedbackService,
                                   LoginService, MessageService, PushService,
@@ -341,6 +341,32 @@ def create_api_v1_router() -> APIRouter:
 
     ##############################################
     # SecSysService public API
+
+    # @security: admin
+    @api_v1_router.get("/secsys/create_access_token",
+                       response_model=Token,
+                       tags=["SecSysService"],
+                       summary="create_access_token",
+                       description="Create OAuth2+JWT token with "
+                                   "custom expiration time")
+    def secsys_create_access_token(request: Request,
+                                   sec_ctx:
+                                   Annotated[SecurityContext, Depends(
+                                       web_oauth2_context)],
+                                   username: str =
+                                   Query(...,
+                                         description="Specify username"),
+                                   expire_sec: int =
+                                   Query(...,
+                                         description="Token expiration time in seconds. "
+                                                     "To set default expiration time "
+                                                     "set value to 0 or negative"),
+                                   ) -> Token:
+        logger.debug(f"secsys_create_access_token(username={username}, "
+                     f"expire_sec={expire_sec})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return svc.create_access_token(username, expire_sec)
 
     # @security: admin
     @api_v1_router.get("/secsys/set_user_password",

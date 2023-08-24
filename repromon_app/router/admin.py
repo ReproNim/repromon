@@ -10,10 +10,10 @@ from fastapi.templating import Jinja2Templates
 from repromon_app.config import app_config, app_settings
 from repromon_app.dao import DAO
 from repromon_app.model import MessageCategoryId, MessageLogEntity, Rolename
-from repromon_app.security import (SecurityContext, SecurityManager,
+from repromon_app.security import (SecurityContext, SecurityManager, Token,
                                    security_check, security_context,
                                    web_basic_context)
-from repromon_app.service import MessageService
+from repromon_app.service import MessageService, SecSysService
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -58,8 +58,8 @@ def create_admin_router() -> APIRouter:
                          expire_sec: Annotated[int, Form()]):
         logger.debug("create_token_ctl")
         security_check(rolename=Rolename.ADMIN)
-        res: str = SecurityManager.instance().create_access_token(username, expire_sec)
-        return PlainTextResponse(content=res)
+        res: Token = SecSysService().create_access_token(username, expire_sec)
+        return PlainTextResponse(content=res.access_token)
 
     # @security: role=admin
     @admin_router.get("/password_hash", response_class=HTMLResponse,
