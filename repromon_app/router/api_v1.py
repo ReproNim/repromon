@@ -369,6 +369,25 @@ def create_api_v1_router() -> APIRouter:
         return svc.create_access_token(username, expire_sec)
 
     # @security: admin
+    @api_v1_router.get("/secsys/get_password_hash",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="get_password_hash",
+                       description="Generate password hash from password string")
+    def secsys_get_password_hash(request: Request,
+                                 sec_ctx:
+                                 Annotated[SecurityContext, Depends(
+                                     web_oauth2_context)],
+                                 password: str =
+                                 Query(...,
+                                       description="Password value"),
+                                 ) -> object:
+        logger.debug("secsys_get_password_hash(...)")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return {"password_hash": svc.get_password_hash(password)}
+
+    # @security: admin
     @api_v1_router.get("/secsys/get_username_by_token",
                        response_model=object,
                        tags=["SecSysService"],

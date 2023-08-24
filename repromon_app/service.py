@@ -252,6 +252,10 @@ class SecSysService(BaseService):
         res: Token = Token(access_token=token, token_type="bearer")
         return res
 
+    def get_password_hash(self, pwd: str) -> str:
+        logger.debug("get_password_hash(...)")
+        return SecurityManager.instance().get_password_hash(pwd)
+
     def get_username_by_token(self, token: str) -> str:
         logger.debug("get_username_by_token(...)")
         return SecurityManager.instance().get_username_by_token(token)
