@@ -35,6 +35,29 @@ class AccountService(BaseService):
                      f" description={description})")
         return self.dao.account.add_role(rolename, description)
 
+    def add_user(self, username: str, is_active: bool, is_system: bool,
+                 first_name: str, last_name: str, email: str,
+                 phone: str, description: str) -> UserEntity:
+        logger.debug(f"add_user(username={username},"
+                     f" is_active={is_active},"
+                     f" is_system={is_system},"
+                     f" first_name={first_name},"
+                     f" last_name={last_name},"
+                     f" email={email},"
+                     f" phone={phone},"
+                     f" description={description}"
+                     f")"
+                     )
+        return self.dao.account.add_user(username,
+                                         'Y' if is_active else 'N',
+                                         'Y' if is_system else 'N',
+                                         first_name,
+                                         last_name,
+                                         email,
+                                         phone,
+                                         description
+                                         )
+
     def get_roles(self) -> list[RoleEntity]:
         logger.debug("get_roles()")
         return self.dao.account.get_roles()

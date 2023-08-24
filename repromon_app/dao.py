@@ -73,6 +73,25 @@ class AccountDAO(BaseDAO):
         self.session().commit()
         return o
 
+    def add_user(self, username: str, is_active: str, is_system: str,
+                 first_name: str, last_name: str, email: str,
+                 phone: str, description: str) -> UserEntity:
+        if self.get_user(username):
+            raise Exception(f"User already exists: {username}")
+
+        o: UserEntity = UserEntity()
+        o.username = username
+        o.is_active = is_active
+        o.is_system = is_system
+        o.first_name = first_name
+        o.last_name = last_name
+        o.email = email
+        o.phone = phone
+        o.description = description
+        self.session().add(o)
+        self.session().commit()
+        return o
+
     def get_roles(self) -> list[RoleEntity]:
         return self.session().query(RoleEntity).all()
 

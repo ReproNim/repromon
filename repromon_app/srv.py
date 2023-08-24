@@ -5,7 +5,7 @@ from typing import Annotated
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 from starlette.datastructures import Headers
@@ -139,6 +139,14 @@ def create_fastapi_app() -> FastAPI:
         access_token: str = mgr.create_access_token(form_data.username)
         res: Token = Token(access_token=access_token, token_type="bearer")
         return res
+
+    @app_web.exception_handler(Exception)
+    async def unhandled_exception_handler(request: Request, e: Exception):
+        logger.error(f"Unhandled exception: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": str(e)}
+        )
 
     @app_web.middleware("http")
     async def app_request_context(request: Request, call_next):

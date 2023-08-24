@@ -49,6 +49,55 @@ def create_api_v1_router() -> APIRouter:
     # AccountService public API
 
     # @security: admin
+    @api_v1_router.get("/account/add_user",
+                       response_model=object,
+                       tags=["AccountService"],
+                       summary="add_user",
+                       description="Register new user in system")
+    def account_add_user(request: Request,
+                         sec_ctx:
+                         Annotated[SecurityContext, Depends(web_oauth2_context)],
+                         username: str =
+                         Query(...,
+                               description="Unique username"),
+                         is_active: bool =
+                         Query(...,
+                               description="Specify if user is active"),
+                         is_system: bool =
+                         Query(...,
+                               description="Specify if user is system one"),
+                         first_name: str =
+                         Query(...,
+                               description="User first name"),
+                         last_name: str =
+                         Query(...,
+                               description="User last name"),
+                         email: Optional[str] =
+                         Query(None,
+                               description="User e-mail"),
+                         phone: Optional[str] =
+                         Query(None,
+                               description="User phone"),
+                         description: Optional[str] =
+                         Query(None,
+                               description="User account description"),
+                         ) -> UserEntity:
+        logger.debug(f"account_add_user(username={username})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: AccountService = AccountService()
+        o: UserEntity = svc.add_user(
+            username,
+            is_active,
+            is_system,
+            first_name,
+            last_name,
+            email,
+            phone,
+            description
+        )
+        return o.copy().clean_sensitive_info() if o else None
+
+    # @security: admin
     @api_v1_router.get("/account/get_roles",
                        response_model=list,
                        tags=["AccountService"],
