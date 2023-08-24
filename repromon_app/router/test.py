@@ -23,7 +23,8 @@ def create_test_router() -> APIRouter:
                      include_in_schema=False)
     def home(request: Request):
         logger.debug("home")
-        security_check(rolename=Rolename.TESTER, env=('local', 'dev', 'qa', 'uat'))
+        security_check(rolename=[Rolename.ADMIN, Rolename.TESTER],
+                       env=('local', 'dev', 'qa', 'uat'))
         return _templates.TemplateResponse("home.j2", {"request": request})
 
     # @security: env=dev|qa|uat, auth, ??role=tester
@@ -31,7 +32,8 @@ def create_test_router() -> APIRouter:
                      include_in_schema=False)
     def test1(request: Request):
         logger.debug("test1")
-        security_check(rolename=Rolename.TESTER, env=('local', 'dev', 'qa', 'uat'))
+        security_check(rolename=[Rolename.ADMIN, Rolename.TESTER],
+                       env=('local', 'dev', 'qa', 'uat'))
         dao: DAO = DAO()
 
         roles = dao.account.get_roles()
