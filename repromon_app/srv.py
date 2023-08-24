@@ -58,6 +58,10 @@ def create_fastapi_app() -> FastAPI:
                 "name": "MessageService",
                 "description": "MessageService operations."
             },
+            {
+                "name": "SecSysService",
+                "description": "SecSysService operations."
+            },
         ]
     )
     # app_web.add_middleware(SessionMiddleware, secret_key="RNRPID")

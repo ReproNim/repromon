@@ -13,7 +13,8 @@ from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
 from repromon_app.security import (SecurityContext, security_check,
                                    security_context, web_oauth2_context)
 from repromon_app.service import (AccountService, FeedbackService,
-                                  LoginService, MessageService, PushService)
+                                  LoginService, MessageService, PushService,
+                                  SecSysService)
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -337,6 +338,31 @@ def create_api_v1_router() -> APIRouter:
         logger.debug(f"id={o.id}")
         res: MessageLogInfoDTO = FeedbackService().get_message(o.id)
         return res
+
+    ##############################################
+    # SecSysService public API
+
+    # @security: admin
+    @api_v1_router.get("/secsys/set_user_password",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="set_user_password",
+                       description="Set user account password")
+    def secsys_set_user_password(request: Request,
+                                 sec_ctx:
+                                 Annotated[SecurityContext, Depends(web_oauth2_context)],
+                                 username: str =
+                                 Query(...,
+                                       description="Specify username"),
+                                 password: str =
+                                 Query(...,
+                                       description="New user password to be set"),
+                                 ) -> UserEntity:
+        logger.debug(f"secsys_set_user_password(username={username})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        o: UserEntity = svc.set_user_password(username, password)
+        return o.copy().clean_sensitive_info() if o else None
 
     ##############################################
     # WebSocket public API

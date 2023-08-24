@@ -159,6 +159,17 @@ class AccountDAO(BaseDAO):
             .first(),
         )
 
+    def update_user_password(self, username: str,
+                             pwd: str) -> UserEntity:
+        o: UserEntity = self.get_user(username)
+        if o:
+            o.password = pwd
+            o.password_changed_on = datetime.now()
+            self.session().commit()
+        else:
+            raise Exception(f"User not found: {username}")
+        return o
+
 
 # Message system DAO
 class MessageDAO(BaseDAO):
@@ -178,7 +189,7 @@ class MessageDAO(BaseDAO):
                               study_id: int,
                               interval_sec: int) -> list[MessageLogInfoDTO]:
         start_event_on: datetime.datetime = \
-            (datetime.now() - timedelta(seconds=interval_sec))\
+            (datetime.now() - timedelta(seconds=interval_sec)) \
             if interval_sec else None
         return _list_dto(
             MessageLogInfoDTO,
@@ -287,7 +298,7 @@ class MessageDAO(BaseDAO):
 
     def update_message_log_visibility_by_ids(self, ids: list[int],
                                              is_visible: str, updated_by: str) -> int:
-        query = self.session().query(MessageLogEntity)\
+        query = self.session().query(MessageLogEntity) \
             .filter(MessageLogEntity.id.in_(ids))
 
         return query.update(

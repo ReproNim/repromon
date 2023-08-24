@@ -210,13 +210,23 @@ class SecurityManager:
         else:
             raise Exception("Invalid token")
 
-    def reset_context_cache(self):
-        logger.debug("reset_context_cache")
-        self.__context_cache = {}
+    def reset_cache(self, username: str = None):
+        self.reset_context_cache(username)
+        self.reset_user_cache(username)
 
-    def reset_user_cache(self):
+    def reset_context_cache(self, username: str = None):
+        logger.debug("reset_context_cache")
+        if username:
+            self.__context_cache.pop(username, None)
+        else:
+            self.__context_cache = {}
+
+    def reset_user_cache(self, username: str = None):
         logger.debug("reset_user_cache")
-        self.__user_cache = {}
+        if username:
+            self.__user_cache.pop(username, None)
+        else:
+            self.__user_cache = {}
 
     def verify_password(self, pwd: str, pwd_hash: str) -> bool:
         if pwd and pwd_hash:

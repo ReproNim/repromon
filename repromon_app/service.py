@@ -7,7 +7,7 @@ from repromon_app.model import (DeviceEntity, LoginInfoDTO, MessageLevelId,
                                 MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, RoleEntity, StudyDataEntity,
                                 StudyInfoDTO, UserEntity)
-from repromon_app.security import security_context
+from repromon_app.security import SecurityManager, security_context
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -238,3 +238,12 @@ class PushService(BaseService):
 class SecSysService(BaseService):
     def __init__(self):
         super().__init__()
+
+    def set_user_password(self, username: str,
+                          pwd: str) -> UserEntity:
+        logger.debug(f"set_user_password(username={username}, ...)")
+        pwd_hash: str = SecurityManager.instance().get_password_hash(pwd)
+        res: UserEntity = self.dao.account.update_user_password(username, pwd_hash)
+        if res:
+            SecurityManager.instance().reset_user_cache(username)
+        return res
