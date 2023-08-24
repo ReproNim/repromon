@@ -140,7 +140,7 @@ def create_admin_router() -> APIRouter:
     def username_by_token_ctl(token: Annotated[str, Form()]):
         logger.debug("username_by_token_ctl")
         security_check(rolename=Rolename.ADMIN)
-        res: str = SecurityManager.instance().get_username_by_token(token)
+        res: str = SecSysService().get_username_by_token(token)
         return PlainTextResponse(content=res)
 
     # @security: role=admin

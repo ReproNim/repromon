@@ -369,6 +369,25 @@ def create_api_v1_router() -> APIRouter:
         return svc.create_access_token(username, expire_sec)
 
     # @security: admin
+    @api_v1_router.get("/secsys/get_username_by_token",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="get_username_by_token",
+                       description="Extract username from access token")
+    def secsys_get_username_by_token(request: Request,
+                                     sec_ctx:
+                                     Annotated[SecurityContext, Depends(
+                                         web_oauth2_context)],
+                                     token: str =
+                                     Query(...,
+                                           description="Access token value"),
+                                     ) -> object:
+        logger.debug("secsys_get_username_by_token(...)")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return {"username": svc.get_username_by_token(token)}
+
+    # @security: admin
     @api_v1_router.get("/secsys/set_user_password",
                        response_model=object,
                        tags=["SecSysService"],
