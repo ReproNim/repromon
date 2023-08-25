@@ -6,5 +6,4 @@ ongoing data entry and acquisition (videos, MRI) as is planned to be captured an
 ReproNim projects such as ReproIn, ReproStim, ReproEvents and con/noisseur which have being developed 
 separately.  
 
-
-
+## TODO: writeup on podman/docker setup
