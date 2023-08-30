@@ -264,6 +264,10 @@ class SecSysService(BaseService):
         logger.debug(f"get_user_roles(username={username})")
         return self.dao.sec_sys.get_rolename_by_username(username)
 
+    def get_users_by_role(self, rolename: str) -> list[str]:
+        logger.debug(f"get_users_by_role(rolename={rolename})")
+        return self.dao.sec_sys.get_username_by_rolename(rolename)
+
     def get_username_by_token(self, token: str) -> str:
         logger.debug("get_username_by_token(...)")
         return SecurityManager.instance().get_username_by_token(token)

@@ -347,6 +347,28 @@ class SecSysDAO(BaseDAO):
             .all(),
         )
 
+    def get_username_by_rolename(self, rolename: str) -> list[str]:
+        return _list_scalar(
+            str,
+            self.session()
+            .execute(
+                text(
+                    """
+                select
+                    u.username
+                from
+                    role r, user u, sec_user_role ur
+                where
+                    r.rolename = :rolename and
+                    ur.role_id = r.id and
+                    u.id = ur.user_id
+            """
+                ),
+                {"rolename": rolename},
+            )
+            .all(),
+        )
+
     def get_rolename_by_username(self, username: str) -> list[str]:
         return _list_scalar(
             str,
