@@ -146,10 +146,17 @@ def create_fastapi_app() -> FastAPI:
 
     @app_web.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, e: Exception):
-        logger.error(f"Unhandled exception: {str(e)}")
+        # protect some bugs in fastapi/pydantic with ValidationError
+        detail: str = None
+        try:
+            detail = str(e)
+        except BaseException:
+            detail = "Internal unhandled server error"
+
+        logger.error(f"Unhandled exception: {detail}")
         return JSONResponse(
             status_code=500,
-            content={"detail": str(e)}
+            content={"detail": detail}
         )
 
     @app_web.middleware("http")
