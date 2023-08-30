@@ -291,3 +291,29 @@ class SecSysService(BaseService):
         if res:
             SecurityManager.instance().reset_user_cache(username)
         return res
+
+    def set_user_devices(self, username: str,
+                         devices: list[str]) -> list[str]:
+        logger.debug(f"set_user_devices(username={username}, "
+                     f"devices={devices})")
+        user: UserEntity = self.dao.account.get_user(username)
+        if not user:
+            raise Exception("User not found")
+
+        # roles_all: list[DeviceEntity] = self.dao.account.get_devices()
+        res = []
+        SecurityManager.instance().reset_context_cache(username)
+        return res
+
+    def set_user_roles(self, username: str,
+                       rolenames: list[str]) -> list[str]:
+        logger.debug(f"set_user_roles(username={username}, "
+                     f"rolenames={rolenames})")
+        user: UserEntity = self.dao.account.get_user(username)
+        if not user:
+            raise Exception("User not found")
+
+        # roles_all: list[RoleEntity] = self.dao.account.get_roles()
+        res = []
+        SecurityManager.instance().reset_context_cache(username)
+        return res

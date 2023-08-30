@@ -506,6 +506,64 @@ def create_api_v1_router() -> APIRouter:
         o: UserEntity = svc.set_user_password(username, password)
         return o.copy().clean_sensitive_info() if o else None
 
+    # @security: admin
+    @api_v1_router.get("/secsys/set_user_devices",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="set_user_devices",
+                       description="Set user devices")
+    def secsys_set_user_devices(request: Request,
+                                sec_ctx:
+                                Annotated[SecurityContext, Depends(web_oauth2_context)],
+                                username: str =
+                                Query(...,
+                                      description="Specify username"),
+                                devices: Optional[list[str]] =
+                                Query([],
+                                      description="Specify list of all user device IDs"),
+                                ) -> object:
+        logger.debug(f"secsys_set_user_devices(username={username} "
+                     f"devices={devices})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        devices_before: list[str] = svc.get_user_devices(username)
+        svc.set_user_devices(username, devices)
+        devices_after: list[str] = svc.get_user_devices(username)
+        return {
+            "username": username,
+            "devices_before": devices_before,
+            "devices_after": devices_after
+        }
+
+    # @security: admin
+    @api_v1_router.get("/secsys/set_user_roles",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="set_user_roles",
+                       description="Set user roles")
+    def secsys_set_user_roles(request: Request,
+                              sec_ctx:
+                              Annotated[SecurityContext, Depends(web_oauth2_context)],
+                              username: str =
+                              Query(...,
+                                    description="Specify username"),
+                              rolenames: Optional[list[str]] =
+                              Query([],
+                                    description="Specify list of all user roles"),
+                              ) -> object:
+        logger.debug(f"secsys_set_user_devices(username={username} "
+                     f"rolenames={rolenames})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        roles_before: list[str] = svc.get_user_roles(username)
+        svc.set_user_roles(username, rolenames)
+        roles_after: list[str] = svc.get_user_roles(username)
+        return {
+            "username": username,
+            "roles_before": roles_before,
+            "roles_after": roles_after
+        }
+
     ##############################################
     # WebSocket public API
     @api_v1_router.websocket("/ws")

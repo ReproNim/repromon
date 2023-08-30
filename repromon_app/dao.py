@@ -6,6 +6,7 @@ from sqlalchemy.sql import func, text
 from repromon_app.model import (BaseDTO, DataProviderEntity, DeviceEntity,
                                 MessageLevelEntity, MessageLogEntity,
                                 MessageLogInfoDTO, RoleEntity, RoleInfoDTO,
+                                SecUserDeviceEntity, SecUserRoleEntity,
                                 StudyDataEntity, StudyInfoDTO, UserEntity,
                                 UserInfoDTO)
 
@@ -326,6 +327,31 @@ class SecSysDAO(BaseDAO):
     def __init__(self):
         pass
 
+    def add_sec_user_device(self, user_id: int, device_id: int) -> SecUserDeviceEntity:
+        o: SecUserDeviceEntity = SecUserDeviceEntity(
+            user_id=user_id, device_id=device_id)
+        self.session().add(o)
+        self.session().commit()
+        return o
+
+    def add_sec_user_role(self, user_id: int, role_id: int) -> SecUserRoleEntity:
+        o: SecUserRoleEntity = SecUserRoleEntity(user_id=user_id, role_id=role_id)
+        self.session().add(o)
+        self.session().commit()
+        return o
+
+    def delete_sec_user_device_by_id(self, entity_id: int) -> int:
+        res = (self.session.query(SecUserDeviceEntity).
+               filter_by(id=entity_id).delete())
+        self.session().commit()
+        return res
+
+    def delete_sec_user_role_by_id(self, entity_id: int) -> int:
+        res = (self.session.query(SecUserRoleEntity).
+               filter_by(id=entity_id).delete())
+        self.session().commit()
+        return res
+
     def get_device_id_by_username(self, username: str) -> list[str]:
         return _list_scalar(
             int,
@@ -345,6 +371,22 @@ class SecSysDAO(BaseDAO):
                 {"username": username},
             )
             .all(),
+        )
+
+    def get_sec_user_device_by_user_id(self, user_id: int) -> list[SecUserDeviceEntity]:
+        return (
+            self.session()
+            .query(SecUserDeviceEntity)
+            .filter(SecUserDeviceEntity.user_id == user_id)
+            .all()
+        )
+
+    def get_sec_user_role_by_user_id(self, user_id: int) -> list[SecUserRoleEntity]:
+        return (
+            self.session()
+            .query(SecUserRoleEntity)
+            .filter(SecUserRoleEntity.user_id == user_id)
+            .all()
         )
 
     def get_username_by_rolename(self, rolename: str) -> list[str]:
