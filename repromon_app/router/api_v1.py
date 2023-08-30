@@ -407,6 +407,30 @@ def create_api_v1_router() -> APIRouter:
         return {"username": svc.get_username_by_token(token)}
 
     # @security: admin
+    @api_v1_router.get("/secsys/set_user_active",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="set_user_active",
+                       description="Update user activity status")
+    def secsys_set_user_active(request: Request,
+                               sec_ctx:
+                               Annotated[SecurityContext, Depends(web_oauth2_context)],
+                               username: str =
+                               Query(...,
+                                     description="Specify username"),
+                               is_active: bool =
+                               Query(...,
+                                     description="Specify user activity "
+                                                 "status to be set"),
+                               ) -> UserEntity:
+        logger.debug(f"secsys_set_user_active(username={username}, "
+                     f"is_active={is_active})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        o: UserEntity = svc.set_user_active(username, is_active)
+        return o.copy().clean_sensitive_info() if o else None
+
+    # @security: admin
     @api_v1_router.get("/secsys/set_user_password",
                        response_model=object,
                        tags=["SecSysService"],

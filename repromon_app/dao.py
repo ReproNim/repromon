@@ -159,6 +159,16 @@ class AccountDAO(BaseDAO):
             .first(),
         )
 
+    def update_user_is_active(self, username: str,
+                              is_active: str) -> UserEntity:
+        o: UserEntity = self.get_user(username)
+        if o:
+            o.is_active = is_active
+            self.session().commit()
+        else:
+            raise Exception(f"User not found: {username}")
+        return o
+
     def update_user_password(self, username: str,
                              pwd: str) -> UserEntity:
         o: UserEntity = self.get_user(username)

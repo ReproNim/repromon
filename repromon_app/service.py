@@ -260,6 +260,17 @@ class SecSysService(BaseService):
         logger.debug("get_username_by_token(...)")
         return SecurityManager.instance().get_username_by_token(token)
 
+    def set_user_active(self, username: str,
+                        is_active: bool) -> UserEntity:
+        logger.debug(f"set_user_active(username={username}, "
+                     f"is_active={is_active}...)")
+        res: UserEntity = self.dao.account.update_user_is_active(
+            username,
+            'Y' if is_active else 'N')
+        if res:
+            SecurityManager.instance().reset_user_cache(username)
+        return res
+
     def set_user_password(self, username: str,
                           pwd: str) -> UserEntity:
         logger.debug(f"set_user_password(username={username}, ...)")
