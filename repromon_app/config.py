@@ -1,4 +1,5 @@
 import logging
+import os
 import platform
 import sys
 import time
@@ -160,9 +161,12 @@ def app_config_init() -> None:
             logging.config.fileConfig(log_file, disable_existing_loggers=False)
             logger.info(f"Found ini config file: {str(ini_path)}")
 
-            cp = ConfigParser(interpolation=MacroExpander(
-                {"ROOT_PATH": cfg.ROOT_PATH}
-            ))
+            parms: dict = dict(os.environ)
+            parms.update({
+                "ROOT_PATH": cfg.ROOT_PATH
+            })
+
+            cp = ConfigParser(interpolation=MacroExpander(parms))
             # keep property names as is
             cp.optionxform = str
             with open(ini_path) as fd:
