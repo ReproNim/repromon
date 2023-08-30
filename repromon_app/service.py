@@ -256,6 +256,14 @@ class SecSysService(BaseService):
         logger.debug("get_password_hash(...)")
         return SecurityManager.instance().get_password_hash(pwd)
 
+    def get_user_devices(self, username: str) -> list[str]:
+        logger.debug(f"get_user_devices(username={username})")
+        return self.dao.sec_sys.get_device_id_by_username(username)
+
+    def get_user_roles(self, username: str) -> list[str]:
+        logger.debug(f"get_user_roles(username={username})")
+        return self.dao.sec_sys.get_rolename_by_username(username)
+
     def get_username_by_token(self, token: str) -> str:
         logger.debug("get_username_by_token(...)")
         return SecurityManager.instance().get_username_by_token(token)

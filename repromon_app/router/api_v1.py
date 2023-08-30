@@ -388,6 +388,42 @@ def create_api_v1_router() -> APIRouter:
         return {"password_hash": svc.get_password_hash(password)}
 
     # @security: admin
+    @api_v1_router.get("/secsys/get_user_devices",
+                       response_model=list,
+                       tags=["SecSysService"],
+                       summary="get_user_devices",
+                       description="Get devices user has access to")
+    def secsys_get_user_devices(request: Request,
+                                sec_ctx:
+                                Annotated[SecurityContext, Depends(web_oauth2_context)],
+                                username: str =
+                                Query(...,
+                                      description="Specify username"),
+                                ) -> UserEntity:
+        logger.debug(f"secsys_get_user_devices(username={username})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return svc.get_user_devices(username)
+
+    # @security: admin
+    @api_v1_router.get("/secsys/get_user_roles",
+                       response_model=list,
+                       tags=["SecSysService"],
+                       summary="get_user_roles",
+                       description="Get rolename list user has access to")
+    def secsys_get_user_roles(request: Request,
+                              sec_ctx:
+                              Annotated[SecurityContext, Depends(web_oauth2_context)],
+                              username: str =
+                              Query(...,
+                                    description="Specify username"),
+                              ) -> UserEntity:
+        logger.debug(f"secsys_get_user_roles(username={username})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return svc.get_user_roles(username)
+
+    # @security: admin
     @api_v1_router.get("/secsys/get_username_by_token",
                        response_model=object,
                        tags=["SecSysService"],
