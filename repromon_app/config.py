@@ -161,12 +161,12 @@ def app_config_init() -> None:
             logging.config.fileConfig(log_file, disable_existing_loggers=False)
             logger.info(f"Found ini config file: {str(ini_path)}")
 
-            parms: dict = dict(os.environ)
-            parms.update({
+            params: dict = dict(os.environ)
+            params.update({
                 "ROOT_PATH": cfg.ROOT_PATH
             })
 
-            cp = ConfigParser(interpolation=MacroExpander(parms))
+            cp = ConfigParser(interpolation=MacroExpander(params))
             # keep property names as is
             cp.optionxform = str
             with open(ini_path) as fd:
