@@ -6,8 +6,9 @@ from repromon_app.config import app_settings
 from repromon_app.dao import DAO
 from repromon_app.model import (DeviceEntity, LoginInfoDTO, MessageLevelId,
                                 MessageLogEntity, MessageLogInfoDTO,
-                                PushMessageDTO, RoleEntity, StudyDataEntity,
-                                StudyInfoDTO, UserEntity)
+                                PushMessageDTO, RoleEntity,
+                                SecUserDeviceEntity, SecUserRoleEntity,
+                                StudyDataEntity, StudyInfoDTO, UserEntity)
 from repromon_app.security import SecurityManager, Token, security_context
 
 logger = logging.getLogger(__name__)
@@ -300,10 +301,47 @@ class SecSysService(BaseService):
         if not user:
             raise Exception("User not found")
 
-        # roles_all: list[DeviceEntity] = self.dao.account.get_devices()
-        res = []
+        # get devices cache
+        devices_all: list[DeviceEntity] = self.dao.message.get_devices()
+        map_name = {str(d.id): d for d in devices_all} | \
+                   {d.kind: d for d in devices_all} | \
+                   {d.description: d for d in devices_all}
+        map_id = {d.id: d for d in devices_all}
+
+        # get list of device IDs to be set for user
+        set1: set[int] = {map_name[s].id for s in devices if s in map_name}
+
+        lst: SecUserDeviceEntity = self.dao.sec_sys.get_sec_user_device_by_user_id(
+            user.id)
+        map_entity = {e.device_id: e for e in lst}
+
+        # get list of device IDs user already have
+        set2: set[int] = set(de.device_id for de in lst)
+
+        # calculate list device IDs to be added in sec_user_device
+        set_to_add: set[int] = set1 - set2
+        logger.debug(f"set_to_add={set_to_add}")
+
+        # calculate list device IDs to be removed from sec_user_device
+        set_to_del: set[int] = set2 - set1
+        logger.debug(f"set_to_del={set_to_del}")
+
+        # calculate list device IDs to be returned
+        set_to_res: set[int] = set1 & set2
+        logger.debug(f"set_to_res={set_to_res}")
+
+        for id_del in set_to_del:
+            logger.debug(f"delete device with id={id_del}")
+            self.dao.sec_sys.delete_sec_user_device_by_id(map_entity[id_del].id)
+
+        for id_add in set_to_add:
+            logger.debug(f"add device with id={id_add}")
+            self.dao.sec_sys.add_sec_user_device(user.id, id_add)
+
+        # reset security context cache for the user
         SecurityManager.instance().reset_context_cache(username)
-        return res
+
+        return list(str(map_id[id_res].id) for id_res in set_to_res)
 
     def set_user_roles(self, username: str,
                        rolenames: list[str]) -> list[str]:
@@ -313,7 +351,44 @@ class SecSysService(BaseService):
         if not user:
             raise Exception("User not found")
 
-        # roles_all: list[RoleEntity] = self.dao.account.get_roles()
-        res = []
+        # get all roles cache
+        roles_all: list[RoleEntity] = self.dao.account.get_roles()
+        map_name = {r.rolename: r for r in roles_all} | \
+                   {str(r.id): r for r in roles_all} | \
+                   {r.description: r for r in roles_all}
+        map_id = {r.id: r for r in roles_all}
+
+        # get list of role IDs to be set for user
+        set1: set[int] = {map_name[s].id for s in rolenames if s in map_name}
+
+        lst: SecUserRoleEntity = self.dao.sec_sys.get_sec_user_role_by_user_id(
+            user.id)
+        map_entity = {e.role_id: e for e in lst}
+
+        # get list of role IDs user already have
+        set2: set[int] = set(re.role_id for re in lst)
+
+        # calculate list role IDs to be added in sec_user_role
+        set_to_add: set[int] = set1 - set2
+        logger.debug(f"set_to_add={set_to_add}")
+
+        # calculate list role IDs to be removed from sec_user_role
+        set_to_del: set[int] = set2 - set1
+        logger.debug(f"set_to_del={set_to_del}")
+
+        # calculate list role IDs to be returned
+        set_to_res: set[int] = set1 & set2
+        logger.debug(f"set_to_res={set_to_res}")
+
+        for id_del in set_to_del:
+            logger.debug(f"delete role with id={id_del}")
+            self.dao.sec_sys.delete_sec_user_role_by_id(map_entity[id_del].id)
+
+        for id_add in set_to_add:
+            logger.debug(f"add role with id={id_add}")
+            self.dao.sec_sys.add_sec_user_role(user.id, id_add)
+
+        # reset security context cache for the user
         SecurityManager.instance().reset_context_cache(username)
-        return res
+
+        return list(map_id[id_res].rolename for id_res in set_to_res)

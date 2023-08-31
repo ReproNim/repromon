@@ -520,7 +520,9 @@ def create_api_v1_router() -> APIRouter:
                                       description="Specify username"),
                                 devices: Optional[list[str]] =
                                 Query([],
-                                      description="Specify list of all user device IDs"),
+                                      description="Specify list of all user devices "
+                                                  "(device ID, device kind or "
+                                                  "device description)"),
                                 ) -> object:
         logger.debug(f"secsys_set_user_devices(username={username} "
                      f"devices={devices})")
@@ -549,7 +551,9 @@ def create_api_v1_router() -> APIRouter:
                                     description="Specify username"),
                               rolenames: Optional[list[str]] =
                               Query([],
-                                    description="Specify list of all user roles"),
+                                    description="Specify list of all user roles "
+                                                "(rolename, role ID or role "
+                                                "description)"),
                               ) -> object:
         logger.debug(f"secsys_set_user_devices(username={username} "
                      f"rolenames={rolenames})")

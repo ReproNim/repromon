@@ -341,13 +341,13 @@ class SecSysDAO(BaseDAO):
         return o
 
     def delete_sec_user_device_by_id(self, entity_id: int) -> int:
-        res = (self.session.query(SecUserDeviceEntity).
+        res = (self.session().query(SecUserDeviceEntity).
                filter_by(id=entity_id).delete())
         self.session().commit()
         return res
 
     def delete_sec_user_role_by_id(self, entity_id: int) -> int:
-        res = (self.session.query(SecUserRoleEntity).
+        res = (self.session().query(SecUserRoleEntity).
                filter_by(id=entity_id).delete())
         self.session().commit()
         return res
