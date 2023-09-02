@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
@@ -16,6 +16,7 @@ import { MessageLogViewComponent } from './components/message-log-view/message-l
 import { MessageLogView2Component } from './components/message-log-view2/message-log-view2.component';
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FeedbackHeaderComponent } from './components/feedback-header/feedback-header.component';
+import {AuthInterceptor} from "./security/AuthInterceptor";
 
 @NgModule({
   declarations: [
@@ -39,7 +40,14 @@ import { FeedbackHeaderComponent } from './components/feedback-header/feedback-h
     MatTableModule,
     NoopAnimationsModule
   ],
-  providers: [DatePipe],
+  providers: [
+    DatePipe,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true, // Multiple interceptors can be used in the order they are provided
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
