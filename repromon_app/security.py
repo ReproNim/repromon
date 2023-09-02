@@ -161,12 +161,12 @@ class SecurityManager:
         if not self.__debug_context:
             ctx: SecurityContext = None
             if app_settings().DEBUG_USERNAME:
-                ctx = SecurityManager().create_context_by_username(
+                ctx = SecurityManager.instance().create_context_by_username(
                     app_settings().DEBUG_USERNAME
                 )
                 logger.debug(f"created debug context: {str(ctx)}")
             else:
-                ctx = SecurityManager.create_empty_context()
+                ctx = SecurityManager.instance().create_empty_context()
 
             self.__debug_context = ctx
             logger.debug(f"created debug context: {str(self.__debug_context)}")
@@ -181,7 +181,9 @@ class SecurityManager:
                 return ctx
 
         ctx = self.get_debug_context()
-        if not ctx.is_empty():
+        if ctx:
+            if ctx.is_empty():
+                logger.error("use empty context")
             return ctx
 
         logger.error("get_context not implemented")
