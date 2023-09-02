@@ -91,6 +91,8 @@ export class MessageLogView2Component implements OnInit {
     console.log('addMessage(message_id=' + message_id + ')');
     this.feedbackService.getMessage(message_id).subscribe( msg => {
       if( msg ) {
+        const selectLast: boolean = this.isSelectedLastItem()
+
         // find item in sorted array based on event_on timestamp
         let index = this.messageLog.findIndex(
           (item) => new Date(msg.event_on) < new Date(item.event_on)
@@ -105,7 +107,8 @@ export class MessageLogView2Component implements OnInit {
         for( let i=index; i<this.messageLog.length; i++)
           this.messageLog[i]._index = i+1;
 
-        this.selectLastItem();
+        if( selectLast )
+          this.selectLastItem();
         this.updateCounters();
         // force grid redraw
         this.dataSource._updateChangeSubscription();
@@ -202,6 +205,16 @@ export class MessageLogView2Component implements OnInit {
 
   formatTime(timestamp: any): string {
     return this.datePipe.transform(timestamp, 'HH:mm:ss') as string;
+  }
+
+  isSelectedLastItem(): boolean {
+    if( this.messageLog.length>0 &&
+        this.selection.isSelected(
+          this.messageLog[this.messageLog.length-1]
+        )
+    )
+      return true;
+    return false;
   }
 
   onDataGridResize(event:any) {
