@@ -155,9 +155,12 @@ def create_api_v1_router() -> APIRouter:
                        tags=["FeedbackService"],
                        summary="get_devices",
                        description="Get DeviceEntity device list")
-    def feedback_get_devices(request: Request) -> list[DeviceEntity]:
+    def feedback_get_devices(request: Request,
+                             sec_ctx:
+                             Annotated[SecurityContext, Depends(
+                                 web_oauth2_context)]) -> list[DeviceEntity]:
         logger.debug("feedback_get_devices()")
-        security_check(rolename=Rolename.DATA_COLLECTOR)
+        security_check(rolename=[Rolename.DATA_COLLECTOR, Rolename.ADMIN])
         return FeedbackService().get_devices()
 
     # @security: role=data_collector, auth
@@ -167,11 +170,14 @@ def create_api_v1_router() -> APIRouter:
                        summary="get_message",
                        description="Get single message log info by message ID")
     def feedback_get_message(request: Request,
+                             sec_ctx:
+                             Annotated[SecurityContext, Depends(
+                                 web_oauth2_context)],
                              message_id: int = Query(...,
                                                      description="Message ID")
                              ) -> MessageLogInfoDTO | None:
         logger.debug("feedback_get_message")
-        security_check(rolename=Rolename.DATA_COLLECTOR)
+        security_check(rolename=[Rolename.ADMIN, Rolename.DATA_COLLECTOR])
         return FeedbackService().get_message(message_id)
 
     # @security: role=data_collector, auth
@@ -181,6 +187,9 @@ def create_api_v1_router() -> APIRouter:
                        summary="get_message_log",
                        description="Get study message log info")
     def feedback_get_message_log(request: Request,
+                                 sec_ctx:
+                                 Annotated[SecurityContext, Depends(
+                                     web_oauth2_context)],
                                  category_id: Optional[int] =
                                  Query(None,
                                        description="Category ID"),
@@ -192,7 +201,7 @@ def create_api_v1_router() -> APIRouter:
                                                    "seconds for latest messages"),
                                  ) -> list[MessageLogInfoDTO]:
         logger.debug("feedback_get_message_log")
-        security_check(rolename=Rolename.DATA_COLLECTOR)
+        security_check(rolename=[Rolename.ADMIN, Rolename.DATA_COLLECTOR])
         return FeedbackService().get_message_log(category_id=category_id,
                                                  study_id=study_id,
                                                  interval_sec=interval_sec)
@@ -204,11 +213,14 @@ def create_api_v1_router() -> APIRouter:
                        summary="get_study_header",
                        description="Get study header info")
     def feedback_get_study_header(request: Request,
+                                  sec_ctx:
+                                  Annotated[SecurityContext, Depends(
+                                      web_oauth2_context)],
                                   study_id: int = Query(...,
                                                         description="Study ID")
                                   ) -> StudyInfoDTO:
         logger.debug("feedback_get_study_header")
-        security_check(rolename=Rolename.DATA_COLLECTOR)
+        security_check(rolename=[Rolename.ADMIN, Rolename.DATA_COLLECTOR])
         return FeedbackService().get_study_header(study_id)
 
     # @security: role=data_collector, auth
@@ -218,6 +230,9 @@ def create_api_v1_router() -> APIRouter:
                        summary="set_message_log_visibility",
                        description="Update visibility for message log")
     def set_message_log_visibility(request: Request,
+                                   sec_ctx:
+                                   Annotated[SecurityContext, Depends(
+                                       web_oauth2_context)],
                                    category_id: int = Query(...,
                                                             description="Category ID"),
                                    visible: bool = Query(...,
@@ -231,7 +246,7 @@ def create_api_v1_router() -> APIRouter:
                                                      "seconds for latest messages"),
                                    ) -> int:
         logger.debug("set_message_log_visibility")
-        security_check(rolename=Rolename.DATA_COLLECTOR)
+        security_check(rolename=[Rolename.ADMIN, Rolename.DATA_COLLECTOR])
         return FeedbackService().set_message_log_visibility(category_id,
                                                             visible, level,
                                                             interval_sec)
@@ -243,6 +258,9 @@ def create_api_v1_router() -> APIRouter:
                        summary="set_message_log_visibility_by_ids",
                        description="Update visibility for message log by message IDs")
     def set_message_log_visibility_by_ids(request: Request,
+                                          sec_ctx:
+                                          Annotated[SecurityContext, Depends(
+                                              web_oauth2_context)],
                                           category_id: int =
                                           Query(...,
                                                 description="Category ID"),
@@ -254,7 +272,7 @@ def create_api_v1_router() -> APIRouter:
                                                 description="Is row visible"),
                                           ) -> int:
         logger.debug("set_message_log_visibility_by_ids")
-        security_check(rolename=Rolename.DATA_COLLECTOR)
+        security_check(rolename=[Rolename.ADMIN, Rolename.DATA_COLLECTOR])
         return FeedbackService().set_message_log_visibility_by_ids(category_id,
                                                                    message_ids,
                                                                    visible)

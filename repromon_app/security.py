@@ -316,7 +316,7 @@ async def web_basic_context(
         raise credentials_exception
 
 
-async def web_oauth2_context(
+async def _web_oauth2_context(
         request: Request,
         token: Annotated[str, Depends(oauth2_scheme)],
         strict: bool = True) -> SecurityContext:
@@ -325,7 +325,7 @@ async def web_oauth2_context(
         detail="Unauthorized: Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    logger.debug(f"web_oauth2_context, token: {token}, strict={strict}")
+    logger.debug(f"_web_oauth2_context, token: {token}, strict={strict}")
     try:
         mgr: SecurityManager = SecurityManager.instance()
         username: str = mgr.get_username_by_token(token)
@@ -347,7 +347,13 @@ async def web_oauth2_context(
         return SecurityManager.instance().create_empty_context()
 
 
+async def web_oauth2_context(
+        request: Request,
+        token: Annotated[str, Depends(oauth2_scheme)]) -> SecurityContext:
+    return await _web_oauth2_context(request, token, strict=True)
+
+
 async def web_oauth2_opt_context(
         request: Request,
         token: Annotated[str, Depends(oauth2_scheme)]) -> SecurityContext:
-    return await web_oauth2_context(request, token, strict=False)
+    return await _web_oauth2_context(request, token, strict=False)
