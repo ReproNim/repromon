@@ -183,7 +183,7 @@ class SecurityManager:
         ctx = self.get_debug_context()
         if ctx:
             if ctx.is_empty():
-                logger.error("use empty context")
+                logger.info("use empty context")
             return ctx
 
         logger.error("get_context not implemented")
@@ -210,7 +210,7 @@ class SecurityManager:
                 logger.error("Failed validate credentials", e1)
                 raise Exception("Failed validate credentials")
         else:
-            raise Exception("Invalid token")
+            raise Exception("Not authenticated")
 
     def reset_cache(self, username: str = None):
         self.reset_context_cache(username)
@@ -282,7 +282,7 @@ def security_check(rolename=Rolename.ANY, device='*', env='*',
 
 ############################################
 # FastAPI security things
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 basic_scheme = HTTPBasic()
 
 
@@ -318,23 +318,36 @@ async def web_basic_context(
 
 async def web_oauth2_context(
         request: Request,
-        token: Annotated[str, Depends(oauth2_scheme)]) -> SecurityContext:
+        token: Annotated[str, Depends(oauth2_scheme)],
+        strict: bool = True) -> SecurityContext:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Unauthorized: Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    logger.debug(f"web_oauth2_context, token: {token}")
+    logger.debug(f"web_oauth2_context, token: {token}, strict={strict}")
     try:
         mgr: SecurityManager = SecurityManager.instance()
         username: str = mgr.get_username_by_token(token)
         if username is None:
-            raise credentials_exception
+            if strict:
+                raise credentials_exception
+            return SecurityManager.instance().create_empty_context()
         ctx: SecurityContext = mgr.create_context_by_username(username)
         request.state.security_context = ctx
         return ctx
     except JWTError:
-        raise credentials_exception
+        if strict:
+            raise credentials_exception
+        return SecurityManager.instance().create_empty_context()
     except BaseException as be:
-        credentials_exception.detail = f"Unauthorized: {str(be)}"
-        raise credentials_exception
+        if strict:
+            credentials_exception.detail = f"Unauthorized: {str(be)}"
+            raise credentials_exception
+        return SecurityManager.instance().create_empty_context()
+
+
+async def web_oauth2_opt_context(
+        request: Request,
+        token: Annotated[str, Depends(oauth2_scheme)]) -> SecurityContext:
+    return await web_oauth2_context(request, token, strict=False)

@@ -11,7 +11,8 @@ from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
                                 PushMessageDTO, RoleEntity, Rolename,
                                 StudyInfoDTO, UserEntity)
 from repromon_app.security import (SecurityContext, Token, security_check,
-                                   security_context, web_oauth2_context)
+                                   security_context, web_oauth2_context,
+                                   web_oauth2_opt_context)
 from repromon_app.service import (AccountService, FeedbackService,
                                   LoginService, MessageService, PushService,
                                   SecSysService)
@@ -267,7 +268,11 @@ def create_api_v1_router() -> APIRouter:
                        tags=["LoginService"],
                        summary="get_current_user",
                        description="Get current user info")
-    def login_get_current_user(request: Request) -> LoginInfoDTO:
+    def login_get_current_user(request: Request,
+                               sec_ctx:
+                               Annotated[SecurityContext, Depends(
+                                   web_oauth2_opt_context)],
+                               ) -> LoginInfoDTO:
         logger.debug("login_get_current_user")
         security_check(rolename=Rolename.ANY)
         return LoginService().get_current_user()
