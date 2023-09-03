@@ -17,6 +17,9 @@ import { MessageLogView2Component } from './components/message-log-view2/message
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FeedbackHeaderComponent } from './components/feedback-header/feedback-header.component';
 import {AuthInterceptor} from "./security/AuthInterceptor";
+import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -27,18 +30,21 @@ import {AuthInterceptor} from "./security/AuthInterceptor";
     StudyHeaderComponent,
     MessageLogViewComponent,
     MessageLogView2Component,
-    FeedbackHeaderComponent
+    FeedbackHeaderComponent,
+    LoginDialogComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
+    FormsModule,
     HttpClientModule,
+    MatInputModule,
     MatButtonModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSortModule,
     MatTableModule,
-    NoopAnimationsModule
+    NoopAnimationsModule,
   ],
   providers: [
     DatePipe,
