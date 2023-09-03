@@ -230,6 +230,17 @@ class SecurityManager:
         else:
             self.__user_cache = {}
 
+    def verify_token(self, token: str) -> bool:
+        try:
+            username: str = self.get_username_by_token(token)
+            return False if username is None else True
+        except JWTError as je:
+            logger.error(f"Failed verify_token jwt, {str(je)}")
+            return False
+        except BaseException as be:
+            logger.error(f"Failed verify_token, {str(be)}")
+            return False
+
     def verify_password(self, pwd: str, pwd_hash: str) -> bool:
         if pwd and pwd_hash:
             # return bcrypt.verify(pwd, pwd_hash)

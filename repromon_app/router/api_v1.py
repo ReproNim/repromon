@@ -10,9 +10,9 @@ from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
                                 MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, RoleEntity, Rolename,
                                 StudyInfoDTO, UserEntity)
-from repromon_app.security import (SecurityContext, Token, security_check,
-                                   security_context, web_oauth2_context,
-                                   web_oauth2_opt_context)
+from repromon_app.security import (SecurityContext, SecurityManager, Token,
+                                   security_check, security_context,
+                                   web_oauth2_context, web_oauth2_opt_context)
 from repromon_app.service import (AccountService, FeedbackService,
                                   LoginService, MessageService, PushService,
                                   SecSysService)
@@ -596,8 +596,18 @@ def create_api_v1_router() -> APIRouter:
     @api_v1_router.websocket("/ws")
     async def ws(websocket: WebSocket):
         await websocket.accept()
-        websocket_channel.add(websocket)
+        f_registered: bool = False
         try:
+            logger.debug(f"waiting for access token to be sent: {str(websocket)}")
+            token: str = await websocket.receive_text()
+            if not SecurityManager.instance().verify_token(token):
+                await websocket.close(code=4000, reason="Invalid access token")
+                return
+
+            websocket_channel.add(websocket)
+            logger.debug(f"register new authenticated connection: {str(websocket)}")
+            f_registered = True
+
             while True:
                 data = await websocket.receive_text()
                 logger.debug(f"data={str(data)}")
@@ -607,6 +617,7 @@ def create_api_v1_router() -> APIRouter:
         except WebSocketException as wse:
             logger.debug(f"websocket exception: {str(wse)}")
         finally:
-            websocket_channel.remove(websocket)
+            if f_registered:
+                websocket_channel.remove(websocket)
 
     return api_v1_router

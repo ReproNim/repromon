@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { AppConfig } from "../config/AppConfig";
 import {PushMessageDTO} from "../model/PushMessageDTO";
+import {SecurityManager} from "../security/SecurityManager";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,9 @@ export class PushListenerService {
   public onConnectedChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   public isConnected: boolean = false;
 
-  constructor() {
+  constructor(
+      private securityManager: SecurityManager,
+    ) {
     this.connect();
     // try to reconnect each 1 minute in case of problems
     setInterval(() => {
@@ -37,8 +40,17 @@ export class PushListenerService {
 
     this.socket.onopen = (event) => {
       console.log('onopen: ' + event);
-      this.isConnected = true;
-      this.onConnectedChange.emit(true);
+      if( this.socket ) {
+        const token = this.securityManager.getToken()
+        if( token ) {
+          this.socket.send(token);
+          this.isConnected = true;
+          this.onConnectedChange.emit(true);
+        } else {
+          console.log("access token not found, disconnect/close websocket")
+          this.socket.close()
+        }
+      }
     };
 
     this.socket.onclose = (event) => {
