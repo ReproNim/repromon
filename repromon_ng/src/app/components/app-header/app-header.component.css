@@ -7,3 +7,14 @@
   color: white;
   background-color: darkred;
 }
+
+.header-not-logged-in {
+  color: white;
+  background-color: dimgray;
+}
+
+.l-button {
+  color: lightgray !important;
+  height: 25pt;
+  width: 60pt;
+}

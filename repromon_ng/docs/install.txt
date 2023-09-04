@@ -38,6 +38,7 @@ ng generate component components/feedback-screen --skip-tests=true
 ng generate component components/study-header --skip-tests=true
 ng generate component components/message-log-view --skip-tests=true
 ng generate component components/login-dialog --skip-tests=true
+ng generate component components/message-box --skip-tests=true
 
 5) Deploy to fastapi server
 

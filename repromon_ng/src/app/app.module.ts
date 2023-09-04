@@ -20,6 +20,8 @@ import {AuthInterceptor} from "./security/AuthInterceptor";
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { MessageBoxComponent } from './components/message-box/message-box.component';
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
@@ -31,13 +33,15 @@ import { MatInputModule } from '@angular/material/input';
     MessageLogViewComponent,
     MessageLogView2Component,
     FeedbackHeaderComponent,
-    LoginDialogComponent
+    LoginDialogComponent,
+    MessageBoxComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    MatDialogModule,
     MatInputModule,
     MatButtonModule,
     MatPaginatorModule,

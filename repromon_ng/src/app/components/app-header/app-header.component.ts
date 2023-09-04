@@ -1,8 +1,10 @@
 import { Component, Input, OnInit} from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { AppConfig } from '../../config/AppConfig';
-import { LoginService } from '../../service/LoginService';
+import {UserLoginService} from "../../service/UserLoginService";
 import {PushListenerService} from "../../service/PushListenerService";
+import {MessageBoxComponent} from "../message-box/message-box.component";
+import {MatDialog} from "@angular/material/dialog";
+import {LoginDialogComponent} from "../login-dialog/login-dialog.component";
 
 @Component({
   selector: 'app-header',
@@ -14,43 +16,24 @@ export class AppHeaderComponent {
   @Input() firstName: string = '';
   @Input() lastName: string = '';
   currentTime: string | null;
-  currentUser: any;
 
   constructor(private datePipe: DatePipe,
-              private loginService: LoginService,
-              public pushListenerService: PushListenerService) {
+              private dialog: MatDialog,
+              public pushListenerService: PushListenerService,
+              public userLoginService: UserLoginService) {
     this.screenName = '';
     this.currentTime = '';
-    this.currentUser = {};
   }
 
   ngOnInit(): void {
     console.log("ngOnInit()")
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
-    this.getCurrentUser();
-    this.pushListenerService.onConnectedChange.subscribe(isConnected => {
-      if (isConnected)
-        this.getCurrentUser();
-    });
   }
 
   updateTime(): void {
     const now = new Date();
     this.currentTime = this.datePipe.transform(now, 'yyyy/MM/dd HH:mm:ss');
-  }
-
-  getCurrentUser(): void {
-    this.loginService.getCurrentUser().subscribe(
-      (user) => {
-        this.currentUser = user;
-        AppConfig.CURRENT_USER = this.currentUser;
-        console.log('set AppConfig.CURRENT_USER=' + JSON.stringify(AppConfig.CURRENT_USER));
-      },
-      (error) => {
-        console.error('Failed to get current user:', error);
-      }
-    );
   }
 
 }

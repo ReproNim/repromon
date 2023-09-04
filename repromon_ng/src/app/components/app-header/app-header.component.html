@@ -1,7 +1,8 @@
 <div
     [class.header]="pushListenerService.isConnected"
     [class.header-error]="!pushListenerService.isConnected"
-    style="display: flex; justify-content: space-between;"
+    [class.header-not-logged-in]="!userLoginService.isLoggedIn"
+    style="display: flex; justify-content: space-between; align-items: center"
 >
   <div>
     <p>&nbsp;&nbsp;<b>ReproMon: </b>{{ screenName }}</p>
@@ -11,8 +12,15 @@
       {{ currentTime | date: 'yyyy/MM/dd HH:mm:ss' }}&nbsp;
     </div>
     <div style="vertical-align: middle; display: table-cell;">
-      <b>{{ currentUser?.first_name }} {{ currentUser?.last_name }}</b>&nbsp;&nbsp;
+      <b>{{ userLoginService.currentUser?.first_name }} {{ userLoginService.currentUser?.last_name }}</b>&nbsp;&nbsp;
+    </div>
+    <div *ngIf="!userLoginService.isLoggedIn">
+      <button mat-stroked-button class="l-button" (click)="userLoginService.loginDialog()">Login</button>&nbsp;
+    </div>
+    <div *ngIf="userLoginService.isLoggedIn">
+      <button mat-stroked-button class="l-button" (click)="userLoginService.logoutDialog()">Logout</button>&nbsp;
     </div>
   </div>
+
 </div>
 

@@ -25,7 +25,10 @@ export class PushListenerService {
 
   private autoReconnect(): void {
     console.log("autoReconnect() attempt")
-    this.connect()
+    if( this.securityManager.hasValidToken() )
+      this.connect()
+    else
+      console.log("skip autoReconnect as valid token not found")
   }
 
   private connect(): void {
@@ -58,6 +61,11 @@ export class PushListenerService {
       this.isConnected = false;
       this.onConnectedChange.emit(false);
     };
+  }
+
+  public disconnect(): void {
+    if( this.isConnected && this.socket )
+      this.socket.close()
   }
 
   private broadcastMessage(message: PushMessageDTO): void {

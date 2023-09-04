@@ -1,10 +1,15 @@
-<h2>Login Dialog</h2>
-<mat-form-field>
-  <input matInput placeholder="Username" [(ngModel)]="username">
-</mat-form-field>
-<mat-form-field>
-  <input matInput type="password" placeholder="Password" [(ngModel)]="password">
-</mat-form-field>
-<div class="dialog-buttons">
-  <button mat-raised-button color="primary" (click)="login()">Login</button>
-</div>
+<h2 mat-dialog-title>Login Dialog</h2>
+<mat-dialog-content>
+  <mat-form-field class="form-field">
+    <input matInput placeholder="Username" [(ngModel)]="username" maxlength="15">
+  </mat-form-field>
+  <mat-form-field class="form-field">
+    <input matInput type="password" placeholder="Password" [(ngModel)]="password" maxlength="45">
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions class="center-buttons">
+  <button mat-stroked-button color="primary"
+          [disabled]="username.trim().length==0 || password.trim().length==0"
+          (click)="login()">Login</button>
+  <button mat-stroked-button (click)="cancel()">Cancel</button>
+</mat-dialog-actions>
