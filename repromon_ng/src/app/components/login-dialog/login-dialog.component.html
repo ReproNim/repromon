@@ -1,5 +1,7 @@
 <h2 mat-dialog-title>Login Dialog</h2>
-<mat-dialog-content>
+<mat-dialog-content
+  (keydown.enter)="login()"
+  (keydown.escape)="cancel()">
   <mat-form-field class="form-field">
     <input matInput placeholder="Username" [(ngModel)]="username" maxlength="15">
   </mat-form-field>
@@ -11,5 +13,5 @@
   <button mat-stroked-button color="primary"
           [disabled]="username.trim().length==0 || password.trim().length==0"
           (click)="login()">Login</button>
-  <button mat-stroked-button (click)="cancel()">Cancel</button>
+  <button mat-stroked-button (click)="cancel()" >Cancel</button>
 </mat-dialog-actions>

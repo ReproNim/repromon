@@ -17,6 +17,8 @@ export class LoginDialogComponent {
   }
 
   login() {
+    if( this.username.trim().length==0 || this.password.trim().length==0 )
+      return;
     this.dialogRef.close( {
         username: this.username,
         password: this.password,

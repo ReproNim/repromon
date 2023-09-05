@@ -22,6 +22,8 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MessageBoxComponent } from './components/message-box/message-box.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import {MatIconModule} from "@angular/material/icon";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import {MatDialogModule} from "@angular/material/dialog";
     MatProgressSpinnerModule,
     MatSortModule,
     MatTableModule,
+    MatTooltipModule,
     NoopAnimationsModule,
+    MatIconModule,
   ],
   providers: [
     DatePipe,

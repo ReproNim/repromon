@@ -15,10 +15,18 @@
       <b>{{ userLoginService.currentUser?.first_name }} {{ userLoginService.currentUser?.last_name }}</b>&nbsp;&nbsp;
     </div>
     <div *ngIf="!userLoginService.isLoggedIn">
-      <button mat-stroked-button class="l-button" (click)="userLoginService.loginDialog()">Login</button>&nbsp;
+      <button mat-icon-button class="l-button"
+              (click)="userLoginService.loginDialog()"
+              matTooltip="Login">
+        <mat-icon class="l-icon">person_outline</mat-icon>
+      </button>&nbsp;
     </div>
     <div *ngIf="userLoginService.isLoggedIn">
-      <button mat-stroked-button class="l-button" (click)="userLoginService.logoutDialog()">Logout</button>&nbsp;
+      <button mat-icon-button class="l-button"
+              (click)="userLoginService.logoutDialog()"
+              matTooltip="Logout">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>&nbsp;
     </div>
   </div>
 

@@ -14,7 +14,16 @@
 }
 
 .l-button {
+  padding: 3.5pt 1pt 0pt 1pt;
   color: lightgray !important;
-  height: 25pt;
-  width: 60pt;
+  width: 26pt;
+  height: 26pt;
+}
+
+.l-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.l-icon {
+  /*font-size: 20pt;*/
 }
