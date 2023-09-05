@@ -49,7 +49,7 @@ export class UserLoginService {
             title: 'Login Error Dialog',
             text: error.error.detail,
             buttons: ['ok'],
-            icons: ['error']
+            icon: 'error'
           },
         });
       }
@@ -87,12 +87,13 @@ export class UserLoginService {
   logoutDialog(): void {
     console.log("logoutDialog()")
     const dialogRef = this.dialog.open(MessageBoxComponent, {
-      width: '240pt',
+      width: '270pt',
       height: '134pt',
       data: {
         title: 'Logout Dialog',
         text: 'Are you sure you want to log out?',
-        buttons: ['yes', 'cancel']
+        buttons: ['yes', 'cancel'],
+        icon: 'question'
       },
     });
 

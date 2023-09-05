@@ -1,3 +1,40 @@
 .center-buttons {
   justify-content: center;
 }
+
+.icon-text {
+  display: flex;
+  align-items: center;
+}
+
+.icon-container {
+  width: 32pt;
+  height: 32pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-red {
+  height: 26pt;
+  width: 26pt;
+  font-size: 26pt;
+  margin-top: 0;
+  color: rgba(203, 5, 49, 0.62);
+}
+
+.icon-blue {
+  height: 26pt;
+  width: 26pt;
+  font-size: 26pt;
+  margin-top: 0;
+  color: rgba(54, 54, 140, 0.79);
+}
+
+.icon-yellow {
+  height: 26pt;
+  width: 26pt;
+  font-size: 26pt;
+  margin-top: 0;
+  color: rgba(213, 179, 10, 0.91);
+}

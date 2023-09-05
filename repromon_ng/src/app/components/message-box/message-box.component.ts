@@ -12,7 +12,7 @@ export class MessageBoxComponent {
   @Input() text: string = '';
   @Input() defaultButton: string = 'ok';
   @Input() buttons: string[] = ['ok'];
-  @Input() icons: string[] = [];
+  @Input() icon: string | null = null;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     if( data ) {
@@ -22,8 +22,8 @@ export class MessageBoxComponent {
         this.text = data.text;
       if( data.buttons )
         this.buttons = data.buttons;
-      if( data.icons )
-        this.icons = data.icons;
+      if( data.icon )
+        this.icon = data.icon;
     }
   }
 }

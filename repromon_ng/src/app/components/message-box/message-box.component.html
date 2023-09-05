@@ -1,5 +1,13 @@
 <h2 mat-dialog-title>{{ title }}</h2>
-<mat-dialog-content>{{ text }}</mat-dialog-content>
+<mat-dialog-content class="icon-text">
+  <div *ngIf="icon" class="icon-container">
+    <mat-icon *ngIf="icon === 'error'" class="icon-red">error</mat-icon>
+    <mat-icon *ngIf="icon === 'warning'" class="icon-yellow">warning</mat-icon>
+    <mat-icon *ngIf="icon === 'question'" class="icon-blue">help</mat-icon>
+    <mat-icon *ngIf="icon === 'info'" class="icon-blue">info</mat-icon>
+  </div>
+  <div>{{ text }}</div>
+</mat-dialog-content>
 <mat-dialog-actions class="center-buttons">
   <button mat-stroked-button [mat-dialog-close]="'ok'" *ngIf="buttons.includes('ok')">OK</button>
   <button mat-stroked-button [mat-dialog-close]="'yes'" *ngIf="buttons.includes('yes')">Yes</button>
