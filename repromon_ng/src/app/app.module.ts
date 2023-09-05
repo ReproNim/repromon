@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { DatePipe } from '@angular/common';
@@ -24,6 +24,11 @@ import { MessageBoxComponent } from './components/message-box/message-box.compon
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatIconModule} from "@angular/material/icon";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {ConfigLoader} from "./config/ConfigLoader";
+
+export function loadConfig(configLoader: ConfigLoader) {
+  return () => configLoader.load();
+}
 
 @NgModule({
   declarations: [
@@ -55,6 +60,13 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     MatIconModule,
   ],
   providers: [
+    ConfigLoader,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: loadConfig,
+      deps: [ConfigLoader],
+      multi: true,
+    },
     DatePipe,
     {
       provide: HTTP_INTERCEPTORS,

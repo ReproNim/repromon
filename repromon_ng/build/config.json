@@ -1,0 +1,8 @@
+{
+  "ENV": "local-config",
+  "API_BASE_URL": "http://127.0.0.1:9095/api/1",
+  "WS_BASE_URL": "ws://127.0.0.1:9095/api/1",
+  "TOKEN_URL": "http://127.0.0.1:9095/token",
+  "DEBUG_ACCESS_TOKEN": null,
+  "FEEDBACK_INTERVAL_SEC": 86400
+}
