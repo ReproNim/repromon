@@ -20,12 +20,18 @@ def db_init(params: dict, session_scopefunc=None):
     :return:
     """
     logger.debug("db_init(...)")
-    engine = create_engine(**params)
+    valid_params = {key: value for key, value in params.items()
+                    if not key.startswith("arg_")}
+
+    engine = create_engine(**valid_params)
     logger.debug(f"created DB engine={str(engine)}")
 
     BaseDAO.default_session = scoped_session(
         sessionmaker(bind=engine), scopefunc=session_scopefunc
     )
+
+    BaseDAO.set_default_schema(params["arg_schema"])
+    logger.debug(f"set default schema to {params['arg_schema']}")
     logger.debug("done")
 
 

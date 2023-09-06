@@ -55,3 +55,7 @@ poetry run srv
 1) Generate TOKEN_SECRET_KEY:
 
 openssl rand -hex 32
+
+[PostgreSQL on MacOS]
+
+ export PATH=/Library/PostgreSQL/15/bin:$PATH

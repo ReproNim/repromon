@@ -42,10 +42,14 @@ def _scalar(cls, proxy):
     return None
 
 
+_prefix_: str = ''
+
+
 class BaseDAO:
     """Base class for all DAO objects"""
 
     default_session = None
+    default_schema = None
 
     def __init__(self):
         pass
@@ -58,6 +62,12 @@ class BaseDAO:
 
     def flush(self):
         self.session().flush()
+
+    @classmethod
+    def set_default_schema(cls, db_schema: str):
+        BaseDAO.default_schema = db_schema
+        global _prefix_
+        _prefix_ = f"{BaseDAO.default_schema}." if BaseDAO.default_schema else ''
 
     def session(self):
         return BaseDAO.default_session
@@ -113,13 +123,13 @@ class AccountDAO(BaseDAO):
             self.session()
             .execute(
                 text(
-                    """
+                    f"""
                 select
                     id,
                     rolename,
                     description
                 from
-                    role
+                    {_prefix_} role
             """
                 )
             )
@@ -143,14 +153,14 @@ class AccountDAO(BaseDAO):
             self.session()
             .execute(
                 text(
-                    """
+                    f"""
                 select
                     u.id,
                     u.username,
                     u.first_name,
                     u.last_name
                 from
-                    user u
+                    {_prefix_} user u
                 where
                     u.username = :username
             """
@@ -207,7 +217,7 @@ class MessageDAO(BaseDAO):
             self.session()
             .execute(
                 text(
-                    """
+                    f"""
                 select
                     ml.id,
                     ml.study_id,
@@ -223,11 +233,11 @@ class MessageDAO(BaseDAO):
                     dp.provider,
                     ml.description
                 from
-                    message_log ml
-                    left join message_category mc on ml.category_id = mc.id
-                    left join message_level ll on ml.level_id = ll.id
-                    left join device dv on ml.device_id = dv.id
-                    left join data_provider dp on ml.provider_id = dp.id
+                    {_prefix_} message_log ml
+                    left join {_prefix_} message_category mc on ml.category_id = mc.id
+                    left join {_prefix_} message_level ll on ml.level_id = ll.id
+                    left join {_prefix_} device dv on ml.device_id = dv.id
+                    left join {_prefix_} data_provider dp on ml.provider_id = dp.id
                 where
                     (:study_id is null or ml.study_id = :study_id) and
                     (:category_id is null or ml.category_id = :category_id) and
@@ -253,7 +263,7 @@ class MessageDAO(BaseDAO):
             self.session()
             .execute(
                 text(
-                    """
+                    f"""
                 select
                     ml.id,
                     ml.study_id,
@@ -269,11 +279,11 @@ class MessageDAO(BaseDAO):
                     dp.provider,
                     ml.description
                 from
-                    message_log ml
-                    left join message_category mc on ml.category_id = mc.id
-                    left join message_level ll on ml.level_id = ll.id
-                    left join device dv on ml.device_id = dv.id
-                    left join data_provider dp on ml.provider_id = dp.id
+                    {_prefix_} message_log ml
+                    left join {_prefix_} message_category mc on ml.category_id = mc.id
+                    left join {_prefix_} message_level ll on ml.level_id = ll.id
+                    left join {_prefix_} device dv on ml.device_id = dv.id
+                    left join {_prefix_} data_provider dp on ml.provider_id = dp.id
                 where
                     ml.id = :message_id
                 """
@@ -358,11 +368,11 @@ class SecSysDAO(BaseDAO):
             self.session()
             .execute(
                 text(
-                    """
+                    f"""
                 select
                     ud.device_id
                 from
-                    user u, sec_user_device ud
+                    {_prefix_} user u, {_prefix_} sec_user_device ud
                 where
                     u.username = :username and
                     u.id = ud.user_id
@@ -395,11 +405,13 @@ class SecSysDAO(BaseDAO):
             self.session()
             .execute(
                 text(
-                    """
+                    f"""
                 select
                     u.username
                 from
-                    role r, user u, sec_user_role ur
+                    {_prefix_} role r,
+                    {_prefix_} user u,
+                    {_prefix_} sec_user_role ur
                 where
                     r.rolename = :rolename and
                     ur.role_id = r.id and
@@ -417,11 +429,13 @@ class SecSysDAO(BaseDAO):
             self.session()
             .execute(
                 text(
-                    """
+                    f"""
                 select
                     r.rolename
                 from
-                    user u, role r, sec_user_role ur
+                    {_prefix_} user u,
+                    {_prefix_} role r,
+                    {_prefix_} sec_user_role ur
                 where
                     u.username = :username and
                     u.id = ur.user_id and
@@ -448,7 +462,7 @@ class StudyDAO(BaseDAO):
             self.session()
             .execute(
                 text(
-                    """
+                    f"""
                 select
                     sd.id,
                     md.description as device,
@@ -457,9 +471,9 @@ class StudyDAO(BaseDAO):
                     sd.start_ts,
                     sd.end_ts
                 from
-                    study_data sd
-                    left join study_status ss on sd.status_id = ss.id
-                    left join device md on sd.device_id = md.id
+                    {_prefix_} study_data sd
+                    left join {_prefix_} study_status ss on sd.status_id = ss.id
+                    left join {_prefix_} device md on sd.device_id = md.id
                 where
                     sd.id = :study_id
             """

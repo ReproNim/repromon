@@ -390,7 +390,7 @@ class UserEntity(BaseEntity):
     email = Column(String(128), unique=True)
     phone = Column(String(16))
     description = Column(String(128))
-    password = Column(String(45))
+    password = Column(String(128))
     password_changed_on = Column(TIMESTAMP)
     last_login = Column(TIMESTAMP)
 

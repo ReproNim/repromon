@@ -22,6 +22,7 @@ class DbConfig(BaseSectionConfig):
     """Database configuration under [db***] sections for SQLAlchemy"""
 
     url: str = None
+    arg_schema: str = None
     echo: bool = False
     pool_size: int = 5
     pool_recycle: int = 3600
