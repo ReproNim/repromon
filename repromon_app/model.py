@@ -4,7 +4,7 @@ from enum import Enum, IntEnum
 from typing import Optional
 
 from pydantic import BaseModel
-from sqlalchemy import (JSON, TIMESTAMP, Column, Index, Integer, String,
+from sqlalchemy import (JSON, TIMESTAMP, Column, Integer, String,
                         UniqueConstraint)
 from sqlalchemy.orm import as_declarative
 
@@ -192,8 +192,8 @@ class DataProviderEntity(BaseEntity):
     """
     __tablename__ = 'data_provider'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    provider = Column(String(15), nullable=False, unique=True)
+    id = Column(Integer, primary_key=True)
+    provider = Column(String(15), nullable=False, unique=True, index=True)
 
     def __repr__(self):
         return "DataProviderEntity(id={self.id}, " \
@@ -205,9 +205,9 @@ class DeviceEntity(BaseEntity):
     """
     __tablename__ = 'device'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    kind = Column(String(15))
-    description = Column(String(128))
+    id = Column(Integer, primary_key=True)
+    kind = Column(String(15), nullable=False)
+    description = Column(String(128), nullable=False)
 
     def __repr__(self):
         return "DeviceEntity(id={self.id}, " \
@@ -220,8 +220,8 @@ class MessageCategoryEntity(BaseEntity):
     """
     __tablename__ = 'message_category'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    category = Column(String(45))
+    id = Column(Integer, primary_key=True)
+    category = Column(String(45), nullable=False)
 
     def __repr__(self):
         return "MessageCategoryEntity(id={self.id}, " \
@@ -234,7 +234,7 @@ class MessageLevelEntity(BaseEntity):
     __tablename__ = 'message_level'
 
     id = Column(Integer, primary_key=True)
-    level = Column(String(8))
+    level = Column(String(8), nullable=False)
 
     def __repr__(self):
         return "MessageLevelEntity(id={self.id}, " \
@@ -246,22 +246,22 @@ class MessageLogEntity(BaseEntity):
     """
     __tablename__ = 'message_log'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    level_id = Column(Integer)
-    category_id = Column(Integer)
-    device_id = Column(Integer)
-    provider_id = Column(Integer)
-    study_id = Column(Integer)
-    study_name = Column(String(255))
-    is_visible = Column(String(1), default='Y')
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    level_id = Column(Integer, nullable=False)
+    category_id = Column(Integer, nullable=False, index=True)
+    device_id = Column(Integer, nullable=False, index=True)
+    provider_id = Column(Integer, nullable=False, index=True)
+    study_id = Column(Integer, index=True)
+    study_name = Column(String(255), index=True)
+    is_visible = Column(String(1), default='Y', nullable=False, index=True)
     visible_updated_on = Column(TIMESTAMP)
     visible_updated_by = Column(String(15))
     description = Column(String(255))
     payload = Column(JSON)
-    event_on = Column(TIMESTAMP)
-    registered_on = Column(TIMESTAMP)
-    recorded_on = Column(TIMESTAMP)
-    recorded_by = Column(String(15))
+    event_on = Column(TIMESTAMP, nullable=False, index=True)
+    registered_on = Column(TIMESTAMP, nullable=False)
+    recorded_on = Column(TIMESTAMP, nullable=False)
+    recorded_by = Column(String(15), nullable=False)
 
     def __repr__(self):
         return "MessageLogEntity(id={self.id}, " \
@@ -290,9 +290,9 @@ class RoleEntity(BaseEntity):
         UniqueConstraint('rolename'),
     )
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    rolename = Column(String(45), nullable=False)
-    description = Column(String(128))
+    id = Column(Integer, primary_key=True, nullable=False)
+    rolename = Column(String(45), nullable=False, index=True)
+    description = Column(String(128), nullable=False)
 
     def __repr__(self):
         return "RoleEntity(id={self.id}, " \
@@ -308,9 +308,9 @@ class SecUserDeviceEntity(BaseEntity):
         UniqueConstraint('user_id', 'device_id'),
     )
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, nullable=False)
-    device_id = Column(Integer, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    device_id = Column(Integer, nullable=False, index=True)
 
     def __repr__(self):
         return "SecUserDeviceEntity(id={self.id}, " \
@@ -326,9 +326,9 @@ class SecUserRoleEntity(BaseEntity):
         UniqueConstraint('user_id', 'role_id'),
     )
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, nullable=False)
-    role_id = Column(Integer, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    role_id = Column(Integer, nullable=False, index=True)
 
     def __repr__(self):
         return "SecUserRoleEntity(id={self.id}, " \
@@ -341,10 +341,10 @@ class StudyDataEntity(BaseEntity):
     """
     __tablename__ = 'study_data'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(128))
-    device_id = Column(Integer)
-    status_id = Column(Integer)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    name = Column(String(128), nullable=False, index=True)
+    device_id = Column(Integer, index=True)
+    status_id = Column(Integer, index=True)
     start_ts = Column(TIMESTAMP)
     end_ts = Column(TIMESTAMP)
     info = Column(JSON)
@@ -364,8 +364,8 @@ class StudyStatusEntity(BaseEntity):
     """
     __tablename__ = 'study_status'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    status = Column(String(45))
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    status = Column(String(45), nullable=False, index=True, unique=True)
 
     def __repr__(self):
         return "StudyStatusEntity(id={self.id}, " \
@@ -376,18 +376,14 @@ class UserEntity(BaseEntity):
     """Entity for "user" table
     """
     __tablename__ = 'user'
-    __table_args__ = (
-        UniqueConstraint('email'),
-        Index('idx_user_name', 'username')
-    )
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(15), nullable=False, unique=True)
-    is_active = Column(String(1), default='N')
-    is_system = Column(String(1), nullable=False, default='N')
-    first_name = Column(String(45))
-    last_name = Column(String(45))
-    email = Column(String(128), unique=True)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    username = Column(String(15), nullable=False, unique=True, index=True)
+    is_active = Column(String(1), default='N', index=True)
+    is_system = Column(String(1), nullable=False, default='N', index=True)
+    first_name = Column(String(45), index=True)
+    last_name = Column(String(45), index=True)
+    email = Column(String(128), unique=True, index=True)
     phone = Column(String(16))
     description = Column(String(128))
     password = Column(String(128))

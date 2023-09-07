@@ -5,7 +5,7 @@
 -- Dumped from database version 15.4
 -- Dumped by pg_dump version 15.4
 
--- Started on 2023-09-05 23:33:29 EEST
+-- Started on 2023-09-07 10:31:03 EEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -29,7 +29,7 @@ CREATE SCHEMA repromon;
 ALTER SCHEMA repromon OWNER TO pg_database_owner;
 
 --
--- TOC entry 3684 (class 0 OID 0)
+-- TOC entry 3709 (class 0 OID 0)
 -- Dependencies: 5
 -- Name: SCHEMA repromon; Type: COMMENT; Schema: -; Owner: pg_database_owner
 --
@@ -138,7 +138,7 @@ CREATE SEQUENCE repromon.message_log_id_seq
 ALTER TABLE repromon.message_log_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3685 (class 0 OID 0)
+-- TOC entry 3710 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: message_log_id_seq; Type: SEQUENCE OWNED BY; Schema: repromon; Owner: postgres
 --
@@ -191,7 +191,7 @@ CREATE SEQUENCE repromon.sec_user_device_id_seq
 ALTER TABLE repromon.sec_user_device_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3686 (class 0 OID 0)
+-- TOC entry 3711 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: sec_user_device_id_seq; Type: SEQUENCE OWNED BY; Schema: repromon; Owner: postgres
 --
@@ -230,7 +230,7 @@ CREATE SEQUENCE repromon.sec_user_role_id_seq
 ALTER TABLE repromon.sec_user_role_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3687 (class 0 OID 0)
+-- TOC entry 3712 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: sec_user_role_id_seq; Type: SEQUENCE OWNED BY; Schema: repromon; Owner: postgres
 --
@@ -273,7 +273,7 @@ CREATE SEQUENCE repromon.study_data_id_seq
 ALTER TABLE repromon.study_data_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3688 (class 0 OID 0)
+-- TOC entry 3713 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: study_data_id_seq; Type: SEQUENCE OWNED BY; Schema: repromon; Owner: postgres
 --
@@ -334,7 +334,7 @@ CREATE SEQUENCE repromon.user_id_seq
 ALTER TABLE repromon.user_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3689 (class 0 OID 0)
+-- TOC entry 3714 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: repromon; Owner: postgres
 --
@@ -383,7 +383,7 @@ ALTER TABLE ONLY repromon."user" ALTER COLUMN id SET DEFAULT nextval('repromon.u
 
 
 --
--- TOC entry 3663 (class 0 OID 16470)
+-- TOC entry 3688 (class 0 OID 16470)
 -- Dependencies: 214
 -- Data for Name: data_provider; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -400,7 +400,7 @@ COPY repromon.data_provider (id, provider) FROM stdin;
 
 
 --
--- TOC entry 3664 (class 0 OID 16473)
+-- TOC entry 3689 (class 0 OID 16473)
 -- Dependencies: 215
 -- Data for Name: device; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -411,7 +411,7 @@ COPY repromon.device (id, kind, description) FROM stdin;
 
 
 --
--- TOC entry 3665 (class 0 OID 16476)
+-- TOC entry 3690 (class 0 OID 16476)
 -- Dependencies: 216
 -- Data for Name: message_category; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -422,7 +422,7 @@ COPY repromon.message_category (id, category) FROM stdin;
 
 
 --
--- TOC entry 3666 (class 0 OID 16479)
+-- TOC entry 3691 (class 0 OID 16479)
 -- Dependencies: 217
 -- Data for Name: message_level; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -435,7 +435,7 @@ COPY repromon.message_level (id, level) FROM stdin;
 
 
 --
--- TOC entry 3670 (class 0 OID 16536)
+-- TOC entry 3695 (class 0 OID 16536)
 -- Dependencies: 221
 -- Data for Name: message_log; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -447,11 +447,12 @@ COPY repromon.message_log (id, level_id, category_id, device_id, provider_id, st
 4	1	1	1	5	1	Halchenko/Horea/1020_animal_mri	Y	\N	\N	proceeded with compliant data on study Halchenko/Horea/1020_animal_mri	\N	2023-06-07 10:54:17	2023-06-07 10:55:07	2023-06-07 10:55:17	noisseur
 5	1	1	1	3	\N	\N	Y	\N	\N	MRI trigger event received	\N	2023-06-07 10:55:45	2023-06-07 10:56:05	2023-06-07 10:56:45	reproevt
 6	3	1	1	6	\N	\N	Y	\N	\N	MRI data lacks rear head coils data [link to PACS recording to review]	\N	2023-06-07 10:58:01	2023-06-07 10:59:00	2023-06-07 10:59:01	dicomqa
+7	1	1	1	3	\N	\N	Y	\N	\N	MRI trigger event received	null	2023-09-05 23:32:10.244539	2023-09-05 23:34:52.263282	2023-09-05 23:34:52.26329	poweruser
 \.
 
 
 --
--- TOC entry 3667 (class 0 OID 16487)
+-- TOC entry 3692 (class 0 OID 16487)
 -- Dependencies: 218
 -- Data for Name: role; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -467,7 +468,7 @@ COPY repromon.role (id, rolename, description) FROM stdin;
 
 
 --
--- TOC entry 3672 (class 0 OID 16551)
+-- TOC entry 3697 (class 0 OID 16551)
 -- Dependencies: 223
 -- Data for Name: sec_user_device; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -483,7 +484,7 @@ COPY repromon.sec_user_device (id, user_id, device_id) FROM stdin;
 
 
 --
--- TOC entry 3674 (class 0 OID 16560)
+-- TOC entry 3699 (class 0 OID 16560)
 -- Dependencies: 225
 -- Data for Name: sec_user_role; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -503,7 +504,7 @@ COPY repromon.sec_user_role (id, user_id, role_id) FROM stdin;
 
 
 --
--- TOC entry 3676 (class 0 OID 16569)
+-- TOC entry 3701 (class 0 OID 16569)
 -- Dependencies: 227
 -- Data for Name: study_data; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -514,7 +515,7 @@ COPY repromon.study_data (id, name, device_id, status_id, start_ts, end_ts, info
 
 
 --
--- TOC entry 3668 (class 0 OID 16511)
+-- TOC entry 3693 (class 0 OID 16511)
 -- Dependencies: 219
 -- Data for Name: study_status; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -530,7 +531,7 @@ COPY repromon.study_status (id, status) FROM stdin;
 
 
 --
--- TOC entry 3678 (class 0 OID 16578)
+-- TOC entry 3703 (class 0 OID 16578)
 -- Dependencies: 229
 -- Data for Name: user; Type: TABLE DATA; Schema: repromon; Owner: postgres
 --
@@ -549,16 +550,16 @@ COPY repromon."user" (id, username, is_active, is_system, first_name, last_name,
 
 
 --
--- TOC entry 3690 (class 0 OID 0)
+-- TOC entry 3715 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: message_log_id_seq; Type: SEQUENCE SET; Schema: repromon; Owner: postgres
 --
 
-SELECT pg_catalog.setval('repromon.message_log_id_seq', 6, true);
+SELECT pg_catalog.setval('repromon.message_log_id_seq', 7, true);
 
 
 --
--- TOC entry 3691 (class 0 OID 0)
+-- TOC entry 3716 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: sec_user_device_id_seq; Type: SEQUENCE SET; Schema: repromon; Owner: postgres
 --
@@ -567,7 +568,7 @@ SELECT pg_catalog.setval('repromon.sec_user_device_id_seq', 6, true);
 
 
 --
--- TOC entry 3692 (class 0 OID 0)
+-- TOC entry 3717 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: sec_user_role_id_seq; Type: SEQUENCE SET; Schema: repromon; Owner: postgres
 --
@@ -576,7 +577,7 @@ SELECT pg_catalog.setval('repromon.sec_user_role_id_seq', 10, true);
 
 
 --
--- TOC entry 3693 (class 0 OID 0)
+-- TOC entry 3718 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: study_data_id_seq; Type: SEQUENCE SET; Schema: repromon; Owner: postgres
 --
@@ -585,7 +586,7 @@ SELECT pg_catalog.setval('repromon.study_data_id_seq', 1, false);
 
 
 --
--- TOC entry 3694 (class 0 OID 0)
+-- TOC entry 3719 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: repromon; Owner: postgres
 --
@@ -603,7 +604,7 @@ ALTER TABLE ONLY repromon.data_provider
 
 
 --
--- TOC entry 3494 (class 2606 OID 16528)
+-- TOC entry 3495 (class 2606 OID 16528)
 -- Name: device device_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -612,16 +613,7 @@ ALTER TABLE ONLY repromon.device
 
 
 --
--- TOC entry 3516 (class 2606 OID 16587)
--- Name: user idx_user_name; Type: CONSTRAINT; Schema: repromon; Owner: postgres
---
-
-ALTER TABLE ONLY repromon."user"
-    ADD CONSTRAINT idx_user_name UNIQUE (username);
-
-
---
--- TOC entry 3496 (class 2606 OID 16530)
+-- TOC entry 3497 (class 2606 OID 16530)
 -- Name: message_category message_category_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -630,7 +622,7 @@ ALTER TABLE ONLY repromon.message_category
 
 
 --
--- TOC entry 3498 (class 2606 OID 16532)
+-- TOC entry 3499 (class 2606 OID 16532)
 -- Name: message_level message_level_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -639,7 +631,7 @@ ALTER TABLE ONLY repromon.message_level
 
 
 --
--- TOC entry 3504 (class 2606 OID 16544)
+-- TOC entry 3516 (class 2606 OID 16544)
 -- Name: message_log message_log_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -648,7 +640,7 @@ ALTER TABLE ONLY repromon.message_log
 
 
 --
--- TOC entry 3500 (class 2606 OID 16547)
+-- TOC entry 3502 (class 2606 OID 16547)
 -- Name: role role_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -657,7 +649,7 @@ ALTER TABLE ONLY repromon.role
 
 
 --
--- TOC entry 3506 (class 2606 OID 16556)
+-- TOC entry 3520 (class 2606 OID 16556)
 -- Name: sec_user_device sec_user_device_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -666,7 +658,7 @@ ALTER TABLE ONLY repromon.sec_user_device
 
 
 --
--- TOC entry 3508 (class 2606 OID 16558)
+-- TOC entry 3522 (class 2606 OID 16558)
 -- Name: sec_user_device sec_user_device_unique_constraint; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -675,7 +667,7 @@ ALTER TABLE ONLY repromon.sec_user_device
 
 
 --
--- TOC entry 3510 (class 2606 OID 16565)
+-- TOC entry 3526 (class 2606 OID 16565)
 -- Name: sec_user_role sec_user_role_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -684,7 +676,7 @@ ALTER TABLE ONLY repromon.sec_user_role
 
 
 --
--- TOC entry 3512 (class 2606 OID 16567)
+-- TOC entry 3528 (class 2606 OID 16567)
 -- Name: sec_user_role sec_user_role_unique_constraint; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -693,7 +685,7 @@ ALTER TABLE ONLY repromon.sec_user_role
 
 
 --
--- TOC entry 3514 (class 2606 OID 16576)
+-- TOC entry 3533 (class 2606 OID 16576)
 -- Name: study_data study_data_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -702,7 +694,7 @@ ALTER TABLE ONLY repromon.study_data
 
 
 --
--- TOC entry 3502 (class 2606 OID 16549)
+-- TOC entry 3505 (class 2606 OID 16549)
 -- Name: study_status study_status_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -711,7 +703,16 @@ ALTER TABLE ONLY repromon.study_status
 
 
 --
--- TOC entry 3518 (class 2606 OID 16589)
+-- TOC entry 3507 (class 2606 OID 16610)
+-- Name: study_status unique_study_status_status; Type: CONSTRAINT; Schema: repromon; Owner: postgres
+--
+
+ALTER TABLE ONLY repromon.study_status
+    ADD CONSTRAINT unique_study_status_status UNIQUE (status);
+
+
+--
+-- TOC entry 3541 (class 2606 OID 16589)
 -- Name: user user_email_unique_constraint; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -720,7 +721,7 @@ ALTER TABLE ONLY repromon."user"
 
 
 --
--- TOC entry 3520 (class 2606 OID 16585)
+-- TOC entry 3543 (class 2606 OID 16585)
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: repromon; Owner: postgres
 --
 
@@ -728,7 +729,200 @@ ALTER TABLE ONLY repromon."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (id);
 
 
--- Completed on 2023-09-05 23:33:29 EEST
+--
+-- TOC entry 3545 (class 2606 OID 16587)
+-- Name: user user_username_unique_constraint; Type: CONSTRAINT; Schema: repromon; Owner: postgres
+--
+
+ALTER TABLE ONLY repromon."user"
+    ADD CONSTRAINT user_username_unique_constraint UNIQUE (username);
+
+
+--
+-- TOC entry 3493 (class 1259 OID 16592)
+-- Name: idx_data_provider_provider; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_data_provider_provider ON repromon.data_provider USING btree (provider);
+
+
+--
+-- TOC entry 3508 (class 1259 OID 16593)
+-- Name: idx_message_log_category_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_message_log_category_id ON repromon.message_log USING btree (category_id);
+
+
+--
+-- TOC entry 3509 (class 1259 OID 16599)
+-- Name: idx_message_log_device_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_message_log_device_id ON repromon.message_log USING btree (device_id);
+
+
+--
+-- TOC entry 3510 (class 1259 OID 16595)
+-- Name: idx_message_log_event_on; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_message_log_event_on ON repromon.message_log USING btree (event_on);
+
+
+--
+-- TOC entry 3511 (class 1259 OID 16594)
+-- Name: idx_message_log_is_visible; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_message_log_is_visible ON repromon.message_log USING btree (is_visible);
+
+
+--
+-- TOC entry 3512 (class 1259 OID 16598)
+-- Name: idx_message_log_provider_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_message_log_provider_id ON repromon.message_log USING btree (provider_id);
+
+
+--
+-- TOC entry 3513 (class 1259 OID 16596)
+-- Name: idx_message_log_study_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_message_log_study_id ON repromon.message_log USING btree (study_id);
+
+
+--
+-- TOC entry 3514 (class 1259 OID 16597)
+-- Name: idx_message_log_study_name; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_message_log_study_name ON repromon.message_log USING btree (study_name);
+
+
+--
+-- TOC entry 3500 (class 1259 OID 16600)
+-- Name: idx_role_rolename; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_role_rolename ON repromon.role USING btree (rolename);
+
+
+--
+-- TOC entry 3517 (class 1259 OID 16602)
+-- Name: idx_sec_user_device_device_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_sec_user_device_device_id ON repromon.sec_user_device USING btree (device_id);
+
+
+--
+-- TOC entry 3518 (class 1259 OID 16601)
+-- Name: idx_sec_user_device_user_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_sec_user_device_user_id ON repromon.sec_user_device USING btree (user_id);
+
+
+--
+-- TOC entry 3523 (class 1259 OID 16604)
+-- Name: idx_sec_user_role_role_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_sec_user_role_role_id ON repromon.sec_user_role USING btree (role_id);
+
+
+--
+-- TOC entry 3524 (class 1259 OID 16603)
+-- Name: idx_sec_user_role_user_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_sec_user_role_user_id ON repromon.sec_user_role USING btree (user_id);
+
+
+--
+-- TOC entry 3529 (class 1259 OID 16606)
+-- Name: idx_study_data_device_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_study_data_device_id ON repromon.study_data USING btree (device_id);
+
+
+--
+-- TOC entry 3530 (class 1259 OID 16605)
+-- Name: idx_study_data_name; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_study_data_name ON repromon.study_data USING btree (name);
+
+
+--
+-- TOC entry 3531 (class 1259 OID 16607)
+-- Name: idx_study_data_status_id; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_study_data_status_id ON repromon.study_data USING btree (status_id);
+
+
+--
+-- TOC entry 3503 (class 1259 OID 16608)
+-- Name: idx_study_status_status; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_study_status_status ON repromon.study_status USING btree (status);
+
+
+--
+-- TOC entry 3534 (class 1259 OID 16616)
+-- Name: idx_user_email; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_user_email ON repromon."user" USING btree (email);
+
+
+--
+-- TOC entry 3535 (class 1259 OID 16614)
+-- Name: idx_user_first_name; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_user_first_name ON repromon."user" USING btree (first_name);
+
+
+--
+-- TOC entry 3536 (class 1259 OID 16612)
+-- Name: idx_user_is_active; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_user_is_active ON repromon."user" USING btree (is_active);
+
+
+--
+-- TOC entry 3537 (class 1259 OID 16613)
+-- Name: idx_user_is_system; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_user_is_system ON repromon."user" USING btree (is_system);
+
+
+--
+-- TOC entry 3538 (class 1259 OID 16615)
+-- Name: idx_user_last_name; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_user_last_name ON repromon."user" USING btree (last_name);
+
+
+--
+-- TOC entry 3539 (class 1259 OID 16611)
+-- Name: idx_user_username; Type: INDEX; Schema: repromon; Owner: postgres
+--
+
+CREATE INDEX idx_user_username ON repromon."user" USING btree (username);
+
+
+-- Completed on 2023-09-07 10:31:03 EEST
 
 --
 -- PostgreSQL database dump complete
