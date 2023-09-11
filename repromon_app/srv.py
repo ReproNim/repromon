@@ -68,14 +68,7 @@ def create_fastapi_app() -> FastAPI:
     # configure CORS to allow REST calls from rich frontend
     app_web.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "http://localhost:3000",
-            "https://localhost:3000",
-            "http://localhost:4200",
-            "https://localhost:4200",
-            "http://localhost:9095",
-            "https://localhost:9095",
-        ],
+        allow_origins=app_settings().CORS_ALLOW_ORIGINS_LIST,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

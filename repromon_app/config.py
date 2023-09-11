@@ -32,12 +32,20 @@ class SettingsConfig(BaseSectionConfig):
     """Basic configuration for [system] section"""
 
     ENV: str = "local"
+    CORS_ALLOW_ORIGINS: str = None
     DEBUG_USERNAME: str = None
     TOKEN_SECRET_KEY: str = None
     TOKEN_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_SEC: int = 24 * 60 * 60
     UI_APP_PATH: str = None
     UI2_APP_PATH: str = None
+
+    @property
+    def CORS_ALLOW_ORIGINS_LIST(self) -> list[str]:
+        if self.CORS_ALLOW_ORIGINS:
+            return self.CORS_ALLOW_ORIGINS.splitlines()
+        else:
+            return []
 
 
 class UvicornConfig(BaseSectionConfig):
