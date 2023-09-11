@@ -42,7 +42,10 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.get("/create_token", response_class=HTMLResponse,
                       include_in_schema=False)
-    def create_token(request: Request):
+    def create_token(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)]
+    ):
         logger.debug("create_token")
         security_check(rolename=Rolename.ADMIN)
         return _templates.TemplateResponse("create_token.j2", {
@@ -53,8 +56,11 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.post('/create_token_ctl', response_class=PlainTextResponse,
                        include_in_schema=False)
-    def create_token_ctl(username: Annotated[str, Form()],
-                         expire_sec: Annotated[int, Form()]):
+    def create_token_ctl(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)],
+            username: Annotated[str, Form()],
+            expire_sec: Annotated[int, Form()]):
         logger.debug("create_token_ctl")
         security_check(rolename=Rolename.ADMIN)
         res: Token = SecSysService().create_access_token(username, expire_sec)
@@ -63,7 +69,10 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.get("/password_hash", response_class=HTMLResponse,
                       include_in_schema=False)
-    def password_hash(request: Request):
+    def password_hash(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)],
+    ):
         logger.debug("password_hash")
         security_check(rolename=Rolename.ADMIN)
         return _templates.TemplateResponse("password_hash.j2", {
@@ -73,7 +82,10 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.post('/password_hash_ctl', response_class=PlainTextResponse,
                        include_in_schema=False)
-    def password_hash_ctl(password: Annotated[str, Form()]):
+    def password_hash_ctl(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)],
+            password: Annotated[str, Form()]):
         logger.debug("password_hash_ctl")
         security_check(rolename=Rolename.ADMIN)
         res: str = SecSysService().get_password_hash(password)
@@ -82,7 +94,10 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.get("/send_fmessage", response_class=HTMLResponse,
                       include_in_schema=False)
-    def send_fmessage(request: Request):
+    def send_fmessage(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)]
+    ):
         logger.debug("send_fmessage")
         security_check(rolename=Rolename.ADMIN)
         dao: DAO = DAO()
@@ -100,13 +115,16 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.post('/send_fmessage_ctl', response_class=PlainTextResponse,
                        include_in_schema=False)
-    def send_fmessage_ctl(username: Annotated[str, Form()],
-                          study_id: Annotated[int, Form()],
-                          level_id: Annotated[int, Form()],
-                          provider_id: Annotated[int, Form()],
-                          description: Annotated[str, Form()],
-                          payload: Annotated[str, Form()]
-                          ):
+    def send_fmessage_ctl(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)],
+            username: Annotated[str, Form()],
+            study_id: Annotated[int, Form()],
+            level_id: Annotated[int, Form()],
+            provider_id: Annotated[int, Form()],
+            description: Annotated[str, Form()],
+            payload: Annotated[str, Form()]
+    ):
         logger.debug("send_fmessage_ctl")
         security_check(rolename=Rolename.ADMIN)
         msg: MessageLogEntity = MessageService().send_message(
@@ -126,7 +144,10 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.get("/username_by_token", response_class=HTMLResponse,
                       include_in_schema=False)
-    def username_by_token(request: Request):
+    def username_by_token(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)]
+    ):
         logger.debug("username_by_token")
         security_check(rolename=Rolename.ADMIN)
         return _templates.TemplateResponse("username_by_token.j2", {
@@ -136,7 +157,11 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.post('/username_by_token_ctl', response_class=PlainTextResponse,
                        include_in_schema=False)
-    def username_by_token_ctl(token: Annotated[str, Form()]):
+    def username_by_token_ctl(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)],
+            token: Annotated[str, Form()]
+    ):
         logger.debug("username_by_token_ctl")
         security_check(rolename=Rolename.ADMIN)
         res: str = SecSysService().get_username_by_token(token)
@@ -145,7 +170,10 @@ def create_admin_router() -> APIRouter:
     # @security: role=admin
     @admin_router.get('/view_config', response_class=PlainTextResponse,
                       include_in_schema=False)
-    def view_config():
+    def view_config(
+            request: Request,
+            sec_ctx: Annotated[SecurityContext, Depends(web_basic_context)]
+    ):
         logger.debug("view_config")
         security_check(rolename=Rolename.ADMIN)
         return PlainTextResponse(
