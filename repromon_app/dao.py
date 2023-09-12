@@ -65,7 +65,10 @@ class BaseDAO:
 
     @classmethod
     def set_default_schema(cls, db_schema: str):
-        BaseDAO.default_schema = db_schema
+        if db_schema is not None and len(db_schema) > 0:
+            BaseDAO.default_schema = db_schema
+        else:
+            BaseDAO.default_schema = None
         global _prefix_
         _prefix_ = f"{BaseDAO.default_schema}." if BaseDAO.default_schema else ''
 

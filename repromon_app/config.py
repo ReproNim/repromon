@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 import pydantic
+from dotenv import dotenv_values
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +113,7 @@ class MacroExpander(ExtendedInterpolation):
         if value and value.find("$") >= 0:
             for k, v in self._params.items():
                 value = value.replace("${" + k + "}", v)
+                value = value.replace("{$ROOT_PATH}", self._params["ROOT_PATH"])
         return super().before_get(parser, section, option, value, defaults)
 
 
@@ -165,12 +167,20 @@ def app_config_init() -> None:
         f"{cfg.HOST_CONFIG_PATH}/{AppConfig.APP_INI}",
     ]
 
+    default_env_path = f"{cfg.ROOT_PATH}/template.env.local"
+
     for ini_path in ini_paths:
         if Path(ini_path).exists():
             logging.config.fileConfig(log_file, disable_existing_loggers=False)
             logger.info(f"Found ini config file: {str(ini_path)}")
 
-            params: dict = dict(os.environ)
+            params: dict = {}
+
+            if Path(default_env_path).exists():
+                logger.info(f"Found default env file: {str(default_env_path)}")
+                params.update(dotenv_values(default_env_path))
+
+            params.update(dict(os.environ))
             params.update({
                 "ROOT_PATH": cfg.ROOT_PATH
             })

@@ -31,7 +31,7 @@ def db_init(params: dict, session_scopefunc=None):
     )
 
     BaseDAO.set_default_schema(params["arg_schema"])
-    logger.debug(f"set default schema to {params['arg_schema']}")
+    logger.debug(f"set default schema to: {params['arg_schema']}")
     logger.debug("done")
 
 
