@@ -1,5 +1,7 @@
 import logging.config
 
+from sqlalchemy import text
+
 from repromon_app.config import app_config, app_config_init
 from repromon_app.dao import DAO, BaseDAO
 from repromon_app.db import db_init
@@ -144,7 +146,8 @@ def fill_tables_with_init_data():
     o = UserEntity(username="tester1",
                    is_active='Y', is_system='N',
                    first_name='Tester', last_name='1',
-                   email='tester1@repromon.com')
+                   email='tester1@repromon.com',
+                   description='Account for testing')
     dao.add(o)
     dao.commit()
 
@@ -188,6 +191,11 @@ def main():
     db_init(app_config().db.dict())
     session = DAO.account.session()
     engine = session.get_bind()
+
+    if BaseDAO.default_schema:
+        session.execute(text(f"CREATE SCHEMA IF NOT EXISTS {BaseDAO.default_schema};"))
+        session.commit()
+
     BaseEntity.metadata.create_all(engine)
 
     fill_tables_with_init_data()
