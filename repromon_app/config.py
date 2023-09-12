@@ -113,7 +113,7 @@ class MacroExpander(ExtendedInterpolation):
         if value and value.find("$") >= 0:
             for k, v in self._params.items():
                 value = value.replace("${" + k + "}", v)
-                value = value.replace("{$ROOT_PATH}", self._params["ROOT_PATH"])
+                value = value.replace("{@ROOT_PATH}", self._params["ROOT_PATH"])
         return super().before_get(parser, section, option, value, defaults)
 
 
