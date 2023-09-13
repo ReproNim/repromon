@@ -388,7 +388,10 @@ class UserEntity(BaseEntity):
     description = Column(String(128))
     password = Column(String(128))
     password_changed_on = Column(TIMESTAMP)
-    last_login = Column(TIMESTAMP)
+    apikey = Column(String(64))
+    apikey_data = Column(String(45))
+    apikey_issued_on = Column(TIMESTAMP)
+    last_login_on = Column(TIMESTAMP)
 
     def clean_sensitive_info(self):
         self.password = "***"
