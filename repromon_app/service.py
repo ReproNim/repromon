@@ -9,7 +9,8 @@ from repromon_app.model import (DeviceEntity, LoginInfoDTO, MessageLevelId,
                                 PushMessageDTO, RoleEntity,
                                 SecUserDeviceEntity, SecUserRoleEntity,
                                 StudyDataEntity, StudyInfoDTO, UserEntity)
-from repromon_app.security import SecurityManager, Token, security_context
+from repromon_app.security import (ApiKey, SecurityManager, Token,
+                                   security_context)
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -243,8 +244,8 @@ class SecSysService(BaseService):
 
     def calculate_apikey(self, apikey_data: str) -> str:
         logger.debug(f"calculate_apikey(apikey_data={apikey_data})")
-        apikey: str = SecurityManager.instance().calculate_apikey(apikey_data)
-        return apikey
+        apikey: ApiKey = SecurityManager.instance().calculate_apikey(apikey_data)
+        return apikey.key
 
     def create_access_token(self, username: str,
                             expire_sec: int = 0) -> Token:
@@ -262,6 +263,10 @@ class SecSysService(BaseService):
         logger.debug(f"create_apikey(username={username})")
         apikey: str = SecurityManager.instance().create_apikey(username)
         return apikey
+
+    def get_apikey_hash(self, apikey: str) -> str:
+        logger.debug("get_apikey_hash(...)")
+        return SecurityManager.instance().get_apikey_hash(apikey)
 
     def get_password_hash(self, pwd: str) -> str:
         logger.debug("get_password_hash(...)")

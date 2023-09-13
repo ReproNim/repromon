@@ -431,6 +431,25 @@ def create_api_v1_router() -> APIRouter:
         return svc.create_apikey(username)
 
     # @security: admin
+    @api_v1_router.get("/secsys/get_apikey_hash",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="get_apikey_hash",
+                       description="Generate API key hash from API key string")
+    def secsys_get_apikey_hash(request: Request,
+                               sec_ctx:
+                               Annotated[SecurityContext, Depends(
+                                   web_oauth2_context)],
+                               apikey: str =
+                               Query(...,
+                                     description="API key value"),
+                               ) -> object:
+        logger.debug("secsys_get_apikey_hash(...)")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return {"apikey_hash": svc.get_apikey_hash(apikey)}
+
+    # @security: admin
     @api_v1_router.get("/secsys/get_password_hash",
                        response_model=object,
                        tags=["SecSysService"],

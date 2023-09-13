@@ -1,4 +1,6 @@
+import base64
 import contextvars
+import hashlib
 import logging
 import uuid
 from datetime import datetime, timedelta
@@ -22,6 +24,13 @@ logger.debug(f"name={__name__}")
 # security things
 # TODO: FastAPI move in some common web place
 current_web_request = contextvars.ContextVar("current_web_request")
+
+
+class ApiKey(BaseModel):
+    key: str
+    prefix: str
+    body: str
+    data: str
 
 
 # class representing current security context
@@ -116,8 +125,14 @@ class SecurityManager:
 
         return True
 
-    def calculate_apikey(self, apikey_data: str) -> str:
+    def calculate_apikey(self, apikey_data: str) -> ApiKey:
         logger.debug(f"calculate_apikey(apikey_data={apikey_data})")
+
+        if not apikey_data:
+            raise Exception("Empty apikey_data provided")
+
+        if len(apikey_data) < 16:
+            raise Exception("Too short apikey_data, should be at least 16 characters")
 
         # add secret to data
         src: str = f"{apikey_data}{app_settings().APIKEY_SECRET}"
@@ -136,18 +151,16 @@ class SecurityManager:
         # create key as prefix.body
         key = f"{prefix}.{body}"
         # logger.debug(f"key={key}")
-        return key
+        return ApiKey(key=key, prefix=prefix, body=body, data=apikey_data)
 
     def create_apikey(self, username: str) -> str:
         logger.debug(f"create_apikey(username={username})")
 
-        apikey_data: str = uuid.uuid4()
+        apikey_data: str = str(uuid.uuid4())
         logger.debug(f"apikey_data={apikey_data}")
 
         apikey: str = self.calculate_apikey(apikey_data)
-        # logger.debug(f"apikey={apikey}")
-
-        return apikey
+        return apikey.key
 
     def create_access_token(self, username: str, expire_sec: int = -1) -> str:
         logger.debug(f"create_access_token(username={username}, "
@@ -192,6 +205,22 @@ class SecurityManager:
         logger.debug(f"register security_context: {username}")
         self.__context_cache[username] = ctx
         return ctx
+
+    def get_apikey_hash(self, apikey: str) -> str:
+        if not apikey:
+            raise Exception("Empty API key")
+
+        a = apikey.split(".")
+        if len(a) == 2:
+            prefix: str = a[0]
+
+            # we use faster hash than for password in this case
+            sha = hashlib.sha256()
+            sha.update(apikey.encode('utf-8'))
+            val = base64.b64encode(sha.digest()).decode('utf-8')
+            return f"{str(prefix)}_{str(val)}"
+        else:
+            raise Exception("Invalid API key format")
 
     def get_debug_context(self) -> SecurityContext:
         if not self.__debug_context:
