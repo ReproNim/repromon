@@ -201,18 +201,18 @@ class SecurityManager:
         return ctx
 
     def get_apikey_by_user(self, username: str) -> ApiKey:
-        ue: UserEntity = self._get_cached_user(username)
+        u: UserEntity = self._get_cached_user(username)
 
-        if not ue:
+        if not u:
             raise Exception(f"User not found: {username}")
 
-        if not ue.apikey_data:
+        if not u.apikey_data:
             raise Exception("User doesn't have API key")
 
-        if len(ue.apikey_data) < 16:
+        if len(u.apikey_data) < 16:
             raise Exception("User doesn't have valid API key")
 
-        return self.calculate_apikey(ue.apikey_data)
+        return self.calculate_apikey(u.apikey_data)
 
     def get_apikey_hash(self, apikey: str) -> str:
         if not apikey:
