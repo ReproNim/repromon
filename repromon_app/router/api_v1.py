@@ -538,6 +538,25 @@ def create_api_v1_router() -> APIRouter:
         return svc.get_users_by_role(rolename)
 
     # @security: admin
+    @api_v1_router.get("/secsys/get_username_by_apikey",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="get_username_by_apikey",
+                       description="Retrieve username from API key")
+    def secsys_get_username_by_apikey(request: Request,
+                                      sec_ctx:
+                                      Annotated[SecurityContext, Depends(
+                                          web_oauth2_context)],
+                                      apikey: str =
+                                      Query(...,
+                                            description="API key value"),
+                                      ) -> object:
+        logger.debug("secsys_get_username_by_apikey(...)")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return {"username": svc.get_username_by_apikey(apikey)}
+
+    # @security: admin
     @api_v1_router.get("/secsys/get_username_by_token",
                        response_model=object,
                        tags=["SecSysService"],

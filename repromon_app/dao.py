@@ -147,6 +147,14 @@ class AccountDAO(BaseDAO):
             .first()
         )
 
+    def get_user_by_apikey(self, apikey: str) -> UserEntity:
+        return (
+            self.session()
+            .query(UserEntity)
+            .filter(UserEntity.apikey == apikey)
+            .first()
+        )
+
     def get_users(self) -> list[UserEntity]:
         return self.session().query(UserEntity).all()
 

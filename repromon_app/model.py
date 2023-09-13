@@ -388,7 +388,7 @@ class UserEntity(BaseEntity):
     description = Column(String(128))
     password = Column(String(128))
     password_changed_on = Column(TIMESTAMP)
-    apikey = Column(String(64))
+    apikey = Column(String(64), index=True)
     apikey_data = Column(String(45))
     apikey_issued_on = Column(TIMESTAMP)
     last_login_on = Column(TIMESTAMP)

@@ -276,6 +276,18 @@ class SecurityManager:
         # return bcrypt.hash(pwd)
         return self.__crypt_pwd_context.hash(pwd)
 
+    def get_username_by_apikey(self, apikey: str) -> str:
+        logger.debug("get_username_by_apikey(...)")
+        # TODO: use apikey cache before
+        if apikey and len(apikey) > 0:
+            apikey_hash: str = self.get_apikey_hash(apikey)
+            u: UserEntity = DAO.account.get_user_by_apikey(apikey_hash)
+            if not u:
+                raise Exception("Invalid API key, user not found")
+            return u.username
+        else:
+            raise Exception("Invalid API key")
+
     def get_username_by_token(self, token: str) -> str:
         logger.debug("get_username_by_token(...)")
         if token and len(token) > 0:
