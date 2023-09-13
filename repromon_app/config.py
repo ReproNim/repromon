@@ -35,6 +35,8 @@ class SettingsConfig(BaseSectionConfig):
     ENV: str = "local"
     CORS_ALLOW_ORIGINS: str = None
     DEBUG_USERNAME: str = None
+    APIKEY_SECRET: str = None
+    APIKEY_SALT: str = "1"
     TOKEN_SECRET_KEY: str = None
     TOKEN_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_SEC: int = 24 * 60 * 60

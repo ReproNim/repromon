@@ -1,5 +1,6 @@
 import contextvars
 import logging
+import uuid
 from datetime import datetime, timedelta
 from typing import Annotated
 
@@ -79,8 +80,10 @@ class SecurityManager:
         self.__debug_context: SecurityContext = None
         self.__context_cache: dict = {}
         self.__user_cache: dict = {}
-        self.__crypt_context: CryptContext = \
+        self.__crypt_pwd_context: CryptContext = \
             CryptContext(schemes=["bcrypt"], deprecated="auto")
+        self.__crypt_apikey_context: CryptContext = \
+            CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
     def auth_user(self, username: str, password: str) -> bool:
         logger.debug(f"auth_user(username={username})")
@@ -112,6 +115,39 @@ class SecurityManager:
             raise Exception("Auth internal error")
 
         return True
+
+    def calculate_apikey(self, apikey_data: str) -> str:
+        logger.debug(f"calculate_apikey(apikey_data={apikey_data})")
+
+        # add secret to data
+        src: str = f"{apikey_data}{app_settings().APIKEY_SECRET}"
+
+        # take only last 43 chars from hash, use
+        # predefined salt and rounds values
+        body: str = self.__crypt_apikey_context.hash(
+            src, salt=app_settings().APIKEY_SALT, rounds=1001)[-43:]
+
+        # keep only [0-9a-zA-Z] characters
+        body = ''.join(c for c in body if c.isalnum() or c.isdigit())
+
+        # generate prefix, at this moment first 5 chars from apikey_data UID
+        prefix: str = str(apikey_data)[0:5]
+
+        # create key as prefix.body
+        key = f"{prefix}.{body}"
+        # logger.debug(f"key={key}")
+        return key
+
+    def create_apikey(self, username: str) -> str:
+        logger.debug(f"create_apikey(username={username})")
+
+        apikey_data: str = uuid.uuid4()
+        logger.debug(f"apikey_data={apikey_data}")
+
+        apikey: str = self.calculate_apikey(apikey_data)
+        # logger.debug(f"apikey={apikey}")
+
+        return apikey
 
     def create_access_token(self, username: str, expire_sec: int = -1) -> str:
         logger.debug(f"create_access_token(username={username}, "
@@ -191,7 +227,7 @@ class SecurityManager:
 
     def get_password_hash(self, pwd: str) -> str:
         # return bcrypt.hash(pwd)
-        return self.__crypt_context.hash(pwd)
+        return self.__crypt_pwd_context.hash(pwd)
 
     def get_username_by_token(self, token: str) -> str:
         logger.debug("get_username_by_token(...)")
@@ -244,7 +280,7 @@ class SecurityManager:
     def verify_password(self, pwd: str, pwd_hash: str) -> bool:
         if pwd and pwd_hash:
             # return bcrypt.verify(pwd, pwd_hash)
-            return self.__crypt_context.verify(pwd, pwd_hash)
+            return self.__crypt_pwd_context.verify(pwd, pwd_hash)
         return False
 
 

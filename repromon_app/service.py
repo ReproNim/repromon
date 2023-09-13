@@ -241,6 +241,11 @@ class SecSysService(BaseService):
     def __init__(self):
         super().__init__()
 
+    def calculate_apikey(self, apikey_data: str) -> str:
+        logger.debug(f"calculate_apikey(apikey_data={apikey_data})")
+        apikey: str = SecurityManager.instance().calculate_apikey(apikey_data)
+        return apikey
+
     def create_access_token(self, username: str,
                             expire_sec: int = 0) -> Token:
         logger.debug(f"create_access_token(username={username}, "
@@ -252,6 +257,11 @@ class SecSysService(BaseService):
             username, expire_sec)
         res: Token = Token(access_token=token, token_type="bearer")
         return res
+
+    def create_apikey(self, username: str) -> str:
+        logger.debug(f"create_apikey(username={username})")
+        apikey: str = SecurityManager.instance().create_apikey(username)
+        return apikey
 
     def get_password_hash(self, pwd: str) -> str:
         logger.debug("get_password_hash(...)")

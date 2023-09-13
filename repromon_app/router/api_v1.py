@@ -366,6 +366,25 @@ def create_api_v1_router() -> APIRouter:
     # SecSysService public API
 
     # @security: admin
+    @api_v1_router.get("/secsys/calculate_apikey",
+                       response_model=str,
+                       tags=["SecSysService"],
+                       summary="calculate_apikey",
+                       description="Calculate API key from apikey_data")
+    def secsys_calculate_apikey(request: Request,
+                                sec_ctx:
+                                Annotated[SecurityContext, Depends(
+                                    web_oauth2_context)],
+                                apikey_data: str =
+                                Query(...,
+                                      description="API key data"),
+                                ) -> str:
+        logger.debug(f"secsys_calculate_apikey(apikey_data={apikey_data})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return svc.calculate_apikey(apikey_data)
+
+    # @security: admin
     @api_v1_router.get("/secsys/create_access_token",
                        response_model=Token,
                        tags=["SecSysService"],
@@ -390,6 +409,26 @@ def create_api_v1_router() -> APIRouter:
         security_check(rolename=Rolename.ADMIN)
         svc: SecSysService = SecSysService()
         return svc.create_access_token(username, expire_sec)
+
+    # @security: admin
+    @api_v1_router.get("/secsys/create_apikey",
+                       response_model=str,
+                       tags=["SecSysService"],
+                       summary="create_apikey",
+                       description="Create API key for backend service based "
+                                   "on username and register it in system")
+    def secsys_create_apikey(request: Request,
+                             sec_ctx:
+                             Annotated[SecurityContext, Depends(
+                                 web_oauth2_context)],
+                             username: str =
+                             Query(...,
+                                   description="Specify username"),
+                             ) -> str:
+        logger.debug(f"secsys_create_apikey(username={username})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return svc.create_apikey(username)
 
     # @security: admin
     @api_v1_router.get("/secsys/get_password_hash",
