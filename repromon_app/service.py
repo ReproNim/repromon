@@ -271,6 +271,10 @@ class SecSysService(BaseService):
         logger.debug("get_password_hash(...)")
         return SecurityManager.instance().get_password_hash(pwd)
 
+    def get_user_apikey(self, username: str) -> ApiKey:
+        logger.debug(f"get_user_apikey(username={username})")
+        return SecurityManager.instance().get_apikey_by_user(username)
+
     def get_user_devices(self, username: str) -> list[str]:
         logger.debug(f"get_user_devices(username={username})")
         return self.dao.sec_sys.get_device_id_by_username(username)

@@ -99,13 +99,7 @@ class SecurityManager:
         if not username:
             raise Exception("Invalid user name")
 
-        user: UserEntity = None
-        if username and username in self.__user_cache:
-            user = self.__user_cache[username]
-        else:
-            user = DAO.account.get_user(username)
-            if user:
-                self.__user_cache[user.username] = user
+        user: UserEntity = self._get_cached_user(username)
 
         if not user:
             raise Exception(f"User not found: {username}")
@@ -206,6 +200,20 @@ class SecurityManager:
         self.__context_cache[username] = ctx
         return ctx
 
+    def get_apikey_by_user(self, username: str) -> ApiKey:
+        ue: UserEntity = self._get_cached_user(username)
+
+        if not ue:
+            raise Exception(f"User not found: {username}")
+
+        if not ue.apikey_data:
+            raise Exception("User doesn't have API key")
+
+        if len(ue.apikey_data) < 16:
+            raise Exception("User doesn't have valid API key")
+
+        return self.calculate_apikey(ue.apikey_data)
+
     def get_apikey_hash(self, apikey: str) -> str:
         if not apikey:
             raise Exception("Empty API key")
@@ -221,6 +229,16 @@ class SecurityManager:
             return f"{str(prefix)}_{str(val)}"
         else:
             raise Exception("Invalid API key format")
+
+    def _get_cached_user(self, username: str) -> UserEntity:
+        user: UserEntity = None
+        if username and username in self.__user_cache:
+            user = self.__user_cache[username]
+        else:
+            user = DAO.account.get_user(username)
+            if user:
+                self.__user_cache[user.username] = user
+        return user
 
     def get_debug_context(self) -> SecurityContext:
         if not self.__debug_context:
