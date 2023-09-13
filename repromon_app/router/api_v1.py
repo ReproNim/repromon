@@ -576,6 +576,26 @@ def create_api_v1_router() -> APIRouter:
         return {"username": username, "apikey": ak.key}
 
     # @security: admin
+    @api_v1_router.get("/secsys/revoke_user_apikey",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="revoke_user_apikey",
+                       description="Remove API key for the specified user")
+    def secsys_revoke_user_apikey(request: Request,
+                                  sec_ctx:
+                                  Annotated[SecurityContext, Depends(
+                                      web_oauth2_context)],
+                                  username: str =
+                                  Query(...,
+                                        description="Specify username"),
+                                  ) -> UserEntity:
+        logger.debug(f"secsys_revoke_user_apikey(username={username})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        svc.revoke_user_apikey(username)
+        return {"detail": f"API key revoked for {username}"}
+
+    # @security: admin
     @api_v1_router.get("/secsys/set_user_active",
                        response_model=object,
                        tags=["SecSysService"],
