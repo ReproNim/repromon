@@ -19,6 +19,7 @@ API_BASE_URL = "http://localhost:9095/api/1"
 ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." \
                "eyJzdWIiOiJwb3dlcnVzZXIiLCJleHAiOjE3MjIzNjI4NzR9." \
                "jwbOzIVemgzxV6A2HHR-iBtNyGYXQA1B4S4uFj6x-9A"
+API_KEY = "343c5.vssTjxCNnOIwgzXmmOWQw870AogZp8JxEjqOd3MB"
 SAMPLE_MESSAGES = [
     {
         "study": None,
@@ -136,9 +137,15 @@ def send_message():
 
         logger.debug(f"params={json.dumps(params, indent=4)}")
 
+        # sample for OAuth2+JWT access token
         headers = {
             "Authorization": f"Bearer {ACCESS_TOKEN}"
         }
+
+        # sample for API Key auth
+        # headers = {
+        #     "X-API-Key": API_KEY
+        # }
 
         response = requests.post(f"{API_BASE_URL}/message/send_message",
                                  params=params,

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
-from fastapi.security import (HTTPBasic, HTTPBasicCredentials,
+from fastapi.security import (APIKeyHeader, HTTPBasic, HTTPBasicCredentials,
                               OAuth2PasswordBearer)
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -416,6 +416,7 @@ def security_check(rolename=Rolename.ANY, device='*', env='*',
 
 ############################################
 # FastAPI security things
+apikey_scheme = APIKeyHeader(name="X-API-Key", auto_error=False)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 basic_scheme = HTTPBasic()
 
@@ -423,6 +424,34 @@ basic_scheme = HTTPBasic()
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+async def web_apikey_context(
+        request: Request,
+        apikey: Annotated[str, Depends(apikey_scheme)]
+) -> SecurityContext:
+    logger.debug("web_apikey_context(...)")
+    if not apikey:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authenticated"
+        )
+    try:
+        mgr: SecurityManager = SecurityManager.instance()
+        username: str = mgr.get_username_by_apikey(apikey)
+        if username is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Unauthorized: Could not validate API key"
+            )
+        ctx: SecurityContext = mgr.create_context_by_username(username)
+        request.state.security_context = ctx
+        return ctx
+    except BaseException as be:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Unauthorized: {str(be)}"
+        )
 
 
 async def web_basic_context(
@@ -491,3 +520,13 @@ async def web_oauth2_opt_context(
         request: Request,
         token: Annotated[str, Depends(oauth2_scheme)]) -> SecurityContext:
     return await _web_oauth2_context(request, token, strict=False)
+
+
+async def web_oauth2_apikey_context(
+        request: Request,
+        token: Annotated[str, Depends(oauth2_scheme)],
+        apikey: Annotated[str, Depends(apikey_scheme)]) -> SecurityContext:
+    if token:
+        return await web_oauth2_context(request, token)
+    else:
+        return await web_apikey_context(request, apikey)
