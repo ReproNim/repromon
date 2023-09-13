@@ -416,7 +416,7 @@ def security_check(rolename=Rolename.ANY, device='*', env='*',
 
 ############################################
 # FastAPI security things
-apikey_scheme = APIKeyHeader(name="X-API-Key", auto_error=False)
+apikey_scheme = APIKeyHeader(name="X-Api-Key", auto_error=False)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 basic_scheme = HTTPBasic()
 

@@ -144,7 +144,7 @@ def send_message():
 
         # sample for API Key auth
         # headers = {
-        #     "X-API-Key": API_KEY
+        #     "X-Api-Key": API_KEY
         # }
 
         response = requests.post(f"{API_BASE_URL}/message/send_message",
