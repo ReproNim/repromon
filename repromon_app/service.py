@@ -314,6 +314,7 @@ class SecSysService(BaseService):
                                                             apikey_hash,
                                                             apikey.data)
         SecurityManager.instance().reset_user_cache(u.username)
+        SecurityManager.instance().reset_apikey_cache(u.username)
         return apikey
 
     def revoke_user_apikey(self, username: str):
@@ -322,6 +323,7 @@ class SecSysService(BaseService):
                                                             None,
                                                             None)
         SecurityManager.instance().reset_user_cache(u.username)
+        SecurityManager.instance().reset_apikey_cache(u.username)
 
     def set_user_password(self, username: str,
                           pwd: str) -> UserEntity:

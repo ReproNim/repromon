@@ -89,6 +89,7 @@ class SecurityManager:
         self.__debug_context: SecurityContext = None
         self.__context_cache: dict = {}
         self.__user_cache: dict = {}
+        self.__apikey_cache: dict = {}
         self.__crypt_pwd_context: CryptContext = \
             CryptContext(schemes=["bcrypt"], deprecated="auto")
         self.__crypt_apikey_context: CryptContext = \
@@ -277,13 +278,30 @@ class SecurityManager:
         return self.__crypt_pwd_context.hash(pwd)
 
     def get_username_by_apikey(self, apikey: str) -> str:
-        logger.debug("get_username_by_apikey(...)")
-        # TODO: use apikey cache before
+        if apikey and apikey in self.__apikey_cache:
+            username: str = self.__apikey_cache[apikey]
+            if username and len(username) > 0:
+                logger.debug(f"use cached apikey value for user: {username}")
+                return username
+            else:
+                logger.debug("use cached apikey value for user: Invalid API key")
+                raise Exception("Invalid API key")
+
+        try:
+            res: str = self.get_username_by_apikey_internal(apikey)
+            self.__apikey_cache[apikey] = res
+            return res
+        except BaseException as e:
+            self.__apikey_cache[apikey] = ""
+            raise e
+
+    def get_username_by_apikey_internal(self, apikey: str) -> str:
+        logger.debug("get_username_by_apikey_internal(...)")
         if apikey and len(apikey) > 0:
             apikey_hash: str = self.get_apikey_hash(apikey)
             u: UserEntity = DAO.account.get_user_by_apikey(apikey_hash)
             if not u:
-                raise Exception("Invalid API key, user not found")
+                raise Exception("Invalid API key")
             return u.username
         else:
             raise Exception("Invalid API key")
@@ -310,6 +328,16 @@ class SecurityManager:
     def reset_cache(self, username: str = None):
         self.reset_context_cache(username)
         self.reset_user_cache(username)
+        self.reset_apikey_cache(username)
+
+    def reset_apikey_cache(self, username: str = None):
+        logger.debug("reset_apikey_cache")
+        if username:
+            keys = [k for k, v in self.__apikey_cache.items() if v == username]
+            for key in keys:
+                del self.__apikey_cache[key]
+        else:
+            self.__apikey_cache = {}
 
     def reset_context_cache(self, username: str = None):
         logger.debug("reset_context_cache")
