@@ -259,10 +259,9 @@ class SecSysService(BaseService):
         res: Token = Token(access_token=token, token_type="bearer")
         return res
 
-    def create_apikey(self, username: str) -> str:
-        logger.debug(f"create_apikey(username={username})")
-        apikey: str = SecurityManager.instance().create_apikey(username)
-        return apikey
+    def create_apikey(self) -> ApiKey:
+        logger.debug("create_apikey()")
+        return SecurityManager.instance().create_apikey()
 
     def get_apikey_hash(self, apikey: str) -> str:
         logger.debug("get_apikey_hash(...)")

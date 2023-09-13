@@ -153,14 +153,14 @@ class SecurityManager:
         # logger.debug(f"key={key}")
         return ApiKey(key=key, prefix=prefix, body=body, data=apikey_data)
 
-    def create_apikey(self, username: str) -> str:
-        logger.debug(f"create_apikey(username={username})")
+    def create_apikey(self) -> ApiKey:
+        logger.debug("create_apikey()")
 
         apikey_data: str = str(uuid.uuid4())
         logger.debug(f"apikey_data={apikey_data}")
 
         apikey: str = self.calculate_apikey(apikey_data)
-        return apikey.key
+        return apikey
 
     def create_access_token(self, username: str, expire_sec: int = -1) -> str:
         logger.debug(f"create_access_token(username={username}, "

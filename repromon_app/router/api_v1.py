@@ -10,8 +10,8 @@ from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
                                 MessageLogEntity, MessageLogInfoDTO,
                                 PushMessageDTO, RoleEntity, Rolename,
                                 StudyInfoDTO, UserEntity)
-from repromon_app.security import (SecurityContext, SecurityManager, Token,
-                                   security_check, security_context,
+from repromon_app.security import (ApiKey, SecurityContext, SecurityManager,
+                                   Token, security_check, security_context,
                                    web_oauth2_context, web_oauth2_opt_context)
 from repromon_app.service import (AccountService, FeedbackService,
                                   LoginService, MessageService, PushService,
@@ -412,23 +412,19 @@ def create_api_v1_router() -> APIRouter:
 
     # @security: admin
     @api_v1_router.get("/secsys/create_apikey",
-                       response_model=str,
+                       response_model=ApiKey,
                        tags=["SecSysService"],
                        summary="create_apikey",
-                       description="Create API key for backend service based "
-                                   "on username and register it in system")
+                       description="Create generic API key")
     def secsys_create_apikey(request: Request,
                              sec_ctx:
                              Annotated[SecurityContext, Depends(
                                  web_oauth2_context)],
-                             username: str =
-                             Query(...,
-                                   description="Specify username"),
                              ) -> str:
-        logger.debug(f"secsys_create_apikey(username={username})")
+        logger.debug("secsys_create_apikey()")
         security_check(rolename=Rolename.ADMIN)
         svc: SecSysService = SecSysService()
-        return svc.create_apikey(username)
+        return svc.create_apikey()
 
     # @security: admin
     @api_v1_router.get("/secsys/get_apikey_hash",
