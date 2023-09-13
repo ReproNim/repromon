@@ -142,7 +142,11 @@ def create_fastapi_app() -> FastAPI:
         # protect some bugs in fastapi/pydantic with ValidationError
         detail: str = None
         try:
-            detail = str(e)
+            logger.error(f"Exception class: {type(e).__name__}")
+            if isinstance(e, ExceptionGroup):
+                detail = '. '.join([str(eg) for eg in e.exceptions])
+            else:
+                detail = str(e)
         except BaseException:
             detail = "Internal unhandled server error"
 

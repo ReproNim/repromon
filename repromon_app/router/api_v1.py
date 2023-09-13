@@ -538,6 +538,25 @@ def create_api_v1_router() -> APIRouter:
         return {"username": svc.get_username_by_token(token)}
 
     # @security: admin
+    @api_v1_router.get("/secsys/renew_user_apikey",
+                       response_model=object,
+                       tags=["SecSysService"],
+                       summary="renew_user_apikey",
+                       description="Renew API key for the specified user")
+    def secsys_renew_user_apikey(request: Request,
+                                 sec_ctx:
+                                 Annotated[SecurityContext, Depends(web_oauth2_context)],
+                                 username: str =
+                                 Query(...,
+                                       description="Specify username"),
+                                 ) -> UserEntity:
+        logger.debug(f"secsys_renew_user_apikey(username={username})")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        ak: ApiKey = svc.renew_user_apikey(username)
+        return {"username": username, "apikey": ak.key}
+
+    # @security: admin
     @api_v1_router.get("/secsys/set_user_active",
                        response_model=object,
                        tags=["SecSysService"],

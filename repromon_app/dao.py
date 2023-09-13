@@ -173,6 +173,19 @@ class AccountDAO(BaseDAO):
             .first(),
         )
 
+    def update_user_apikey(self, username: str,
+                           apikey: str,
+                           apikey_data: str) -> UserEntity:
+        o: UserEntity = self.get_user(username)
+        if o:
+            o.apikey = apikey
+            o.apikey_data = apikey_data
+            o.apikey_issued_on = datetime.now()
+            self.session().commit()
+        else:
+            raise Exception(f"User not found: {username}")
+        return o
+
     def update_user_is_active(self, username: str,
                               is_active: str) -> UserEntity:
         o: UserEntity = self.get_user(username)

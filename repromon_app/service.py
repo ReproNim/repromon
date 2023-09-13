@@ -298,6 +298,17 @@ class SecSysService(BaseService):
             SecurityManager.instance().reset_user_cache(username)
         return res
 
+    def renew_user_apikey(self, username: str) -> ApiKey:
+        logger.debug(f"renew_user_apikey(username={username})")
+        apikey: ApiKey = SecurityManager.instance().create_apikey()
+        apikey_hash: str = SecurityManager.instance().get_apikey_hash(apikey.key)
+        ue: UserEntity = self.dao.account.update_user_apikey(username,
+                                                             apikey_hash,
+                                                             apikey.data)
+        logger.debug(f"TODO: reset_apikey_cache{ue.username}")
+        # TODO: SecurityManager.instance().reset_apikey_cache(username)
+        return apikey
+
     def set_user_password(self, username: str,
                           pwd: str) -> UserEntity:
         logger.debug(f"set_user_password(username={username}, ...)")
