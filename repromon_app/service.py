@@ -306,10 +306,10 @@ class SecSysService(BaseService):
         logger.debug(f"renew_user_apikey(username={username})")
         apikey: ApiKey = SecurityManager.instance().create_apikey()
         apikey_hash: str = SecurityManager.instance().get_apikey_hash(apikey.key)
-        ue: UserEntity = self.dao.account.update_user_apikey(username,
-                                                             apikey_hash,
-                                                             apikey.data)
-        SecurityManager.instance().reset_user_cache(ue.username)
+        u: UserEntity = self.dao.account.update_user_apikey(username,
+                                                            apikey_hash,
+                                                            apikey.data)
+        SecurityManager.instance().reset_user_cache(u.username)
         return apikey
 
     def revoke_user_apikey(self, username: str):
