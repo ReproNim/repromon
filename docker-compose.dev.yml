@@ -22,6 +22,7 @@ services:
     command: [ "/app/venv/bin/poetry", "run", "srv" ]
     volumes:
       - ${WEB_PATH_AT_HOST}/instance:/app/instance
+      - ./.env.dev:/app/template.env.local
 
   db:
     image: docker.io/postgres:latest
@@ -30,11 +31,11 @@ services:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_INITDB_ARGS: --encoding utf8 --locale C
-    ports:
-      - "5433:5432"
+        #ports:
+        #- "5432:5433"
     networks:
       - internal
-    command: -p 5433
+        #command: -p 5432
     userns_mode: "keep-id"  # This has an effect only after podman-compose 1.0.3 possibly
       # See https://github.com/containers/podman-compose/issues/166
       # for details.
