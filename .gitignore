@@ -13,3 +13,6 @@ dist/
 *.swp
 *.sqbpro
 venv
+.env.*
+services
+venvs
