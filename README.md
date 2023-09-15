@@ -16,3 +16,16 @@ To expedite generation of the local .env.dev, you can use following command
         -e "s,TODO_token_secret_key,$(openssl rand -hex 32),g" \
         -e "s,TODO_postgres_user,repromon,g" \
         -e "s,TODO_postgres_password,pw$RANDOM$RANDOM,g" template.env.dev > .env.dev
+
+To run the instance in a subshell (so that we do not leak those variables in the current env) use
+
+    ( set -a &&  source ./.env.dev && podman-compose  -f docker-compose.dev.yml up -d --build  ; )
+
+the first time to also build the image(s) and then without --build just to start
+
+    ( set -a &&  source ./.env.dev && podman-compose  -f docker-compose.dev.yml up -d  ; )
+
+Then you can check that all services started using  `podman ps` which should have repromon_db_1 and repromon_web_1
+services.  You can see the logs using `podman logs` and the container name or id.
+
+
