@@ -18,8 +18,9 @@ To expedite generation of the local .env.dev, you can use following command
     sed -e "s,TODO_apikey_secret,$(openssl rand -hex 32),g" \
         -e "s,TODO_apikey_salt,$RANDOM,g" \
         -e "s,TODO_token_secret_key,$(openssl rand -hex 32),g" \
+        -e "s,TODO_initial_admin_password,$(openssl rand -base64 32 | tr -d /=+ | cut -c -12),g" \
         -e "s,TODO_postgres_user,repromon,g" \
-        -e "s,TODO_postgres_password,pw$RANDOM$RANDOM,g" template.env.dev > .env.dev
+        -e "s,TODO_postgres_password,$(openssl rand -base64 32 | tr -d /=+ | cut -c -12),g" template.env.dev > .env.dev
 
 To run the instance in a subshell (so that we do not leak those variables in the current env) use
 

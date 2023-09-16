@@ -37,6 +37,7 @@ class SettingsConfig(BaseSectionConfig):
     DEBUG_USERNAME: str = None
     APIKEY_SECRET: str = None
     APIKEY_SALT: str = "1"
+    INITIAL_ADMIN_PASSWORD: str = None
     TOKEN_SECRET_KEY: str = None
     TOKEN_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_SEC: int = 24 * 60 * 60

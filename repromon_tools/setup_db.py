@@ -2,7 +2,7 @@ import logging.config
 
 from sqlalchemy import text
 
-from repromon_app.config import app_config, app_config_init
+from repromon_app.config import app_config, app_config_init, app_settings
 from repromon_app.dao import DAO, BaseDAO
 from repromon_app.db import db_init
 from repromon_app.model import (BaseEntity, DataProviderEntity, DeviceEntity,
@@ -152,8 +152,11 @@ def fill_tables_with_init_data():
     dao.commit()
 
     sec_svc: SecSysService = SecSysService()
-    # set initial default password only for admin as 'password'
-    sec_svc.set_user_password("admin", "password")
+    # set initial default password admin
+    pwd = app_settings().INITIAL_ADMIN_PASSWORD
+    if pwd and len(pwd) > 0:
+        logger.info("set initial admin password ***")
+        sec_svc.set_user_password("admin", pwd)
 
     # set user roles
     sec_svc.set_user_roles("user1", [Rolename.DATA_COLLECTOR])
