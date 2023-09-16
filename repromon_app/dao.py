@@ -60,6 +60,9 @@ class BaseDAO:
     def commit(self):
         self.session().commit()
 
+    def count(self, entity):
+        return self.session().query(func.count('*')).select_from(entity).scalar()
+
     def flush(self):
         self.session().flush()
 
