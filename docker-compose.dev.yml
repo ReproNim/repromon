@@ -22,7 +22,7 @@ services:
     command: [ "/app/venv/bin/poetry", "run", "srv" ]
     volumes:
       - ${WEB_PATH_AT_HOST}/instance:/app/instance
-      - ./.env.dev:/app/template.env.local
+      - ./.env.dev:/app/.env.local
 
   db:
     image: docker.io/postgres:latest

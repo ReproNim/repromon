@@ -4,6 +4,7 @@ build/
 dist/
 *.egg-info
 .env.*
+!.env.local
 .flake8
 .idea/
 .mypy_cache/

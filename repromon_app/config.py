@@ -169,7 +169,7 @@ def app_config_init() -> None:
         f"{cfg.HOST_CONFIG_PATH}/{AppConfig.APP_INI}",
     ]
 
-    default_env_path = f"{cfg.ROOT_PATH}/template.env.local"
+    default_env_path = f"{cfg.ROOT_PATH}/.env.local"
 
     for ini_path in ini_paths:
         if Path(ini_path).exists():
