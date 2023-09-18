@@ -19,7 +19,7 @@ services:
 #
 #      # db service access info
 #      SQLALCHEMY_DATABASE_URI: "${SQLALCHEMY_DATABASE_URI}"
-    command: [ "/app/venv/bin/poetry", "run", "setup_db", "&&", "/app/venv/bin/poetry", "run", "srv" ]
+    command: [ "bash", "-c", "/app/venv/bin/poetry run setup_db && /app/venv/bin/poetry run srv" ]
     volumes:
       - ${WEB_PATH_AT_HOST}/instance:/app/instance
       - ./.env.dev:/app/.env.local

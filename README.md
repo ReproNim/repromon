@@ -39,7 +39,7 @@ which should have repromon_db_1 and repromon_web_1 services by default.
 
 You can see the logs using these commands:
 
-    podman logs repromon_web_1
+    podman logs --since "2023-09-01T00:00:00Z" repromon_web_1
     podman logs repromon_db_1
 
 To open shell on web server container use:
