@@ -178,6 +178,7 @@ def fill_tables_with_init_data():
             sec_svc.set_user_password("admin", pwd)
 
         # set user roles
+        logger.info("set user roles")
         sec_svc.set_user_roles("user1", [Rolename.DATA_COLLECTOR])
         sec_svc.set_user_roles("user2", [Rolename.MRI_OPERATOR])
         sec_svc.set_user_roles("user3", [Rolename.PARTICIPANT])
@@ -195,6 +196,7 @@ def fill_tables_with_init_data():
                                            Rolename.SYS_DATA_ENTRY])
 
         # set user devices
+        logger.info("set user devices")
         sec_svc.set_user_devices("user1", ["MRI"])
         sec_svc.set_user_devices("user2", ["MRI"])
         sec_svc.set_user_devices("user3", ["MRI"])
@@ -205,6 +207,14 @@ def fill_tables_with_init_data():
         sec_svc.set_user_devices("reproevt", ["MRI"])
         sec_svc.set_user_devices("dicomqa", ["MRI"])
         sec_svc.set_user_devices("tester1", ["MRI"])
+
+        # generate API key for system accounts
+        logger.info("generate API key for system accounts")
+        sec_svc.renew_user_apikey("noisseur")
+        sec_svc.renew_user_apikey("reprostim")
+        sec_svc.renew_user_apikey("reproevt")
+        sec_svc.renew_user_apikey("dicomqa")
+        sec_svc.renew_user_apikey("tester1")
     else:
         logger.info("skip user fill")
 
