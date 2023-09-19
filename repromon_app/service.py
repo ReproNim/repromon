@@ -4,9 +4,9 @@ from datetime import datetime
 
 from repromon_app.config import app_settings
 from repromon_app.dao import DAO
-from repromon_app.model import (DeviceEntity, LoginInfoDTO, MessageLevelId,
-                                MessageLogEntity, MessageLogInfoDTO,
-                                PushMessageDTO, RoleEntity,
+from repromon_app.model import (ApiKeyInfoDTO, DeviceEntity, LoginInfoDTO,
+                                MessageLevelId, MessageLogEntity,
+                                MessageLogInfoDTO, PushMessageDTO, RoleEntity,
                                 SecUserDeviceEntity, SecUserRoleEntity,
                                 StudyDataEntity, StudyInfoDTO, UserEntity)
 from repromon_app.security import (ApiKey, SecurityManager, Token,
@@ -242,6 +242,12 @@ class SecSysService(BaseService):
     def __init__(self):
         super().__init__()
 
+    def _apikey_info(self, username: str, key: ApiKey) -> ApiKeyInfoDTO:
+        o: ApiKeyInfoDTO = ApiKeyInfoDTO(username=username,
+                                         apikey=key.key,
+                                         issued_on=key.issued_on)
+        return o
+
     def calculate_apikey(self, apikey_data: str) -> str:
         logger.debug(f"calculate_apikey(apikey_data={apikey_data})")
         apikey: ApiKey = SecurityManager.instance().calculate_apikey(apikey_data)
@@ -263,6 +269,17 @@ class SecSysService(BaseService):
         logger.debug("create_apikey()")
         return SecurityManager.instance().create_apikey()
 
+    def get_all_apikeys(self) -> list[ApiKeyInfoDTO]:
+        lst: list[UserEntity] = DAO.account.get_users()
+        lst = [u for u in lst if u.apikey_data and len(u.apikey_data) > 1]
+        lst2 = []
+        for u in lst:
+            try:
+                lst2.append(self.get_user_entity_apikey(u))
+            except BaseException as e:
+                logger.error(f"Failed calculate apikey for u={u}. {str(e)}")
+        return lst2
+
     def get_apikey_hash(self, apikey: str) -> str:
         logger.debug("get_apikey_hash(...)")
         return SecurityManager.instance().get_apikey_hash(apikey)
@@ -271,9 +288,15 @@ class SecSysService(BaseService):
         logger.debug("get_password_hash(...)")
         return SecurityManager.instance().get_password_hash(pwd)
 
-    def get_user_apikey(self, username: str) -> ApiKey:
+    def get_user_apikey(self, username: str) -> ApiKeyInfoDTO:
         logger.debug(f"get_user_apikey(username={username})")
-        return SecurityManager.instance().get_apikey_by_user(username)
+        key: ApiKey = SecurityManager.instance().get_apikey_by_user(username)
+        return self._apikey_info(username, key)
+
+    def get_user_entity_apikey(self, u: UserEntity) -> ApiKeyInfoDTO:
+        logger.debug("get_user_entity_apikey(...)")
+        key: ApiKey = SecurityManager.instance().get_apikey_by_entity(u)
+        return self._apikey_info(u.username, key)
 
     def get_user_devices(self, username: str) -> list[str]:
         logger.debug(f"get_user_devices(username={username})")

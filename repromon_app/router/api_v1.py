@@ -5,11 +5,11 @@ from typing import Annotated, Optional
 from fastapi import (APIRouter, Depends, Query, Request, WebSocket,
                      WebSocketDisconnect, WebSocketException)
 
-from repromon_app.model import (DataProviderId, DeviceEntity, LoginInfoDTO,
-                                MessageCategoryId, MessageLevelId,
-                                MessageLogEntity, MessageLogInfoDTO,
-                                PushMessageDTO, RoleEntity, Rolename,
-                                StudyInfoDTO, UserEntity)
+from repromon_app.model import (ApiKeyInfoDTO, DataProviderId, DeviceEntity,
+                                LoginInfoDTO, MessageCategoryId,
+                                MessageLevelId, MessageLogEntity,
+                                MessageLogInfoDTO, PushMessageDTO, RoleEntity,
+                                Rolename, StudyInfoDTO, UserEntity)
 from repromon_app.security import (ApiKey, SecurityContext, SecurityManager,
                                    Token, security_check, security_context,
                                    web_oauth2_apikey_context,
@@ -429,6 +429,21 @@ def create_api_v1_router() -> APIRouter:
         return svc.create_apikey()
 
     # @security: admin
+    @api_v1_router.get("/secsys/get_all_apikeys",
+                       response_model=list[ApiKeyInfoDTO],
+                       tags=["SecSysService"],
+                       summary="get_all_apikeys",
+                       description="Get all API keys as list")
+    def secsys_get_all_apikeys(request: Request,
+                               sec_ctx:
+                               Annotated[SecurityContext, Depends(web_oauth2_context)],
+                               ) -> list[ApiKeyInfoDTO]:
+        logger.debug("secsys_get_all_apikeys()")
+        security_check(rolename=Rolename.ADMIN)
+        svc: SecSysService = SecSysService()
+        return svc.get_all_apikeys()
+
+    # @security: admin
     @api_v1_router.get("/secsys/get_apikey_hash",
                        response_model=object,
                        tags=["SecSysService"],
@@ -468,7 +483,7 @@ def create_api_v1_router() -> APIRouter:
 
     # @security: admin
     @api_v1_router.get("/secsys/get_user_apikey",
-                       response_model=object,
+                       response_model=ApiKeyInfoDTO,
                        tags=["SecSysService"],
                        summary="get_user_apikey",
                        description="Get user current API key if any")
@@ -478,12 +493,11 @@ def create_api_v1_router() -> APIRouter:
                                username: str =
                                Query(...,
                                      description="Specify username"),
-                               ) -> UserEntity:
+                               ) -> ApiKeyInfoDTO:
         logger.debug(f"secsys_get_user_apikey(username={username})")
         security_check(rolename=Rolename.ADMIN)
         svc: SecSysService = SecSysService()
-        key: ApiKey = svc.get_user_apikey(username)
-        return {"username": username, "apikey": key.key}
+        return svc.get_user_apikey(username)
 
     # @security: admin
     @api_v1_router.get("/secsys/get_user_devices",

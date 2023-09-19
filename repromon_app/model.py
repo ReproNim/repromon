@@ -87,6 +87,15 @@ class BasePydantic(BaseModel, BaseDTO):
     pass
 
 
+class ApiKeyInfoDTO(BasePydantic):
+    """API key info
+    """
+
+    username: str = None
+    apikey: str = None
+    issued_on: datetime.datetime = None
+
+
 class LoginInfoDTO(BasePydantic):
     """Logged user info
     """

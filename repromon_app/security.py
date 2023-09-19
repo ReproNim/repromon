@@ -31,6 +31,7 @@ class ApiKey(BaseModel):
     prefix: str
     body: str
     data: str
+    issued_on: datetime = None
 
 
 # class representing current security context
@@ -146,7 +147,8 @@ class SecurityManager:
         # create key as prefix.body
         key = f"{prefix}.{body}"
         # logger.debug(f"key={key}")
-        return ApiKey(key=key, prefix=prefix, body=body, data=apikey_data)
+        return ApiKey(key=key, prefix=prefix, body=body,
+                      data=apikey_data, issued_on=None)
 
     def create_apikey(self) -> ApiKey:
         logger.debug("create_apikey()")
@@ -201,11 +203,9 @@ class SecurityManager:
         self.__context_cache[username] = ctx
         return ctx
 
-    def get_apikey_by_user(self, username: str) -> ApiKey:
-        u: UserEntity = self._get_cached_user(username)
-
+    def get_apikey_by_entity(self, u: UserEntity) -> ApiKey:
         if not u:
-            raise Exception(f"User not found: {username}")
+            raise Exception("User is null")
 
         if not u.apikey_data:
             raise Exception("User doesn't have API key")
@@ -213,7 +213,17 @@ class SecurityManager:
         if len(u.apikey_data) < 16:
             raise Exception("User doesn't have valid API key")
 
-        return self.calculate_apikey(u.apikey_data)
+        key: ApiKey = self.calculate_apikey(u.apikey_data)
+        key.issued_on = u.apikey_issued_on
+        return key
+
+    def get_apikey_by_user(self, username: str) -> ApiKey:
+        u: UserEntity = self._get_cached_user(username)
+
+        if not u:
+            raise Exception(f"User not found: {username}")
+
+        return self.get_apikey_by_entity(u)
 
     def get_apikey_hash(self, apikey: str) -> str:
         if not apikey:
