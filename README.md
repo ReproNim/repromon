@@ -64,16 +64,16 @@ To stop instances use:
     ( set -a &&  source ./.env.dev && podman-compose  -f docker-compose.dev.yml down  ; )
 
 
-
 ### Local Development Environment
 
+Local Python development can be used on project as is with any editor e.g. PyCharm.
+Default local configuration specified in '.env.local' file and uses project build-in SQLite3 DB.
 
+
+<!--
 ## Web Application UI
-
 ### TODO: Feedback Screen UI
-
 ### TODO: Administration
-
 ### TODO: Sending Feedback Screen Message
-
 ### TODO: Testing
++-->
