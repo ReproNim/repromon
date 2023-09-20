@@ -34,9 +34,17 @@ build-backend = "poetry.masonry.api"
 #poetry run .
 
 # use syntax like listed below from command line:
+#
 #        poetry run <name>
+#
 # e.g.:
+#
 #        poetry run srv
+#
+# or with custom environment variable
+#
+#        REPROMON_API_KEY=*** poetry run test_send_message
+#
 
 srv = "repromon_app.srv:main"
 setup_db = "repromon_tools.setup_db:main"

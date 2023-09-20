@@ -5,22 +5,42 @@ import json
 import logging.config
 import os
 import random
+import sys
 import time
 from datetime import datetime, timedelta
 
 import requests
 
-from repromon_app.config import app_config_init
-from repromon_app.model import (DataProviderId, MessageCategoryId,
-                                MessageLevelId)
-
 logger = logging.getLogger(__name__)
+logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+logger.setLevel(logging.DEBUG)
 logger.debug(f"name={__name__}")
 
 
 API_BASE_URL = os.environ.get('REPROMON_API_URL', "https://localhost:9095/api/1")
 ACCESS_TOKEN = os.environ.get('REPROMON_ACCESS_TOKEN')
 API_KEY = os.environ.get('REPROMON_API_KEY')
+
+
+class DataProviderId:
+    REPROIN = 1
+    REPROSTIM = 2
+    REPROEVENTS = 3
+    PACS = 4
+    NOISSEUR = 5
+    DICOM_QA = 6
+    MRI = 7
+
+
+class MessageCategoryId:
+    FEEDBACK = 1
+
+
+class MessageLevelId:
+    INFO = 1
+    WARNING = 2
+    ERROR = 3
+
 
 SAMPLE_MESSAGES = [
     {
@@ -141,20 +161,30 @@ def send_message():
 
         if ACCESS_TOKEN:
             # sample for OAuth2+JWT access token
+            logger.debug("use OAuth2+JWT access token auth")
             headers = {
                 "Authorization": f"Bearer {ACCESS_TOKEN}"
             }
         elif API_KEY:
             # sample for API Key auth
+            logger.debug("use API Key auth")
             headers = {
                 "X-Api-Key": API_KEY
             }
         else:
+            logger.debug("use no auth")
             headers = {}
+
+        logger.debug(f"API_BASE_URL={API_BASE_URL}")
 
         response = requests.post(f"{API_BASE_URL}/message/send_message",
                                  params=params,
-                                 headers=headers)
+                                 headers=headers,
+                                 verify=False  # NOTE: This should be only used
+                                               # with local self-signed
+                                               # certificates and not in
+                                               # production environment
+                                 )
 
         if response.status_code == 200:
             logger.debug("Message sent successfully")
@@ -170,8 +200,6 @@ def send_message():
 
 
 def main():
-    app_config_init()
-
     while True:
         send_message()
         time.sleep(random.randint(1, 5))
