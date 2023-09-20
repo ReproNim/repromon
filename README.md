@@ -66,8 +66,8 @@ To stop instances use:
 
 ### Local Development Environment
 
-Local Python development can be used on project as is with any editor e.g. PyCharm.
-Default local configuration specified in '.env.local' file and uses project build-in SQLite3 DB.
+Local Python development can be used on project 'as is' with any editors, e.g. PyCharm.
+Default local configuration specified in '.env.local' file and uses project built-in SQLite3 DB.
 
 
 <!--
