@@ -63,8 +63,8 @@ class UvicornConfig(BaseSectionConfig):
     # timeout_keep_alive: Optional[int] = 5
     # limit_concurrency: Optional[int] = 100
     # limit_max_requests: Optional[int] = 0
-    # ssl_keyfile: Optional[str] = None
-    # ssl_certfile: Optional[str] = None
+    ssl_keyfile: Optional[str] = None
+    ssl_certfile: Optional[str] = None
 
 
 class AppConfig:

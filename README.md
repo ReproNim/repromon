@@ -10,6 +10,19 @@ separately.
 
 ## System Setup
 
+### SSL Certificates
+
+For development purposes should be created self-signed SSL certificate to be used for HTTPS/WSS
+communications under ./certs/ directory and named as '${WEB_HOST}.key' and '${WEB_HOST}.pem'. Below
+listed script to generate these files for "localhost" domain:
+
+    WEB_HOST=localhost && mkdir -p ./certs && openssl req -x509 -nodes -newkey rsa:4096 -keyout ./certs/$WEB_HOST.key -out ./certs/$WEB_HOST.crt -days 3650 -subj "/CN=$WEB_HOST" && openssl x509 -in ./certs/$WEB_HOST.crt -out ./certs/$WEB_HOST.pem -outform PEM
+
+In DEV/QA/UAT and other environments WEB_HOST should be specified to real DNS or IP address value
+end-user and backend clients will use to communicate with the repromon server. Also this value should
+be the same as WEB_HOST variable in '.env.*' file.
+
+For production deployment should be used SSL certificate from trusted authorities.
 
 ### Podman / Docker Environment
 There is a `template.env.dev` file with a configuration for a typical setup, but it has fields to fill in.

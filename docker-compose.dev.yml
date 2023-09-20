@@ -23,6 +23,8 @@ services:
     volumes:
       - ${WEB_PATH_AT_HOST}/instance:/app/instance
       - ./.env.dev:/app/.env.local
+      - ${WEB_SSL_KEY_PATH_AT_HOST}:${WEB_SSL_KEY_PATH}
+      - ${WEB_SSL_CERT_PATH_AT_HOST}:${WEB_SSL_CERT_PATH}
 
   db:
     image: docker.io/postgres:latest

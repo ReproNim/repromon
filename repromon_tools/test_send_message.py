@@ -3,9 +3,9 @@
 import copy
 import json
 import logging.config
+import os
 import random
 import time
-import os
 from datetime import datetime, timedelta
 
 import requests
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
 
 
-API_BASE_URL = os.environ.get('REPROMON_API_URL', "http://localhost:9095/api/1")
+API_BASE_URL = os.environ.get('REPROMON_API_URL', "https://localhost:9095/api/1")
 ACCESS_TOKEN = os.environ.get('REPROMON_ACCESS_TOKEN')
 API_KEY = os.environ.get('REPROMON_API_KEY')
 
