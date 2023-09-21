@@ -70,10 +70,22 @@ Local Python development can be used on project 'as is' with any editors, e.g. P
 Default local configuration specified in '.env.local' file and uses project built-in SQLite3 DB.
 
 
+### Testing
+
+Repromon testing based on pytest and integrated into project repromon_app package. Unit tests
+can be executed with 'pytest' directly. It's recommended to turn on live logging for more
+detailed logs from repromon_app:
+
+    pytest --pyargs repromon_app -o log_cli=true -o log_cli_level=DEBUG
+
+or via poetry:
+
+     ./venv/bin/poetry run pytest
+
+
 <!--
 ## Web Application UI
 ### TODO: Feedback Screen UI
 ### TODO: Administration
 ### TODO: Sending Feedback Screen Message
-### TODO: Testing
 +-->

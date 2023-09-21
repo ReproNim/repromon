@@ -149,7 +149,11 @@ def app_config_init() -> None:
 
     for log_file in log_files:
         if Path(log_file).exists():
-            logging.config.fileConfig(log_file, disable_existing_loggers=False)
+            if hasattr(logging, 'config'):
+                logging.config.fileConfig(log_file, disable_existing_loggers=False)
+            else:
+                logger.error("logging.config not found, undefined")
+                sys.stderr.write("!!! logging.config not found, undefined !!!\n")
             logger.info(f"Found logger configuration file: {str(log_file)}")
             break
 
@@ -174,7 +178,7 @@ def app_config_init() -> None:
 
     for ini_path in ini_paths:
         if Path(ini_path).exists():
-            logging.config.fileConfig(log_file, disable_existing_loggers=False)
+            # logging.config.fileConfig(log_file, disable_existing_loggers=False)
             logger.info(f"Found ini config file: {str(ini_path)}")
 
             params: dict = {}

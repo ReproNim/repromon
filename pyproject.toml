@@ -24,6 +24,12 @@ passlib = { version = "^1.7.4", extras = ["bcrypt"] }
 pytest = "^7.4.2"
 httpx = "^0.25.0"
 
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "DEBUG"
+# log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+# log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
 [build-system]
 requires = ["poetry>=1.0"]
 build-backend = "poetry.masonry.api"
