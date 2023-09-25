@@ -63,6 +63,9 @@ class BaseDAO:
     def count(self, entity):
         return self.session().query(func.count('*')).select_from(entity).scalar()
 
+    def delete(self, o: BaseDTO):
+        return self.session().delete(o)
+
     def flush(self):
         self.session().flush()
 
