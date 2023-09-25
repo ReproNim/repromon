@@ -168,6 +168,18 @@ def fill_tables_with_init_data():
                        email='tester1@repromon.com',
                        description='Account for testing')
         dao.add(o)
+        o = UserEntity(username="tester2",
+                       is_active='Y', is_system='Y',
+                       first_name='Tester', last_name='2',
+                       email='tester2@repromon.com',
+                       description='Account for testing')
+        dao.add(o)
+        o = UserEntity(username="tester3",
+                       is_active='Y', is_system='N',
+                       first_name='Tester', last_name='3',
+                       email='tester3@repromon.com',
+                       description='Account for testing')
+        dao.add(o)
         dao.commit()
 
         sec_svc: SecSysService = SecSysService()
@@ -192,7 +204,9 @@ def fill_tables_with_init_data():
         sec_svc.set_user_roles("reprostim", [Rolename.SYS_DATA_ENTRY])
         sec_svc.set_user_roles("reproevt", [Rolename.SYS_DATA_ENTRY])
         sec_svc.set_user_roles("dicomqa", [Rolename.SYS_DATA_ENTRY])
-        sec_svc.set_user_roles("tester1", [Rolename.DATA_COLLECTOR,
+        sec_svc.set_user_roles("tester1", [Rolename.DATA_COLLECTOR])
+        sec_svc.set_user_roles("tester2", [Rolename.SYS_DATA_ENTRY])
+        sec_svc.set_user_roles("tester3", [Rolename.DATA_COLLECTOR,
                                            Rolename.SYS_DATA_ENTRY])
 
         # set user devices
@@ -207,6 +221,8 @@ def fill_tables_with_init_data():
         sec_svc.set_user_devices("reproevt", ["MRI"])
         sec_svc.set_user_devices("dicomqa", ["MRI"])
         sec_svc.set_user_devices("tester1", ["MRI"])
+        sec_svc.set_user_devices("tester2", ["MRI"])
+        sec_svc.set_user_devices("tester3", ["MRI"])
 
         # generate API key for system accounts
         logger.info("generate API key for system accounts")
@@ -215,6 +231,8 @@ def fill_tables_with_init_data():
         sec_svc.renew_user_apikey("reproevt")
         sec_svc.renew_user_apikey("dicomqa")
         sec_svc.renew_user_apikey("tester1")
+        sec_svc.renew_user_apikey("tester2")
+        sec_svc.renew_user_apikey("tester3")
     else:
         logger.info("skip user fill")
 

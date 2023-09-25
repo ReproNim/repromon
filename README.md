@@ -72,7 +72,7 @@ Default local configuration specified in '.env.local' file and uses project buil
 
 ### Testing
 
-Repromon testing based on pytest and integrated into project repromon_app package. Unit tests
+Repromon testing based on pytest and integrated into project 'repromon_app' package. Unit tests
 can be executed with 'pytest' directly. It's recommended to turn on live logging for more
 detailed logs from repromon_app:
 
