@@ -85,3 +85,33 @@ def test_message_get_message_log_infos():
     assert len(lst) > 0
     msg0 = lst[0]
     assert DAO.message.get_message_log_info(msg0.id)
+
+
+def test_sec_sys_get_device_id_by_username():
+    assert len(DAO.sec_sys.get_device_id_by_username("tester1")) > 0
+
+
+def test_sec_sys_get_sec_user_device_by_user_id():
+    user_id = DAO.account.get_user("tester1").id
+    assert len(DAO.sec_sys.get_sec_user_device_by_user_id(user_id)) > 0
+
+
+def test_sec_sys_get_sec_user_role_by_user_id():
+    user_id = DAO.account.get_user("tester1").id
+    assert len(DAO.sec_sys.get_sec_user_role_by_user_id(user_id)) > 0
+
+
+def test_sec_sys_get_username_by_rolename():
+    assert len(DAO.sec_sys.get_username_by_rolename(Rolename.ADMIN)) > 0
+
+
+def test_sec_sys_get_rolename_by_username():
+    assert len(DAO.sec_sys.get_rolename_by_username("tester1")) > 0
+
+
+def test_study_get_study_data():
+    assert DAO.study.get_study_data(-1) is None
+
+
+def test_study_get_study_info():
+    assert DAO.study.get_study_info(-1) is None
