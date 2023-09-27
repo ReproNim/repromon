@@ -88,7 +88,9 @@ class AccountDAO(BaseDAO):
         pass
 
     def add_role(self, rolename: str, description: str) -> RoleEntity:
-        o: RoleEntity = RoleEntity(rolename, description)
+        role_id = self.session().query(func.max(RoleEntity.id)).scalar() + 1
+        o: RoleEntity = RoleEntity(id=role_id, rolename=rolename,
+                                   description=description)
         self.session().add(o)
         self.session().commit()
         return o
