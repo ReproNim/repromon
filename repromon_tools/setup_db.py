@@ -5,11 +5,12 @@ from sqlalchemy import text
 from repromon_app.config import app_config, app_config_init, app_settings
 from repromon_app.dao import DAO, BaseDAO
 from repromon_app.db import db_init
-from repromon_app.model import (BaseEntity, DataProviderEntity, DeviceEntity,
-                                MessageCategoryEntity, MessageLevelEntity,
-                                RoleEntity, Rolename, StudyStatusEntity,
-                                UserEntity)
-from repromon_app.service import SecSysService
+from repromon_app.model import (BaseEntity, DataProviderEntity, DataProviderId,
+                                DeviceEntity, MessageCategoryEntity,
+                                MessageCategoryId, MessageLevelEntity,
+                                MessageLevelId, RoleEntity, Rolename,
+                                StudyStatusEntity, UserEntity)
+from repromon_app.service import MessageService, SecSysService
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -233,6 +234,17 @@ def fill_tables_with_init_data():
         sec_svc.renew_user_apikey("tester1")
         sec_svc.renew_user_apikey("tester2")
         sec_svc.renew_user_apikey("tester3")
+
+        msg_svc: MessageService = MessageService()
+        msg_svc.send_message(
+            "tester1", None, "Test Study Name",
+            MessageCategoryId.FEEDBACK,
+            MessageLevelId.INFO,
+            1,
+            DataProviderId.MRI,
+            "Test message from setup_db tool",
+            "{'foo': 321}"
+        )
     else:
         logger.info("skip user fill")
 

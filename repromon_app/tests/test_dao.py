@@ -1,7 +1,7 @@
 import logging
 
 from repromon_app.dao import DAO
-from repromon_app.model import Rolename
+from repromon_app.model import MessageCategoryId, Rolename
 
 logger = logging.getLogger(__name__)
 logger.debug(f"name={__name__}")
@@ -53,7 +53,35 @@ def test_account_add_update_user():
     assert u
     assert u.username == "tester0"
 
+    DAO.account.update_user_apikey("tester0", "apikey0", "data0")
+    DAO.account.update_user_password("tester0", "password0")
+    DAO.account.update_user_is_active("tester0", "N")
+
     u = DAO.account.get_user("tester0")
+    assert u.apikey == "apikey0"
+    assert u.apikey_data == "data0"
+    assert u.password == "password0"
+    assert u.is_active == 'N'
+
     if u:
         DAO.account.delete(u)
         DAO.account.commit()
+
+
+def test_message_get_data_providers():
+    assert len(DAO.message.get_data_providers()) > 0
+
+
+def test_message_get_devices():
+    assert len(DAO.message.get_devices()) > 0
+
+
+def test_message_get_message_levels():
+    assert len(DAO.message.get_message_levels()) > 0
+
+
+def test_message_get_message_log_infos():
+    lst = DAO.message.get_message_log_infos(MessageCategoryId.FEEDBACK, None, None)
+    assert len(lst) > 0
+    msg0 = lst[0]
+    assert DAO.message.get_message_log_info(msg0.id)
