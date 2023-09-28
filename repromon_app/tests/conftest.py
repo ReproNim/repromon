@@ -17,6 +17,10 @@ _apikey_tester1: str = None
 _apikey_tester2: str = None
 _apikey_tester3: str = None
 
+_token_tester1: str = None
+_token_tester2: str = None
+_token_tester3: str = None
+
 _fastapi_app: FastAPI = None
 _test_client: TestClient = None
 
@@ -39,6 +43,11 @@ def init_db():
     _apikey_tester1 = svc.get_user_apikey("tester1").apikey
     _apikey_tester2 = svc.get_user_apikey("tester2").apikey
     _apikey_tester3 = svc.get_user_apikey("tester3").apikey
+
+    global _token_tester1, _token_tester2, _token_tester3
+    _token_tester1 = svc.create_access_token("tester1", 60 * 60).access_token
+    _token_tester2 = svc.create_access_token("tester2", 60 * 60).access_token
+    _token_tester3 = svc.create_access_token("tester3", 60 * 60).access_token
     yield
 
 
@@ -79,8 +88,35 @@ def fastapi_app() -> FastAPI:
 
 
 @pytest.fixture
+def oauth2_tester1_headers() -> dict:
+    global _token_tester1
+    headers = {
+        "Authorization": f"Bearer {_token_tester1}"
+    }
+    return headers
+
+
+@pytest.fixture
 def test_client(fastapi_app) -> str:
     global _test_client
     if not _test_client:
         _test_client = TestClient(fastapi_app)
     return _test_client
+
+
+@pytest.fixture
+def token_tester1() -> str:
+    global _token_tester1
+    return _token_tester1
+
+
+@pytest.fixture
+def token_tester2() -> str:
+    global _token_tester2
+    return _token_tester2
+
+
+@pytest.fixture
+def token_tester3() -> str:
+    global _token_tester3
+    return _token_tester3
