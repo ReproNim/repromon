@@ -90,10 +90,25 @@ def fastapi_app() -> FastAPI:
 @pytest.fixture
 def oauth2_tester1_headers() -> dict:
     global _token_tester1
-    headers = {
+    return {
         "Authorization": f"Bearer {_token_tester1}"
     }
-    return headers
+
+
+@pytest.fixture
+def oauth2_tester2_headers() -> dict:
+    global _token_tester2
+    return {
+        "Authorization": f"Bearer {_token_tester2}"
+    }
+
+
+@pytest.fixture
+def oauth2_tester3_headers() -> dict:
+    global _token_tester3
+    return {
+        "Authorization": f"Bearer {_token_tester3}"
+    }
 
 
 @pytest.fixture
