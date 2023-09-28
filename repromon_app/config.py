@@ -43,6 +43,8 @@ class SettingsConfig(BaseSectionConfig):
     TOKEN_EXPIRE_SEC: int = 24 * 60 * 60
     UI_APP_PATH: str = None
     UI2_APP_PATH: str = None
+    WEB_HOST: str = "localhost"
+    WEB_PORT: int = 9095
 
     @property
     def CORS_ALLOW_ORIGINS_LIST(self) -> list[str]:
