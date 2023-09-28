@@ -2,16 +2,22 @@ import logging
 import threading
 
 import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
-from repromon_app.config import app_config, app_config_init
+from repromon_app.config import app_config, app_config_init, app_settings
 from repromon_app.db import db_init
 from repromon_app.service import SecSysService
+from repromon_app.srv import create_fastapi_app
 
 logger = logging.getLogger(__name__)
 
 _apikey_tester1: str = None
 _apikey_tester2: str = None
 _apikey_tester3: str = None
+
+_fastapi_app: FastAPI = None
+_test_client: TestClient = None
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -51,3 +57,24 @@ def apikey_tester2() -> str:
 def apikey_tester3() -> str:
     global _apikey_tester3
     return _apikey_tester3
+
+
+@pytest.fixture
+def base_url() -> str:
+    return f"https://{app_settings().WEB_HOST}:{str(app_settings().WEB_PORT)}"
+
+
+@pytest.fixture
+def fastapi_app() -> FastAPI:
+    global _fastapi_app
+    if not _fastapi_app:
+        _fastapi_app = create_fastapi_app()
+    return _fastapi_app
+
+
+@pytest.fixture
+def test_client(fastapi_app) -> str:
+    global _test_client
+    if not _test_client:
+        _test_client = TestClient(fastapi_app)
+    return _test_client
