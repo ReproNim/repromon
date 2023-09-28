@@ -209,7 +209,7 @@ def create_api_v1_router() -> APIRouter:
 
     # @security: role=data_collector, auth
     @api_v1_router.get("/feedback/get_study_header",
-                       response_model=StudyInfoDTO,
+                       response_model=StudyInfoDTO | None,
                        tags=["FeedbackService"],
                        summary="get_study_header",
                        description="Get study header info")
