@@ -4,6 +4,7 @@ import threading
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from httpx import BasicAuth
 
 from repromon_app.config import app_config, app_config_init, app_settings
 from repromon_app.db import db_init
@@ -39,6 +40,11 @@ def init_db():
     _apikey_tester2 = svc.get_user_apikey("tester2").apikey
     _apikey_tester3 = svc.get_user_apikey("tester3").apikey
     yield
+
+
+@pytest.fixture
+def admin_basic_auth() -> BasicAuth:
+    return BasicAuth("admin", app_settings().INITIAL_ADMIN_PASSWORD)
 
 
 @pytest.fixture
