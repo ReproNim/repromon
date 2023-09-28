@@ -17,6 +17,7 @@ _apikey_tester1: str = None
 _apikey_tester2: str = None
 _apikey_tester3: str = None
 
+_token_admin: str = None
 _token_tester1: str = None
 _token_tester2: str = None
 _token_tester3: str = None
@@ -44,7 +45,8 @@ def init_db():
     _apikey_tester2 = svc.get_user_apikey("tester2").apikey
     _apikey_tester3 = svc.get_user_apikey("tester3").apikey
 
-    global _token_tester1, _token_tester2, _token_tester3
+    global _token_admin, _token_tester1, _token_tester2, _token_tester3
+    _token_admin = svc.create_access_token("admin", 60 * 60).access_token
     _token_tester1 = svc.create_access_token("tester1", 60 * 60).access_token
     _token_tester2 = svc.create_access_token("tester2", 60 * 60).access_token
     _token_tester3 = svc.create_access_token("tester3", 60 * 60).access_token
@@ -75,6 +77,30 @@ def apikey_tester3() -> str:
 
 
 @pytest.fixture
+def apikey_tester1_headers() -> dict:
+    global _apikey_tester1
+    return {
+        "X-Api-Key": _apikey_tester1
+    }
+
+
+@pytest.fixture
+def apikey_tester2_headers() -> dict:
+    global _apikey_tester2
+    return {
+        "X-Api-Key": _apikey_tester2
+    }
+
+
+@pytest.fixture
+def apikey_tester3_headers() -> dict:
+    global _apikey_tester3
+    return {
+        "X-Api-Key": _apikey_tester3
+    }
+
+
+@pytest.fixture
 def base_url() -> str:
     return f"https://{app_settings().WEB_HOST}:{str(app_settings().WEB_PORT)}"
 
@@ -85,6 +111,14 @@ def fastapi_app() -> FastAPI:
     if not _fastapi_app:
         _fastapi_app = create_fastapi_app()
     return _fastapi_app
+
+
+@pytest.fixture
+def oauth2_admin_headers() -> dict:
+    global _token_admin
+    return {
+        "Authorization": f"Bearer {_token_admin}"
+    }
 
 
 @pytest.fixture
