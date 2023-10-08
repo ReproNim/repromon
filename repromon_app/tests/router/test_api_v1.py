@@ -122,10 +122,10 @@ def test_message_send_message(
         "/api/1/message/send_message",
         params={
             "study": "Test Study Name",
-            "category": MessageCategoryId.FEEDBACK,
-            "level": MessageLevelId.INFO,
+            "category": int(MessageCategoryId.FEEDBACK),
+            "level": int(MessageLevelId.INFO),
             "device": 1,
-            "provider": DataProviderId.MRI,
+            "provider": int(DataProviderId.MRI),
             "description": "Test message from test_api_v1",
             "payload": "{'foobar': 111}"
 
