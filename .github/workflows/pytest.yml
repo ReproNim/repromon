@@ -1,0 +1,30 @@
+name: PyTest
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  POSTGRES_DB: rmdb
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure environment
+      run: |
+        git config --global user.name "repromon-test"
+        git config --global user.email "repromon-test@example.com"
+        uname -a
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        echo TODO
