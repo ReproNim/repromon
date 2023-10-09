@@ -40,6 +40,7 @@ jobs:
     - name: Create Python 3.11 venv
       run: |
         pwd
+        ls -l
         python3.11 -m venv venv
         venv/bin/pip install poetry
         venv/bin/poetry config virtualenvs.create false
