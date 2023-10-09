@@ -1,12 +1,14 @@
+---
 name: PyTest
 
 on:
   push:
-    branches:
-      - master
+    branches: [main]
   pull_request:
-    branches:
-      - master
+    branches: [main]
+
+permissions:
+  contents: read
 
 env:
   POSTGRES_DB: rmdb
