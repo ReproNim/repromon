@@ -14,7 +14,7 @@ env:
   POSTGRES_DB: rmdb
 
 jobs:
-  test:
+  pytest:
     runs-on: ubuntu-latest
     steps:
     - name: Configure environment
