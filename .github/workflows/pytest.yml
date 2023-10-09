@@ -33,7 +33,7 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install Python 3.11
+    - name: Try to install Python 3.11
       run: |
         sudo apt update
         sudo apt install python3.11 -y
@@ -42,7 +42,7 @@ jobs:
         sudo apt install python3.11-venv -y
       shell: bash
 
-    - name: Create Python 3.11 venv
+    - name: Create venv and poetry
       run: |
         pwd
         ls -l
@@ -51,10 +51,17 @@ jobs:
         venv/bin/poetry config virtualenvs.create false
         venv/bin/poetry config virtualenvs.in-project true 
         venv/bin/poetry env use `which python3`
+        venv/bin/python --version
         venv/bin/poetry --version
       shell: bash
 
-
     - name: Setup test DB
       run: |
-        echo TODO_setup_DB
+        > db/db_dev.sqlite3
+        venv/bin/poetry run setup_db
+      shell: bash
+
+    - name: Run pytest
+      run: |
+        venv/bin/poetry run pytest
+      shell: bash
