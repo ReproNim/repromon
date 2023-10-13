@@ -37,25 +37,25 @@ jobs:
       run: |
         pwd
         ls -l
-        venv/bin/pip install poetry
-        venv/bin/poetry config virtualenvs.create false
-        venv/bin/poetry config virtualenvs.in-project true 
-        venv/bin/poetry env use `which python`
-        venv/bin/python --version
-        venv/bin/poetry --version
-        venv/bin/poetry install
-        venv/bin/poetry build
+        pip install poetry
+        poetry config virtualenvs.create false
+        poetry config virtualenvs.in-project true 
+        poetry env use `which python`
+        python --version
+        poetry --version
+        poetry install
+        poetry build
       shell: bash
 
     - name: Setup test DB
       run: |
         > db/db_dev.sqlite3
-        venv/bin/poetry run setup_db
+        poetry run setup_db
       shell: bash
 
     - name: Run pytest
       run: |
-        venv/bin/poetry run pytest --cov=. --cov-report=xml
+        poetry run pytest --cov=. --cov-report=xml
       shell: bash
 
     - name: Upload coverage reports to Codecov
