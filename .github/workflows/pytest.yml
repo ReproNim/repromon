@@ -54,12 +54,6 @@ jobs:
         poetry build
       shell: bash
 
-    - name: Setup test DB
-      run: |
-        > db/db_dev.sqlite3
-        poetry run setup_db
-      shell: bash
-
     - name: Run pytest
       run: |
         poetry run pytest --cov=. --cov-report=xml

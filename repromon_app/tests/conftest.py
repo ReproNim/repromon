@@ -1,5 +1,7 @@
+import os
 import logging
 import threading
+import tempfile
 
 import pytest
 from fastapi import FastAPI
@@ -10,6 +12,7 @@ from repromon_app.config import app_config, app_config_init, app_settings
 from repromon_app.db import db_init
 from repromon_app.service import SecSysService
 from repromon_app.srv import create_fastapi_app
+from repromon_tools import setup_db
 
 logger = logging.getLogger(__name__)
 #
@@ -30,15 +33,30 @@ _test_client: TestClient = None
 @pytest.fixture(scope="session", autouse=True)
 def init_config():
     logger.debug("init_config()")
+    #
+    temp = tempfile.NamedTemporaryFile(prefix='repromon_db_test_sqlite3_', delete=False)
+    db_path = temp.name
+    logger.info(f"create temporary file: {db_path}")
+    db_url = f"sqlite:///{db_path}"
+    os.environ['DB_URL'] = db_url
+    logger.info(f"override DB_URL env with this value: {db_url}")
+    #
     app_config_init()
     yield
+    #
+    if os.path.isfile(db_path):
+        os.remove(db_path)
+        print(f"Deleted temporary DB file: {db_path}")
 
 
 @pytest.fixture(scope="session", autouse=True)
 def init_db():
     logger.debug("init_db()")
     logger.debug("Initialize DB...")
-    db_init(app_config().db.dict(), threading.get_ident)
+    # db_init(app_config().db.dict(), threading.get_ident)
+    logger.debug("Execute setup_db first")
+    setup_db.main()
+    logger.debug("Done, setup_db")
     svc: SecSysService = SecSysService()
 
     global _apikey_tester1, _apikey_tester2, _apikey_tester3
