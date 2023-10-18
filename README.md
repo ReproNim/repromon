@@ -82,6 +82,7 @@ or via poetry:
 
      ./venv/bin/poetry run pytest
 
+     ./venv/bin/poetry run pytest --cov=. --cov-report=xml -s
 
 <!--
 ## Web Application UI

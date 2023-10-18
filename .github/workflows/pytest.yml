@@ -57,7 +57,7 @@ jobs:
 
     - name: Run pytest
       run: |
-        poetry run pytest --cov=. --cov-report=xml -s
+        poetry run pytest --cov=. --cov-report=xml
       shell: bash
 
     - name: Upload coverage reports to Codecov
