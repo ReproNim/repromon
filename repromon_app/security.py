@@ -167,7 +167,6 @@ class SecurityManager:
         if username and len(username) > 0:
             expire: datetime.datetime = \
                 datetime.now(timezone.utc) + timedelta(seconds=expire_sec)
-            expire = expire.timestamp()
             data = {
                 "sub": username,
                 "exp": expire

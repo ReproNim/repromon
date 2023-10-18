@@ -65,10 +65,10 @@ def init_db():
     _apikey_tester3 = svc.get_user_apikey("tester3").apikey
 
     global _token_admin, _token_tester1, _token_tester2, _token_tester3
-    _token_admin = svc.create_access_token("admin", 60 * 60).access_token
-    _token_tester1 = svc.create_access_token("tester1", 60 * 60).access_token
-    _token_tester2 = svc.create_access_token("tester2", 60 * 60).access_token
-    _token_tester3 = svc.create_access_token("tester3", 60 * 60).access_token
+    _token_admin = svc.create_access_token("admin", 24 * 60 * 60).access_token
+    _token_tester1 = svc.create_access_token("tester1", 24 * 60 * 60).access_token
+    _token_tester2 = svc.create_access_token("tester2", 24 * 60 * 60).access_token
+    _token_tester3 = svc.create_access_token("tester3", 24 * 60 * 60).access_token
     yield
 
 
