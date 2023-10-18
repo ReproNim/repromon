@@ -169,7 +169,7 @@ class SecurityManager:
                 datetime.now(timezone.utc) + timedelta(seconds=expire_sec)
             data = {
                 "sub": username,
-                "exp": int(expire.timestamp())
+                "exp": expire.timestamp()
             }
             logger.debug(f"data={str(data)}")
             token: str = jwt.encode(data,
