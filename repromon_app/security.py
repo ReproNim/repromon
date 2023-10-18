@@ -166,7 +166,8 @@ class SecurityManager:
             expire_sec = app_settings().TOKEN_EXPIRE_SEC
         if username and len(username) > 0:
             expire: datetime.datetime = \
-                datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(seconds=expire_sec)
+                datetime.now(timezone.utc) + timedelta(seconds=expire_sec)
+            expire = expire.timestamp()
             data = {
                 "sub": username,
                 "exp": expire
