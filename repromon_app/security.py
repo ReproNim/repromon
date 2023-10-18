@@ -3,7 +3,7 @@ import contextvars
 import hashlib
 import logging
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
@@ -166,10 +166,10 @@ class SecurityManager:
             expire_sec = app_settings().TOKEN_EXPIRE_SEC
         if username and len(username) > 0:
             expire: datetime.datetime = \
-                datetime.utcnow() + timedelta(seconds=expire_sec)
+                datetime.now(timezone.utc) + timedelta(seconds=expire_sec)
             data = {
                 "sub": username,
-                "exp": expire
+                "exp": expire.timestamp()
             }
             logger.debug(f"data={str(data)}")
             token: str = jwt.encode(data,
@@ -498,7 +498,7 @@ async def _web_oauth2_context(
         detail="Unauthorized: Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    logger.debug(f"_web_oauth2_context, token: {token}, strict={strict}")
+    logger.debug(f"_web_oauth2_context, token: ***, strict={strict}")
     try:
         mgr: SecurityManager = SecurityManager.instance()
         username: str = mgr.get_username_by_token(token)
@@ -515,6 +515,7 @@ async def _web_oauth2_context(
         return SecurityManager.instance().create_empty_context()
     except BaseException as be:
         if strict:
+            logging.error(f"Unauthorized exception occurred: {str(be)}", exc_info=True)
             credentials_exception.detail = f"Unauthorized: {str(be)}"
             raise credentials_exception
         return SecurityManager.instance().create_empty_context()

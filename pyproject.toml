@@ -28,8 +28,18 @@ httpx = "^0.25.0"
 [tool.pytest.ini_options]
 log_cli = true
 log_cli_level = "DEBUG"
-# log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
-# log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+addopts = "--tb=short"
+filterwarnings = [
+    "error",
+    # filed an issue: https://foss.heptapod.net/python-libs/passlib/-/issues/188
+    "ignore:'crypt' is deprecated and slated for removal.*:DeprecationWarning:passlib",
+    # https://github.com/ReproNim/repromon/issues/9
+    "ignore: passing settings to sha256_crypt.hash\\(\\) is deprecated, .*:DeprecationWarning:passlib",
+    # jose/jwt.py", line 311, in _validate_exp has deprecated code
+    # now = timegm(datetime.utcnow().utctimetuple())
+    "ignore: datetime.datetime.utcnow\\(\\) is deprecated .*:DeprecationWarning:jose",
+]
+
 
 [build-system]
 requires = ["poetry>=1.0"]
