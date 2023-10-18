@@ -67,4 +67,3 @@ where
 	ml.study_id = 1
 order by ml.created_on asc
 ;
-
