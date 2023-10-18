@@ -3,7 +3,7 @@ import contextvars
 import hashlib
 import logging
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
@@ -166,7 +166,7 @@ class SecurityManager:
             expire_sec = app_settings().TOKEN_EXPIRE_SEC
         if username and len(username) > 0:
             expire: datetime.datetime = \
-                datetime.utcnow() + timedelta(seconds=expire_sec)
+                datetime.now(timezone.utc) + timedelta(seconds=expire_sec)
             data = {
                 "sub": username,
                 "exp": expire
