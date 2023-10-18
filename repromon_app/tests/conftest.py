@@ -1,6 +1,5 @@
-import os
 import logging
-import threading
+import os
 import tempfile
 
 import pytest
@@ -8,11 +7,13 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from httpx import BasicAuth
 
-from repromon_app.config import app_config, app_config_init, app_settings
-from repromon_app.db import db_init
+from repromon_app.config import app_config_init, app_settings
+# from repromon_app.db import db_init
 from repromon_app.service import SecSysService
 from repromon_app.srv import create_fastapi_app
 from repromon_tools import setup_db
+
+# import threading
 
 logger = logging.getLogger(__name__)
 #
