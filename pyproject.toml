@@ -35,8 +35,7 @@ filterwarnings = [
     "ignore:'crypt' is deprecated and slated for removal.*:DeprecationWarning:passlib",
     # https://github.com/ReproNim/repromon/issues/9
     "ignore: passing settings to sha256_crypt.hash\\(\\) is deprecated, .*:DeprecationWarning:passlib",
-    # jose/jwt.py", line 311, in _validate_exp has deprecated code
-    # now = timegm(datetime.utcnow().utctimetuple())
+    # https://github.com/mpdavis/python-jose/issues/334
     "ignore: datetime.datetime.utcnow\\(\\) is deprecated .*:DeprecationWarning:jose",
 ]
 
