@@ -16,7 +16,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
       libpq-dev \
       python3-dev \
       python3-pip \
-      python3.11-venv \
+      python3-venv \
+      python-is-python3 \
       && \
     DEBIAN_FRONTEND=noninteractive apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
