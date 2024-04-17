@@ -131,6 +131,12 @@ def fill_tables_with_init_data():
                        email='user3@repromon.com',
                        phone='111')
         dao.add(o)
+        o = UserEntity(username="mriuser",
+                       is_active='Y', is_system='N',
+                       first_name='MRI', last_name='User',
+                       description='MRI User'
+                       )
+        dao.add(o)
         o = UserEntity(username="admin",
                        is_active='Y', is_system='N',
                        first_name='Admin', last_name='Admin',
@@ -195,6 +201,8 @@ def fill_tables_with_init_data():
         sec_svc.set_user_roles("user1", [Rolename.DATA_COLLECTOR])
         sec_svc.set_user_roles("user2", [Rolename.MRI_OPERATOR])
         sec_svc.set_user_roles("user3", [Rolename.PARTICIPANT])
+        sec_svc.set_user_roles("mriuser", [Rolename.DATA_COLLECTOR,
+                                           Rolename.MRI_OPERATOR])
         sec_svc.set_user_roles("admin", [Rolename.ADMIN,
                                          Rolename.DATA_COLLECTOR])
         sec_svc.set_user_roles("poweruser", [Rolename.DATA_COLLECTOR,
@@ -215,6 +223,7 @@ def fill_tables_with_init_data():
         sec_svc.set_user_devices("user1", ["MRI"])
         sec_svc.set_user_devices("user2", ["MRI"])
         sec_svc.set_user_devices("user3", ["MRI"])
+        sec_svc.set_user_devices("mriuser", ["MRI"])
         sec_svc.set_user_devices("admin", ["MRI"])
         sec_svc.set_user_devices("poweruser", ["MRI"])
         sec_svc.set_user_devices("noisseur", ["MRI"])
